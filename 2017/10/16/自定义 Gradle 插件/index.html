@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Menlo:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="gradle 插件,">
+
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Deemons's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Android 中许多优秀的开源框架都会自定义 Gradle 插件，比如，热修复的 Tinker 。 所以，这篇文章记录 Android Studio 中如何自定义 Gradle 插件。">
+<meta name="keywords" content="gradle 插件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义 Gradle 插件">
+<meta property="og:url" content="https://deemons.cn/2017/10/16/自定义 Gradle 插件/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="Android 中许多优秀的开源框架都会自定义 Gradle 插件，比如，热修复的 Tinker 。 所以，这篇文章记录 Android Studio 中如何自定义 Gradle 插件。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbhra2pyj30hs0br0t0.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbhs7x3bj30ak05aglm.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbhsrwmdj309a045mx1.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbhukvf4j30c307wjru.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbhv4klwj30ad07y3yo.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbhwuxr7j30fm084wf5.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbhzap8dj30n6072wer.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbi08vw9j30w70cbmxs.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbi1znv5j30xp0ftt9k.jpg">
+<meta property="og:updated_time" content="2019-04-26T12:40:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义 Gradle 插件">
+<meta name="twitter:description" content="Android 中许多优秀的开源框架都会自定义 Gradle 插件，比如，热修复的 Tinker 。 所以，这篇文章记录 Android Studio 中如何自定义 Gradle 插件。">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbhra2pyj30hs0br0t0.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '0FA2UOCAJT',
+      apiKey: '48c755a2f7afcfda222593cdbca42a14',
+      indexName: 'Deemons blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://deemons.cn/2017/10/16/自定义 Gradle 插件/">
+
+
+
+
+
+  <title>自定义 Gradle 插件 | Deemons's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c15bcaa74aa04daa85ae1f6fd25d09be";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Deemons's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://deemons.cn/2017/10/16/自定义 Gradle 插件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">自定义 Gradle 插件</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-16T22:04:39+08:00">
+                2017-10-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AOP/" itemprop="url" rel="index">
+                    <span itemprop="name">AOP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/10/16/自定义 Gradle 插件/" class="leancloud_visitors" data-flag-title="自定义 Gradle 插件">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbhra2pyj30hs0br0t0.jpg" alt></p>
+<p>Android 中许多优秀的开源框架都会自定义 Gradle 插件，比如，热修复的 <a href="https://github.com/Tencent/tinker" target="_blank" rel="noopener">Tinker</a> 。</p>
+<p>所以，这篇文章记录 Android Studio 中如何自定义 Gradle 插件。</p>
+<a id="more"></a>
+<p><br></p>
+<h3 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h3><p>Gradle 是个的构建工具，也是Android Studio 默认的构建工具，与传统的 Ant 、maven 相比，Gradle 更加强大。利用 Gradle 这个工具，我们能做很多事情，例如热修复、插件化等等。</p>
+<p>当然，这篇文章不会将具体的 Gradle 语法，这篇文章只会记录如何创建一个Gradle 插件。</p>
+<p>如果你想彻底理解并应用 Gradle ，推荐看这系列文章 <a href="https://segmentfault.com/a/1190000004229002" target="_blank" rel="noopener">Gradle for Android</a> 。</p>
+<p>Gradle 插件是使用 Groovy 语言进行开发的，而 Groovy 是可以兼容 Java 的。Android Studio 除了开发 APP 外，完全可以开发 Gradle 插件。</p>
+<p><br></p>
+<h3 id="插件开发"><a href="#插件开发" class="headerlink" title="插件开发"></a>插件开发</h3><p>现在来说下，详细的 Gradle 插件开发步骤：</p>
+<ol>
+<li><p>新建一个项目</p>
+</li>
+<li><p>再新建一个 Module，此 Module 用于开发插件，类型选什么都无所谓，后面会大改。</p>
+</li>
+<li><p>在 Project 目录视图模式下，清空 build.gradle 文件的内容，删除其余的所有文件。</p>
+</li>
+<li><p>然后在 module 中新建多个文件夹 <code>src/main/groovy</code> ，再新建包名文件夹。 在 main 目录下再新建<code>resources</code>  目录，在<code>resources</code> 目录下再新建 <code>META-INF</code> 文件夹，再新建文件夹<code>gradle-plugins</code>，这样就完成了 gradle 插件的目录结构搭建，整个目录结构如下。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbhs7x3bj30ak05aglm.jpg" alt></p>
+</li>
+<li><p>打开 <code>build.gralde</code> 文件，替换全部内容</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'groovy'</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'maven'</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    compile gradleApi() <span class="comment">//gradle sdk</span></span><br><span class="line">    compile localGroovy() <span class="comment">//groovy sdk</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>现在，就可以来正式写插件内容了。在刚刚新建的包名下 再次新建一个文件 <code>MyPlugin.groovy</code> ，注意文件类型，一定是 <code>groovy</code> 类型文件，刚开始没注意，直到出了问题，排查时，打开本地文件才发现文件没有后缀名称。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.app.plugin</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Plugin</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Project</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> apply(Project project) &#123;</span><br><span class="line">    <span class="keyword">def</span> log = project.logger</span><br><span class="line">    log.error <span class="string">"========================"</span>;</span><br><span class="line">    log.error <span class="string">"完整的MyPlugin，开始修改Class!"</span>;</span><br><span class="line">    log.error <span class="string">"========================"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>resources/META-INF/gradle-plugins</code>  目录下新建一个 <code>.properties</code> 文件，注意该文件的命名就是你使用此插件时的名称，这里命名为 <code>com.app.myplugin.properties</code> ，一定要注意后缀名称，那么使用时的名称就是<code>com.app.myplugin</code>，文件里面的内容填写如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation-class=com.app.plugin.MyPlugin</span><br></pre></td></tr></table></figure>
+<p>这里是 <code>key = value</code> 的形式，值就是刚刚自定义的 插件（ groovy 文件 ）的全名，也就是路径加上类名称。</p>
+</li>
+</ol>
+<p><br><br>至此，插件也就开发完成了。</p>
+<p>这是可以发布出去的完整的插件结构，如果你想开发只针对当前项目的 Gradle 插件，那么可以简化很多步骤，也可以忽略后面的打包发布的繁琐步骤。</p>
+<p><br></p>
+<p><br></p>
+<h3 id="简化版-gradle-插件"><a href="#简化版-gradle-插件" class="headerlink" title="简化版 gradle 插件"></a>简化版 gradle 插件</h3><p>开发仅用于当前项目的简化版 Gradle 插件的话，绝大部分与前面完整的步骤相同，只是有两点需要注意：</p>
+<ol>
+<li>用于开发插件的 Module 名称必须是 <code>BuildSrc</code> </li>
+<li>无须 <code>resources</code> 目录</li>
+</ol>
+<p>整个目录结构简化了许多。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbhsrwmdj309a045mx1.jpg" alt></p>
+<p>而且 <code>build.gradle</code> 中也去除了 maven 插件 <code>apply plugin: &#39;maven&#39;</code> ，文件如下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'groovy'</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">  compile gradleApi() <span class="comment">//gradle sdk</span></span><br><span class="line">  compile localGroovy() <span class="comment">//groovy sdk</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">  jcenter()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后就是编写的插件，<code>MyPlugin.groovy</code> 文件内容如下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Plugin</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Project</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> apply(Project project) &#123;</span><br><span class="line">    <span class="keyword">def</span> log = project.logger</span><br><span class="line">    log.error <span class="string">"========================"</span>;</span><br><span class="line">    log.error <span class="string">"精简的MyPlugin，开始修改Class!"</span>;</span><br><span class="line">    log.error <span class="string">"========================"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果是使用的话，就直接在需要使用的 module 中 <code>build.gradle</code> 添加 </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> com.example.MyPlugin <span class="comment">//注意，这里没有单引号，直接填写插件的全名</span></span><br></pre></td></tr></table></figure>
+<p>然后，先 <code>clean</code> 下项目，然后 <code>make project</code> ，就可以在控制台看到效果:</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbhukvf4j30c307wjru.jpg" alt></p>
+<p><br></p>
+<p><br></p>
+<h3 id="插件的发布"><a href="#插件的发布" class="headerlink" title="插件的发布"></a>插件的发布</h3><p>当然，如果你想复用 你的gradle 插件，那就必须把它发布出去。</p>
+<p>按发布的地点分类，有两种：</p>
+<ol>
+<li>发布到本地仓库</li>
+<li>发布到远程仓库</li>
+</ol>
+<p><br></p>
+<h4 id="本地仓库"><a href="#本地仓库" class="headerlink" title="本地仓库"></a>本地仓库</h4><p>如果是发布到本地，则在插件的<code>build.gradle</code> 中添加如下代码 ：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">uploadArchives &#123;</span><br><span class="line">    repositories.mavenDeployer &#123;</span><br><span class="line">        repository(<span class="string">url:</span> uri(<span class="string">'../repo'</span>)) <span class="comment">//仓库的路径，此处是项目根目录下的 repo 的文件夹</span></span><br><span class="line">        pom.groupId = <span class="string">'com.app.plugin'</span>  <span class="comment">//groupId ，自行定义，一般是包名</span></span><br><span class="line">        pom.artifactId = <span class="string">'gradleplugin'</span> <span class="comment">//artifactId ，自行定义</span></span><br><span class="line">        pom.version = <span class="string">'1.0.0'</span> <span class="comment">//version 版本号</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此处的 <code>groupId</code> 、<code>artifactId</code> 和 <code>version</code> 这三个参数都是自定义的，后面再引用这个插件时会用到。</p>
+<p>maven 本地仓库的目录就是当前项目目录下的 repo 目录，这个时候右侧的 gradle Toolbar 就会在module下多出一个task ，<code>upload-uploadArchives</code> ，在运行这个Task 之前，需要先 clean 项目。运行过后，就会在项目中生成一个 <code>repo</code> 的文件夹，里面就存放着发布的 gradle 插件。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbhv4klwj30ad07y3yo.jpg" alt></p>
+<p><br></p>
+<p>使用时，需要在根目录的 <code>build.gradle</code> 中添加如下代码：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">      <span class="comment">//首先需要配置本地的 maven 仓库地址，这里填写的是相对路径，也可以是全路径</span></span><br><span class="line">        maven &#123;</span><br><span class="line">            url uri(<span class="string">'repo'</span>) </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        <span class="comment">//然后，添加依赖的插件，形式是 groupId：artifactId：version</span></span><br><span class="line">      	<span class="comment">//这些都是插件发布时，定义的名称</span></span><br><span class="line">        classpath <span class="string">'com.app.plugin:gradleplugin:1.0.0'</span> </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，在使用的 module 的 build.gradle 里，添加</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.app.plugin.myplugin'</span> <span class="comment">//这里就填写 .properties 文件的名称</span></span><br></pre></td></tr></table></figure>
+<p>这就完成了本地仓库的插件使用。重新构建工程后，效果如下：</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbhwuxr7j30fm084wf5.jpg" alt></p>
+<p><br></p>
+<h4 id="远程仓库"><a href="#远程仓库" class="headerlink" title="远程仓库"></a>远程仓库</h4><p>发布插件到远程仓库的方法，我在网上搜索到几个方案，都不成功。</p>
+<p>幸好 有 <a href="https://plugins.gradle.org/" target="_blank" rel="noopener">Gradle Plugins</a> 这样一个门户网站，让我们可以快速发布 Gradle 的插件，它有一个使用的教程文档，在这里放上 <a href="https://plugins.gradle.org/docs/submit" target="_blank" rel="noopener">地址</a> ，你也可以直接看文档。</p>
+<p><br></p>
+<p>现在来简单介绍如果使用：</p>
+<ol>
+<li><p>首先需要在这个门户网站 <code>https://plugins.gradle.org/</code> 中注册账户，它也可以支持 Github 账户登录。</p>
+</li>
+<li><p>然后在自己的账户界面，点击 API Keys ，获取 key 和 secret ，将他们 copy 到项目的 <code>gradle.properties</code> 文件中。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbhzap8dj30n6072wer.jpg" alt></p>
+</li>
+<li><p>然后在将要发布的插件 module 的 build.gradle 文件中做如下配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'groovy'</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">"com.gradle.plugin-publish"</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    compile gradleApi() <span class="comment">//gradle sdk</span></span><br><span class="line">    compile localGroovy() <span class="comment">//groovy sdk</span></span><br><span class="line">	</span><br><span class="line">  	<span class="comment">//这里根据插件需要，添加对应的依赖</span></span><br><span class="line">    compile <span class="string">'com.android.tools.build:gradle:3.0.0'</span></span><br><span class="line">    compile <span class="string">'org.javassist:javassist:3.20.0-GA'</span></span><br><span class="line">&#125;</span><br><span class="line">repositories &#123;</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            url <span class="string">"https://plugins.gradle.org/m2/"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">"com.gradle.publish:plugin-publish-plugin:0.9.7"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">version = <span class="string">"1.0.0"</span>    <span class="comment">//配置插件的版本号</span></span><br><span class="line">group = <span class="string">"com.deemons.gradlePlugin"</span>   <span class="comment">//插件的群组，插件的classpath会用到</span></span><br><span class="line"></span><br><span class="line">pluginBundle &#123;</span><br><span class="line"></span><br><span class="line">    website = <span class="string">'http://www.gradle.org/'</span></span><br><span class="line">    vcsUrl = <span class="string">'https://github.com/gradle/gradle'</span></span><br><span class="line">    description = <span class="string">'javassist for okbus'</span>  <span class="comment">//插件描述</span></span><br><span class="line">    tags = [<span class="string">'okbus'</span>, <span class="string">'javassist'</span>]  <span class="comment">//插件的tag。可以通过这个在插件门户上搜索</span></span><br><span class="line"></span><br><span class="line">    plugins &#123;</span><br><span class="line">        greetingsPlugin &#123;</span><br><span class="line">            id = <span class="string">'com.deemons.bus'</span>   <span class="comment">//插件的id，到时候apply的插件id</span></span><br><span class="line">            displayName = <span class="string">'OkBus plugin'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加完成后并且同步后，右侧对应模块的 Tasks 目录下，会多出 <code>plugin portal</code> ，然后点击 <code>publishPlugins</code> 就完成发布了。</p>
+</li>
+</ol>
+<p><br></p>
+<p>如果不出意外，插件就已经上传好了，这时候在 <a href="https://plugins.gradle.org" target="_blank" rel="noopener">Plugins</a> 上就可以搜索到自己的插件了。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbi08vw9j30w70cbmxs.jpg" alt></p>
+<p>点击进入，查看插件详情，里面会告诉你这个插件是如何使用的，是不是非常方便~</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbi1znv5j30xp0ftt9k.jpg" alt></p>
+<p><br></p>
+<p>这篇文章只是简单的介绍了 gradle 插件的开发，但真正有难度的是插件的内容。比如，结合 AspectJ 或者javassist 完成功能强大的插件，例如 <a href="https://github.com/Tencent/tinker" target="_blank" rel="noopener">Tinker</a>  、<a href="https://github.com/Qihoo360/RePlugin" target="_blank" rel="noopener">RePlugin</a>、<a href="https://github.com/didi/VirtualAPK" target="_blank" rel="noopener">VirtualAPK</a> 等。</p>
+<p><br></p>
+<p><br></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://segmentfault.com/a/1190000004229002" target="_blank" rel="noopener">Gradle for Android</a></li>
+<li><a href="http://kvh.io/cn/tags/EmbraceAndroidStudio/" target="_blank" rel="noopener">拥抱 Android Studio</a></li>
+<li><a href="http://blog.csdn.net/sbsujjbcy/article/details/50782830" target="_blank" rel="noopener">如何使用Android Studio开发Gradle插件</a></li>
+<li><a href="http://blog.csdn.net/huachao1001/article/details/51810328" target="_blank" rel="noopener">在AndroidStudio中自定义Gradle插件</a></li>
+</ul>
+<p><br></p>
+<p><br></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div><br>坚持分享技术，但行好事，莫问前程 ~^o^~</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/img/wechatPay.png" alt="Deemons 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/img/aliPay.png" alt="Deemons 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gradle-插件/" rel="tag"># gradle 插件</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/10/AspectJ/" rel="next" title="AspectJ">
+                <i class="fa fa-chevron-left"></i> AspectJ
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/18/发布-Library-到-JitPack/" rel="prev" title="发布 Library 到 JitPack">
+                发布 Library 到 JitPack <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/img/my_icon.jpeg" alt="Deemons">
+            
+              <p class="site-author-name" itemprop="name">Deemons</p>
+              <p class="site-description motion-element" itemprop="description">Deemons 的回档</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">52</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/rss2.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Deemonser" target="_blank" title="Github">
+                      
+                        <i class="fa fa-fw fa-github"></i>Github</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:deemonsch@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Gradle"><span class="nav-number">1.</span> <span class="nav-text">Gradle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插件开发"><span class="nav-number">2.</span> <span class="nav-text">插件开发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简化版-gradle-插件"><span class="nav-number">3.</span> <span class="nav-text">简化版 gradle 插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插件的发布"><span class="nav-number">4.</span> <span class="nav-text">插件的发布</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#本地仓库"><span class="nav-number">4.1.</span> <span class="nav-text">本地仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#远程仓库"><span class="nav-number">4.2.</span> <span class="nav-text">远程仓库</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+  <div class="footer-custom"><p>Hosted by <a href="https://pages.coding.me" style="font-weight:bold">Coding Pages</a></p></div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("FmiC6jxSM8I92r4lHwV4YYrf-gzGzoHsz", "vjepq9zuVLmpfH6SLkJ3Nbn5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
