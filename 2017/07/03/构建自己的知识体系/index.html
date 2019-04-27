@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="theme-next pisces use-motion" lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0">
+<!DOCTYPE html><html class="theme-next pisces" lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -6,6 +6,13 @@
 
 
 
+
+  
+  
+    
+    
+  
+  
 
 
 
@@ -60,9 +67,9 @@
     back2top_sidebar: false,
     fancybox: false,
     fastclick: false,
-    lazyload: false,
+    lazyload: true,
     tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     algolia: {
       applicationID: '0FA2UOCAJT',
       apiKey: '48c755a2f7afcfda222593cdbca42a14',
@@ -1903,7 +1910,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #49d298;
+  background: #90ff0f;
 }
 .feed-link,
 .chat {
@@ -2788,7 +2795,6 @@ ul.breadcrumb li+li:last-child {
   background: #fff;
   box-shadow: initial;
   border-radius: initial;
-  opacity: 0;
 }
 .sidebar-inner.affix {
   position: fixed;
@@ -3795,11 +3801,15 @@ ul.breadcrumb li+li:last-child {
 
   
 
-<script>
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
+
+
+
+
+
+
+
+
+  
 
 
 
@@ -3820,11 +3830,8 @@ ul.breadcrumb li+li:last-child {
 
 
 
-
-
-
-
-
+  
+  
 
   
   
@@ -3921,6 +3928,11 @@ ul.breadcrumb li+li:last-child {
 
 
 <script type="text/javascript" src="/bundle.js"></script><script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+;
+
     // Popup Window;
     var isfetched = false;
     var isXml = true;
