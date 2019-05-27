@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="theme-next pisces" lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0">
+<!DOCTYPE html><html class="theme-next pisces use-motion" lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -6,13 +6,6 @@
 
 
 
-
-  
-  
-    
-    
-  
-  
 
 
 
@@ -61,15 +54,15 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    version: '7.1.0',
+    version: '7.1.1',
     sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
     back2top: true,
     back2top_sidebar: false,
     fancybox: false,
     fastclick: false,
-    lazyload: true,
+    lazyload: false,
     tabs: true,
-    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     algolia: {
       applicationID: '0FA2UOCAJT',
       apiKey: '48c755a2f7afcfda222593cdbca42a14',
@@ -83,7 +76,8 @@
 
   
 
-<meta name="referrer" content="no-referrer">
+
+
 
   <meta name="description" content="Retrofit 是 Square 公司开源的一个高质量高效率的http库，开发者是被称为 Android 之神 的 Jake Wharton。 Retrofit 以其解耦彻底、扩展灵活、使用简单等特性，在 Android 领域声名远播。 Retrofit 已经出来很久了，现在最新版本是 2.3.0 ，如果还没使用过它，就真的是 low 爆了。">
 <meta name="keywords" content="Retrofit2,网络,文件上传">
@@ -1912,7 +1906,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #90ff0f;
+  background: #ff49ff;
 }
 .feed-link,
 .chat {
@@ -2797,6 +2791,7 @@ ul.breadcrumb li+li:last-child {
   background: #fff;
   box-shadow: initial;
   border-radius: initial;
+  opacity: 0;
 }
 .sidebar-inner.affix {
   position: fixed;
@@ -3154,11 +3149,11 @@ ul.breadcrumb li+li:last-child {
 
         
         
-          <h1 class="post-title" itemprop="name headline">Retrofit2 的简单使用
+          <h2 class="post-title" itemprop="name headline">Retrofit2 的简单使用
 
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -3749,17 +3744,6 @@ ul.breadcrumb li+li:last-child {
                   <a href="https://github.com/Deemonser" title="Github → https://github.com/Deemonser" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>Github</a>
                 </span>
               
-                <span class="links-of-author-item">
-                  
-                  
-                    
-                  
-                  
-                    
-                  
-                  <a href="mailto:deemonsch@gmail.com" title="E-Mail → mailto:deemonsch@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-                </span>
-              
             </div>
           
 
@@ -3828,7 +3812,7 @@ ul.breadcrumb li+li:last-child {
 
 
 
-  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.1.0</div>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.1.1</div>
 
 
 
@@ -3862,20 +3846,11 @@ ul.breadcrumb li+li:last-child {
 
   
 
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
 
 
 
@@ -3891,11 +3866,16 @@ ul.breadcrumb li+li:last-child {
 
 
 
-  
-  
 
-  
-  
+
+
+
+
+
+
+
+
+
 
   
   
@@ -3903,17 +3883,10 @@ ul.breadcrumb li+li:last-child {
   
   
 
-
+  
   
 
 
-  
-
-  
-
-
-
-  
   
 
 
@@ -3927,6 +3900,16 @@ ul.breadcrumb li+li:last-child {
   
 
 
+  
+
+  
+
+
+
+  
+  
+
+
 
 
   
@@ -3969,6 +3952,8 @@ ul.breadcrumb li+li:last-child {
   
 
   
+  
+
 
   
 
@@ -3989,11 +3974,6 @@ ul.breadcrumb li+li:last-child {
 
 
 <script type="text/javascript" src="/bundle.js"></script><script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-;
-
     // Popup Window;
     var isfetched = false;
     var isXml = true;
@@ -4368,4 +4348,13 @@ ul.breadcrumb li+li:last-child {
           
         });
     });
+  ;
+
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
   </script></body></html>
