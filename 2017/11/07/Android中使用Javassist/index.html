@@ -83,7 +83,7 @@
 <meta name="keywords" content="javassist,AOP,Gradle Plugin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android中使用 Javassist">
-<meta property="og:url" content="https://deemons.cn/2017/11/07/Android中使用Javassist/index.html">
+<meta property="og:url" content="https://www.deemons.cn/2017/11/07/Android中使用Javassist/index.html">
 <meta property="og:site_name" content="Deemons's Blog">
 <meta property="og:description" content="JavassistJavassist 是一个执行字节码操作的库。它可以在一个已经编译好的类中添加新的方法，或者是修改已有的方法，并且不需要对字节码方面有深入的了解。">
 <meta property="og:locale" content="zh-CN">
@@ -102,7 +102,7 @@
 
   
   
-  <link rel="canonical" href="https://deemons.cn/2017/11/07/Android中使用Javassist/">
+  <link rel="canonical" href="https://www.deemons.cn/2017/11/07/Android中使用Javassist/">
 
 
 
@@ -1906,7 +1906,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #e05dff;
+  background: #614626;
 }
 .feed-link,
 .chat {
@@ -3132,7 +3132,7 @@ ul.breadcrumb li+li:last-child {
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://deemons.cn/2017/11/07/Android中使用Javassist/">
+    <link itemprop="mainEntityOfPage" href="https://www.deemons.cn/2017/11/07/Android中使用Javassist/">
 
     <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Deemons">
@@ -3267,7 +3267,7 @@ ul.breadcrumb li+li:last-child {
 <p>不同的 Plugin 提供了不同的 Task 来实际不同的功能。</p>
 <p>可以简单的理解为： Gradle只是一个框架，真正起作用的是plugin。而plugin的主要作用是往Gradle脚本中添加Task</p>
 <p><br></p>
-<p>我们需要在整个 Gradle 工作的过程中，找到合适的时机来插入自定义的 Plugin，然后在 Plugin 中使用 Javassist 对字节进行操作 ，所以使用 Javassit 的前提是掌握自定义 Gradle 插件，不清楚的可以看前面的 <a href="https://deemons.cn/2017/10/16/%E8%87%AA%E5%AE%9A%E4%B9%89%20Gradle%20%E6%8F%92%E4%BB%B6/">自定义 Gradle 插件</a> ，这里不多介绍。</p>
+<p>我们需要在整个 Gradle 工作的过程中，找到合适的时机来插入自定义的 Plugin，然后在 Plugin 中使用 Javassist 对字节进行操作 ，所以使用 Javassit 的前提是掌握自定义 Gradle 插件，不清楚的可以看前面的 <a href="https://deemons.cn/2017/10/16/%E8%87%AA%E5%AE%9A%E4%B9%89%20Gradle%20%E6%8F%92%E4%BB%B6/" target="_blank" rel="noopener">自定义 Gradle 插件</a> ，这里不多介绍。</p>
 <p>在前面说了 Javassist 工作的时机，这个时机在 Gradle1.5 之前并不容易掌握的，从1.5.0-beta1开始，android的gradle插件引入了com.android.build.api.transform.Transform，可以点击 <a href="http://tools.android.com/tech-docs/new-build-system/transform-api" target="_blank" rel="noopener">http://tools.android.com/tech-docs/new-build-system/transform-api</a> 查看相关内容，我们刚好就可以利用这个 API 来使用 Javassist 。</p>
 <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbcwp6tqj30v804cglv.jpg" alt="transform"></p>
 <p><br></p>

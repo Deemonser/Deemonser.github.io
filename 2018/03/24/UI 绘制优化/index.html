@@ -83,7 +83,7 @@
 <meta name="keywords" content="绘制优化">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UI 绘制优化">
-<meta property="og:url" content="https://deemons.cn/2018/03/24/UI 绘制优化/index.html">
+<meta property="og:url" content="https://www.deemons.cn/2018/03/24/UI 绘制优化/index.html">
 <meta property="og:site_name" content="Deemons's Blog">
 <meta property="og:description" content="Google 在15年初发布了  Android性能优化典范，里面详细谈及了Android 渲染机制。">
 <meta property="og:locale" content="zh-CN">
@@ -108,7 +108,7 @@
 
   
   
-  <link rel="canonical" href="https://deemons.cn/2018/03/24/UI 绘制优化/">
+  <link rel="canonical" href="https://www.deemons.cn/2018/03/24/UI 绘制优化/">
 
 
 
@@ -1912,7 +1912,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #e05dff;
+  background: #614626;
 }
 .feed-link,
 .chat {
@@ -3138,7 +3138,7 @@ ul.breadcrumb li+li:last-child {
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://deemons.cn/2018/03/24/UI 绘制优化/">
+    <link itemprop="mainEntityOfPage" href="https://www.deemons.cn/2018/03/24/UI 绘制优化/">
 
     <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Deemons">
@@ -3306,7 +3306,7 @@ ul.breadcrumb li+li:last-child {
 <h3 id="3-UI-线程复杂运算"><a href="#3-UI-线程复杂运算" class="headerlink" title="3.UI 线程复杂运算"></a>3.UI 线程复杂运算</h3><p>Android 为了提升画面的流畅性，特意使用一个线程来绘制图像，这个线程就是所谓的主线程，也可以称为 UI线程，而且因为刷新 UI 时有做线程校验，所有也只能是 UI 线程来刷新 UI（SurfaceView、TextureView除外）。<br>当我们在 UI 线程里做一些复杂的耗时操作时，占用了 UI 线程的资源，很容易使得 UI 线程来不及去绘制画面，从而导致丢帧，产生卡顿。</p>
 <p>所有解决的方法是：</p>
 <p>首先检测出耗时的地方，然后优化代码提升执行效率，如果无法优化就将其放过在子线程中执行。</p>
-<p>检测耗时的工具，有前文 <a href="https://deemons.cn/2018/01/30/App-%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/">App 启动优化</a> 中已经介绍过的<strong>TraceView、Hugo</strong> ，现在介绍另一种 <strong>StrictMode（严苛模式）</strong>。</p>
+<p>检测耗时的工具，有前文 <a href="https://deemons.cn/2018/01/30/App-%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/" target="_blank" rel="noopener">App 启动优化</a> 中已经介绍过的<strong>TraceView、Hugo</strong> ，现在介绍另一种 <strong>StrictMode（严苛模式）</strong>。</p>
 <p>StrictMode 就是用来指定一系列策略（policy），对相应规则（rule）进行检查并且做出反应。这些策略大致包括Android 的编码规范，例如监控在主线程（UI线程）中的操作等等。StrictMode 有不同的策略 (ThreadPolicy 和 VmPolicy )，每种策略又用不同的规则（rule），每种规则又对应不同的方法，一旦规则被违反，这些对应的方法就会被用来做出反应。</p>
 <p>先来一段实例代码</p>
 <figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>{</span><br><span class="line">     <span class="keyword">if</span> (BuildConfig.DEBUG) {</span><br><span class="line">         <span class="comment">// 针对线程的相关策略</span></span><br><span class="line">         StrictMode.setThreadPolicy(<span class="keyword">new</span> StrictMode.ThreadPolicy.Builder()</span><br><span class="line">                 .detectDiskReads() <span class="comment">//侦测磁盘读</span></span><br><span class="line">                 .detectDiskWrites() <span class="comment">//侦测磁盘写</span></span><br><span class="line">                 .detectNetwork()   <span class="comment">//侦测网络操作</span></span><br><span class="line">                 .detectCustomSlowCalls()	<span class="comment">//侦测自定义的耗时操作</span></span><br><span class="line">             <span class="comment">//  .detectAll() 		//侦测一切潜在违规</span></span><br><span class="line">                 .penaltyLog()		<span class="comment">//违规时，打印日志</span></span><br><span class="line">                 .build());</span><br><span class="line">                 </span><br><span class="line">         <span class="comment">// 针对VM的相关策略</span></span><br><span class="line">         StrictMode.setVmPolicy(<span class="keyword">new</span> StrictMode.VmPolicy.Builder()</span><br><span class="line">                 .detectLeakedSqlLiteObjects()</span><br><span class="line">                 .detectLeakedClosableObjects()</span><br><span class="line">                 .penaltyLog()		<span class="comment">//违规时，打印日志</span></span><br><span class="line">                 .penaltyDeath()	<span class="comment">//违规时，直接使应用崩溃</span></span><br><span class="line">                 .build());</span><br><span class="line">     }</span><br><span class="line">     <span class="keyword">super</span>.onCreate();</span><br><span class="line"> }</span><br></pre></td></tr></tbody></table></figure>
