@@ -1,4 +1,5 @@
 https://www.deemons.cn/2019/08/26/GooglePlay 上架流程/
+https://www.deemons.cn/2019/07/26/Firebase 集成 Google、Facebook登录/
 https://www.deemons.cn/2019/05/25/Android Shape工具 Duck/
 https://www.deemons.cn/2018/10/15/搭建梯子/
 https://www.deemons.cn/2018/08/30/Android ADB Shell 命令/
