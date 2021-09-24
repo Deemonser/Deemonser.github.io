@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在工作中经常会用到存储相关的API，各种概念比较混乱， 所以整理一下，以便以后再次查看">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 存储">
+<meta property="og:url" content="https://deemonser.github.io/2017/03/12/Android-%E5%AD%98%E5%82%A8/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="在工作中经常会用到存储相关的API，各种概念比较混乱， 所以整理一下，以便以后再次查看">
+<meta property="og:locale">
+<meta property="og:image" content="http://img2.imgtn.bdimg.com/it/u=169468055,4200803197&fm=23&gp=0.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbc5f8qzj30b40jp3yp.jpg">
+<meta property="article:published_time" content="2017-03-12T13:16:41.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="存储">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://img2.imgtn.bdimg.com/it/u=169468055,4200803197&fm=23&gp=0.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2017/03/12/Android-%E5%AD%98%E5%82%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android 存储 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2017/03/12/Android-%E5%AD%98%E5%82%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android 存储
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-03-12 21:16:41" itemprop="dateCreated datePublished" datetime="2017-03-12T21:16:41+08:00">2017-03-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">Android知识整理</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="http://img2.imgtn.bdimg.com/it/u=169468055,4200803197&fm=23&gp=0.jpg" alt="test"></p>
+<p>在工作中经常会用到存储相关的API，各种概念比较混乱， 所以整理一下，以便以后再次查看</p>
+<span id="more"></span>
+
+<br>
+
+<br>
+
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Android最初只支持内部存储，到后来国内ROM厂商各自改造，人为的把内部存储分为Internal,External导致开发者对Androi存储系统产生很多迷惑。同时破坏了Android原有的生态系统，Google一直对这块都没有发布更新，直到Android6.0引入了适配存储（Adoptable Storage）的方式来支持外置的SD卡。</p>
+<br>
+
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>　Android数据存储位置分为内部存储 <code>Internal Storage </code>和外部存储 <code>External Storage</code>。</p>
+<ul>
+<li>内部存储是系统默认的存储位置,永远可用。默认情况下，保存在内部存储内的文件是应用程序私有的，其他应用程序（或用户）是无法访问的。当用户卸载此应用程序时，内部存储的数据会一并清除。</li>
+<li>外部存储可以通过物理介质提供(如SD卡)，也可以通过将内部存储中的一部分封装而成，设备可以有多个外部存储实例。可能不可用。外部存储的读写权限在不同系统版本中是不同的.</li>
+</ul>
+<br>
+
+<h3 id="历史"><a href="#历史" class="headerlink" title="历史"></a>历史</h3><ul>
+<li><p>从Android 1.0开始，写操作受权限<code>WRITE_EXTERNAL_STORAGE</code>保护。</p>
+</li>
+<li><p>从Android 4.1开始，读操作受权限<code>READ_EXTERNAL_STORAGE</code>保护。</p>
+</li>
+<li><p>从Android 4.4开始，应用可以管理在它外部存储上的对应目录(<code>SDCard/Android/data/应用包名/</code>)，而不用获取读写权限。程序卸载后,此目录下的数据会一并清除.</p>
+</li>
+<li><p>从Android6.0开始, 运行时权限机制开启后,读写权限分为一组被列入危险权限,从而需要用户手动确认,否则crash.当然,你也可以不兼容6.0也没关系.</p>
+<p>​</p>
+<br>
+
+<p>长期以来, Android手机的外部存储目录乱象横生, 各家应用在外边存储目录上随意创建文件夹及文件, 毫无规范可言, 卸载应用后文件没有清理, 导致整个外部存储不堪重负. 这其中还包括各个大厂的应用. </p>
+<p>​</p>
+<br></li>
+</ul>
+<h3 id="常用目录"><a href="#常用目录" class="headerlink" title="常用目录"></a>常用目录</h3><p>内部存储在Android文件系统的位置是当我们在打开DDMS下的File Explorer面板的时候，<code>/data</code>目录就是所谓的内部存储(ROM)。但是注意，当手机没有root的时候不能打开此文件夹。</p>
+<br>
+
+<p>外部存储可以分为两类,  一类是系统为每个应用创建的目录:<code>SDCard/Android/data/应用包</code>, 这部分存储是应用的扩展存储, 在Android4.4之后,应用不需要申请权限就能读写; 另一类,则是除<code>SDCard/Android</code>目录外的其他目录,访问这部分目录都需要权限.</p>
+<p>在Android系统中，根据调用的系统API接口，有3种目录可以给我们写入文件：</p>
+<ol>
+<li><p><strong>应用</strong>私有存储</p>
+<p>内部存储中, 两个目录重点说下：</p>
+<ol>
+<li><p><code>/data/app</code> : app文件夹里存放着我们所有安装的app的apk文件</p>
+</li>
+<li><p><code>/data/data</code>: 此目录下将每一个APP的存储内容按照包名分类存放好。包名下就是我们<code>应用的私有存储</code>.</p>
+<p>比如:</p>
+<ul>
+<li><code>data/data/包名/shared_prefs</code> 存放该APP内的SP信息</li>
+<li><code>data/data/包名/databases</code> 存放该APP的数据库信息</li>
+<li><code>data/data/包名/files</code> 通过<code>Context.getFileDir()</code>获取内置存储下的文件目录，可以用来保存不能公开给其他应用的一些敏感数据如用户个人信息</li>
+<li><code>data/data/包名/cache</code> 通过<code>Context.getCacheDir()</code>获取内置存储下的缓存目录，可以用来保存一些缓存文件如图片，当内置存储的空间不足时将系统自动被清除</li>
+</ul>
+<p>当然, 还可以在包名目录下创建文件夹.</p>
+<p>​    使用文件名称和操作模式调用<code>openFileOutput()</code>得到<code>FileOutputStream</code></p>
+<p>​    调用<code>openFileInput()</code>并向其传递要读取的文件名称,将返回一个<code>FileInputStream</code></p>
+<p>除此之外还有两个API用得到</p>
+<p>​    <code>deleteFile()</code>删除保存在内部存储的文件。<br>​    <code>fileList()</code>返回您的应用当前保存的一系列文件。</p>
+</li>
+</ol>
+<blockquote>
+<p>这些数据也会随着用户卸载App而被一起删除。这两个目录其实就对应着<code>设置-&gt;应用-&gt;你的App-&gt;存储空间</code>下面的<code>清除数据</code>和<code>清楚缓存</code></p>
+</blockquote>
+<br></li>
+<li><p>应用扩展存储（SD卡）</p>
+<ul>
+<li><p>获取方式：</p>
+<ul>
+<li><code>Context.getExternalFilesDir()</code>：<code>获取SD卡上的文件目</code></li>
+<li><code>Context.getExternalCacheDir()</code>：<code>获取SD卡上的缓存目录</code></li>
+</ul>
+</li>
+<li><p>绝对路径：</p>
+<ul>
+<li><code>Context.getExternalFilesDir()</code>：<code>SDCard/Android/data/应用包名/files/</code></li>
+<li><code>Context.getExternalCacheDir()</code>：<code>SDCard/Android/data/应用包名/cache/</code></li>
+</ul>
+</li>
+<li><p>写权限：</p>
+<ul>
+<li>API &lt; 19：需要申请 </li>
+<li>API &gt;= 19：不需要申请</li>
+</ul>
+<blockquote>
+<p>既然是SD卡上的目录，那么是可以被其他的应用读取到的，所以这个目录下，不应该存放用户的敏感信息。同上面一样的，这里的文件会随着App卸载而被删除，也可以由用户手动在设置界面里面清除。还有, SD卡并不保证一定可用, 所以在操作SD卡是一定要先通过<code>getExternalStorageState()</code>判断SD卡状态 是否可用</p>
+</blockquote>
+<br></li>
+</ul>
+</li>
+<li><p>公共存储（SD卡）</p>
+<ul>
+<li>获取方式：<code>Environment.getExternalStorageDirectory()</code></li>
+<li>绝对路径：<code>SDCard/你设置的文件夹名字/</code></li>
+<li>写权限：需要申请</li>
+</ul>
+<blockquote>
+<p>如果我们的App需要存储一些公共的文件，应该将文件保存到设备上的“公共”位置，以便其他应用能够在其中访问这些文件，并且用户也能轻松地从该设备复制这些文件。 执行此操作时，应使用共享的公共目录之一，例如 <code>Music</code>、<code>Pictures</code> 和 <code>Ringtones</code>等。</p>
+<p>要获取表示相应的公共目录的<code>File</code>，请调用<code>getExternalStoragePublicDirectory()</code>，向其传递您需要的目录类型，例如<code>DIRECTORY_MUSIC</code>、<code>DIRECTORY_PICTURES</code>、<code>DIRECTORY_RINGTONES</code>或其他类型。通过将您的文件保存到相应的媒体类型目录，系统的媒体扫描程序可以在系统中正确地归类您的文件.</p>
+</blockquote>
+</li>
+</ol>
+<br>
+
+<br>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>有了上面的介绍, 相信都明白了. 根据存储信息的安全性选择存储位置.</p>
+<ol>
+<li>如果是<code>私有的</code>, <code>重要的</code>用户信息,则存放在<code>内部存储</code></li>
+<li>如果是应用的一些资源,如缓存图片, 则存放在应用的<code>扩展存储</code></li>
+<li>如果是一些公共的资源, 则可以存放在<code>公共存储</code></li>
+</ol>
+<br>
+
+<p>还有一个坑要填, 在Android4.4后 应用的扩展存储是不需要申请权限的, 这都知道了. 可为了适配以前的版本, 还是需要在manifest清单中注册读写权限. 那么问题来了,  Android6.0是可以手动取消存储空间的, 如下图所示，只要在manifest里面注册了，就可以动态取消之！</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbc5f8qzj30b40jp3yp.jpg" alt="app-权限"></p>
+<p>当用户取消了权限之后，SDK接口中与<code>File</code>相关的API全部都返回空了，于是我们就没法写文件了。</p>
+<p>将AndroidManifest.xml文件中的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;/&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>改为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;</span><br><span class="line">android:maxSdkVersion=&quot;22&quot;/&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>表示只在<code>API &lt;= 22</code>时，才申请<code>WRITE_EXTERNAL_STORAGE</code>权限。这样用户就无法在Android6.0系统的设置下面看到<code>存储空间</code>权限的开关，当然也就无法关闭它了.至于为啥是22而不是18,因为flyme这伙android5.1 写getExternalFilesDir必须有权限才行.</p>
+<br>
+
+<br>
+
+<p>参考文章:<br><a target="_blank" rel="noopener" href="https://juejin.im/post/58b557de128fe10065e93cc8">Android存储（1）– 你还在乱用Android存储嘛！！！</a></p>
+<p><a target="_blank" rel="noopener" href="http://unclechen.github.io/2016/03/06/Android6.0%E6%9D%83%E9%99%90%E9%80%82%E9%85%8D%E4%B9%8BSD%E5%8D%A1%E5%86%99%E5%85%A5/">Android6.0权限适配之WRITE_EXTERNAL_STORAGE（SD卡写入）</a></p>
+<br>
+
+<p>更多详情参考:</p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/58b66777570c350062fa2b42">Android存储（2）– 适配器存储</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/58b66eff61ff4b006ccdb6ee">Android存储（3）– 设备配置</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/58b675a761ff4b006ccde8ed">Android存储（4）– 配置示例</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AD%98%E5%82%A8/" rel="tag"># 存储</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/03/12/%E7%AC%AC%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95/" rel="prev" title="第三方登录">
+      <i class="fa fa-chevron-left"></i> 第三方登录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/03/19/Java-%E6%95%B0%E5%AD%97%E6%A0%BC%E5%BC%8F%E5%8C%96/" rel="next" title="java 数字格式化">
+      java 数字格式化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%86%E5%8F%B2"><span class="nav-number">3.</span> <span class="nav-text">历史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9B%AE%E5%BD%95"><span class="nav-number">4.</span> <span class="nav-text">常用目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

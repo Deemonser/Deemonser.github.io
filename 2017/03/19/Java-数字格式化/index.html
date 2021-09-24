@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前言数字的格式化 是工作中不可避免要接触到的问题，我们经常碰到这些的需求：   金额以 ”¥999,999.99“ 格式 (带金额符，逗号分组，小数点保留两位)  数字以 ”999,999.99“格式   百分比 ”％“ 或 千分比 ”‰“   例：0.45 —&gt;  45%  小数点后最多保留两位小数，如果有零，则直接省略 例：3.141 —&gt;  3.14 ​">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java 数字格式化">
+<meta property="og:url" content="https://deemonser.github.io/2017/03/19/Java-%E6%95%B0%E5%AD%97%E6%A0%BC%E5%BC%8F%E5%8C%96/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="前言数字的格式化 是工作中不可避免要接触到的问题，我们经常碰到这些的需求：   金额以 ”¥999,999.99“ 格式 (带金额符，逗号分组，小数点保留两位)  数字以 ”999,999.99“格式   百分比 ”％“ 或 千分比 ”‰“   例：0.45 —&gt;  45%  小数点后最多保留两位小数，如果有零，则直接省略 例：3.141 —&gt;  3.14 ​">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbevai2hj30m80ett99.jpg">
+<meta property="article:published_time" content="2017-03-19T02:37:23.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="数字格式化">
+<meta property="article:tag" content="NumberFormat">
+<meta property="article:tag" content="DecimalFormat">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbevai2hj30m80ett99.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2017/03/19/Java-%E6%95%B0%E5%AD%97%E6%A0%BC%E5%BC%8F%E5%8C%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>java 数字格式化 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2017/03/19/Java-%E6%95%B0%E5%AD%97%E6%A0%BC%E5%BC%8F%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java 数字格式化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-03-19 10:37:23" itemprop="dateCreated datePublished" datetime="2017-03-19T10:37:23+08:00">2017-03-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbevai2hj30m80ett99.jpg" alt="数字格式化"></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><strong>数字的格式化</strong> 是工作中不可避免要接触到的问题，我们经常碰到这些的需求：</p>
+<blockquote>
+<ol>
+<li><p>金额以 ”¥999,999.99“ 格式 (带金额符，逗号分组，小数点保留两位)</p>
+</li>
+<li><p>数字以 ”999,999.99“格式 </p>
+</li>
+<li><p>百分比 ”％“ 或 千分比 ”‰“   例：0.45 —&gt;  45%</p>
+</li>
+<li><p>小数点后最多保留两位小数，如果有零，则直接省略 例：3.141 —&gt;  3.14</p>
+<p>​                                                3.100  —&gt; 3.1</p>
+<p>​                                                3.000 —&gt; 3        </p>
+</li>
+<li><p>精度模式   ”舍“   ”入“   或   ”四舍五入“  </p>
+</li>
+</ol>
+</blockquote>
+<p>如此，就得好好整理一下。</p>
+<span id="more"></span>
+
+<br>
+
+<p>在 java 中主要涉及两个类：<code>NumberFormat</code> 及其子类 <code>DecimalFormat</code> ，我们分别说说特点。</p>
+<br>
+
+<h3 id="NmberFormat"><a href="#NmberFormat" class="headerlink" title="NmberFormat"></a>NmberFormat</h3><p><code>NumberFormat</code> 常用于指定不同于本地的地区（就是国际化）。</p>
+<p><code>NumberFormat</code> 有三个类型格式化: **数字 **, <strong>金额</strong> , <strong>百分比</strong> 。 而且格式控制比较弱 , 所有格式化都带分组</p>
+<p>例如:</p>
+<ul>
+<li>数字类型 在德国 逗号<code>,</code>代表小数分隔符，点<code>.</code>代表组分隔符 即 12345678.123 —&gt; 12.345.678,123</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> num = <span class="number">12345678.1233</span>;</span><br><span class="line"></span><br><span class="line">NumberFormat format = NumberFormat.getInstance();	<span class="comment">// 本地 </span></span><br><span class="line">NumberFormat germanFormat = NumberFormat.getInstance(Locale.GERMAN);	<span class="comment">//指定德国</span></span><br><span class="line"></span><br><span class="line">System.out.println(format.format(num));		<span class="comment">//12,345,678.123</span></span><br><span class="line">System.out.println(germanFormat.format(num));	<span class="comment">//12.345.678,123</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>金额类型 在中国是人民币<code>¥</code> ，在美国是美元 <code>$</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> num = <span class="number">12345678.1233</span>;</span><br><span class="line"></span><br><span class="line">NumberFormat format = NumberFormat.getCurrencyInstance();</span><br><span class="line">NumberFormat usFormat = NumberFormat.getCurrencyInstance(Locale.US);	<span class="comment">//指定美国</span></span><br><span class="line"></span><br><span class="line">System.out.println(format.format(num));		<span class="comment">//￥12,345,678.12</span></span><br><span class="line">System.out.println(usFormat.format(num));	<span class="comment">//$12,345,678.12</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>百分比都一样</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> num = <span class="number">78.1233</span>;</span><br><span class="line">NumberFormat format = NumberFormat.getPercentInstance();</span><br><span class="line">System.out.println(format.format(num));		<span class="comment">//7,812%</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>小数位数 &gt;= 3位的情况下，数字类型默认保留3位小数，金额则保留2位小数，百分比不保留小数</p>
+<p>小数位数 &lt; 3位的情况下，有几位小数就显示几位 </p>
+<p>精度默认是<code>四舍六入五取偶</code></p>
+</blockquote>
+<br>
+
+<p>整数位数和小数位数可以设置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> num1 = <span class="number">123456789</span>;</span><br><span class="line"><span class="keyword">double</span> num2 = <span class="number">1.123456</span>;</span><br><span class="line"></span><br><span class="line">NumberFormat format = NumberFormat.getInstance();</span><br><span class="line"></span><br><span class="line">format.setMaximumIntegerDigits(<span class="number">8</span>);		<span class="comment">//设置整数的 最大位数</span></span><br><span class="line">format.setMinimumIntegerDigits(<span class="number">2</span>);		<span class="comment">//设置整数的 最小位数</span></span><br><span class="line">format.setMaximumFractionDigits(<span class="number">2</span>);		<span class="comment">//设置小数的 最大位数</span></span><br><span class="line">format.setMinimumFractionDigits(<span class="number">1</span>);		<span class="comment">//设置小数的 最小位数</span></span><br><span class="line"></span><br><span class="line">System.out.println(format.format(num1));	<span class="comment">//23,456,789.0</span></span><br><span class="line">System.out.println(format.format(num2));	<span class="comment">//01.12</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p>精度通过<code>setRoundingMode（）</code>设置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> num1 = <span class="number">3.1114</span>;</span><br><span class="line"><span class="keyword">double</span> num2 = <span class="number">3.1115</span>;</span><br><span class="line"><span class="keyword">double</span> num3 = <span class="number">3.1116</span>;</span><br><span class="line"></span><br><span class="line">NumberFormat format = NumberFormat.getInstance();</span><br><span class="line"></span><br><span class="line">format.setRoundingMode(RoundingMode.HALF_UP);  <span class="comment">//四舍五入</span></span><br><span class="line">System.out.println(format.format(num1));<span class="comment">//3.111</span></span><br><span class="line">System.out.println(format.format(num2));<span class="comment">//3.112</span></span><br><span class="line">System.out.println(format.format(num3));<span class="comment">//3.112</span></span><br><span class="line"></span><br><span class="line">format.setRoundingMode(RoundingMode.DOWN);		<span class="comment">// 舍</span></span><br><span class="line">System.out.println(format.format(num1));<span class="comment">//3.111</span></span><br><span class="line">System.out.println(format.format(num2));<span class="comment">//3.111</span></span><br><span class="line">System.out.println(format.format(num3));<span class="comment">//3.111</span></span><br><span class="line"></span><br><span class="line">format.setRoundingMode(RoundingMode.UP);		<span class="comment">// 入</span></span><br><span class="line">System.out.println(format.format(num1));<span class="comment">//3.112</span></span><br><span class="line">System.out.println(format.format(num2));<span class="comment">//3.112</span></span><br><span class="line">System.out.println(format.format(num3));<span class="comment">//3.112</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>关于<code>RoundingMode</code> 的值 有<code>UP</code>，<code>DOWN</code>，<code>CEILING</code>，<code>FLOOR</code>，<code>HALF_UP</code>，<code>HALF_DOWN</code>，<code>HALF_EVEN</code>，<code>UNNECESSARY</code>这些，详情见这个：<a target="_blank" rel="noopener" href="http://blog.csdn.net/alanzyy/article/details/8465098">DecimalFormat对数值格式化的舍入问题——RoundingMode</a></p>
+<blockquote>
+<p>常用的就是<strong>四舍五入</strong><code>HALF_UP</code> 以及 <strong>银行家舍入</strong>（四舍六入五取偶） <code>HALF_EVEN</code>，欧洲的银行工厂都用的后者。</p>
+<p><strong>四舍六入五取偶</strong>  ：取偶的意思就是遇到5<strong>（5后面位上必须全是0）</strong>，把前一位变成偶数  1.15-&gt;1.2   1.16-&gt;1.2   1.25-&gt;1.2   1.26-&gt;1.3</p>
+<p><strong>NumberFormat</strong> 格式化都会带分组功能。如果不需要这个，而且不考虑国际化则建议使用<strong>DecimalFormat</strong></p>
+</blockquote>
+<br>
+
+<br>
+
+<h3 id="DecimalFormat"><a href="#DecimalFormat" class="headerlink" title="DecimalFormat"></a>DecimalFormat</h3><p><strong>DecimalFormat</strong> 有很好的格式控制, 可随意定制。和 <strong>NumberFormat</strong>  相比，它的线程并不安全，建议配合<strong>ThreadLocal</strong> ，为每个线程创建一个实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> ThreadLocal&lt;DecimalFormat&gt; threadLocal = <span class="keyword">new</span> ThreadLocal&lt;DecimalFormat&gt; () &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> DecimalFormat <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DecimalFormat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">format</span><span class="params">(String pattern, <span class="keyword">double</span> v)</span> </span>&#123;</span><br><span class="line">    DecimalFormat decimalFormat = threadLocal.get();</span><br><span class="line">    decimalFormat.applyPattern(pattern);</span><br><span class="line">    <span class="keyword">return</span> decimalFormat.format(v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p><strong>DecimalFormat</strong> 类主要靠 <code>#</code> 和 <code>0</code> 两种占位符号来指定数字长度。<code>0</code> 表示如果位数不足则以 0 填充，<code>#</code> 表示只要有可能就把数字拉上这个位置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> pi = <span class="number">3.1415927</span>;<span class="comment">//圆周率  </span></span><br><span class="line"></span><br><span class="line">System.out.println(<span class="keyword">new</span> DecimalFormat(<span class="string">&quot;0&quot;</span>).format(pi));      <span class="comment">//3</span></span><br><span class="line">System.out.println(<span class="keyword">new</span> DecimalFormat(<span class="string">&quot;0.00&quot;</span>).format(pi));   <span class="comment">//3.14</span></span><br><span class="line">System.out.println(<span class="keyword">new</span> DecimalFormat(<span class="string">&quot;00.000&quot;</span>).format(pi)); <span class="comment">// 03.142</span></span><br><span class="line">System.out.println(<span class="keyword">new</span> DecimalFormat(<span class="string">&quot;#&quot;</span>).format(pi));      <span class="comment">//3</span></span><br><span class="line">System.out.println(<span class="keyword">new</span> DecimalFormat(<span class="string">&quot;#.##%&quot;</span>).format(pi));  <span class="comment">//314.16%</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">long</span> c = <span class="number">299792458</span>;<span class="comment">//光速</span></span><br><span class="line">System.out.println(<span class="keyword">new</span> DecimalFormat(<span class="string">&quot;#.#####E0&quot;</span>).format(c));   <span class="comment">//2.99792E8</span></span><br><span class="line">System.out.println(<span class="keyword">new</span> DecimalFormat(<span class="string">&quot;00.####E0&quot;</span>).format(c));   <span class="comment">//29.9792E7</span></span><br><span class="line">System.out.println(<span class="keyword">new</span> DecimalFormat(<span class="string">&quot;,###&quot;</span>).format(c));        <span class="comment">//299,792,458</span></span><br><span class="line">System.out.println(<span class="keyword">new</span> DecimalFormat(<span class="string">&quot;光速大小为每秒,###米。&quot;</span>).format(c));<span class="comment">//光速大小为每秒299,792,458米。</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p>除了上面常用的符号，还有一些不常用的</p>
+<p><a target="_blank" rel="noopener" href="http://blog.csdn.net/u013456370/article/details/52688836">Java中DecimalFormat的用法！</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/%E6%95%B0%E5%AD%97%E6%A0%BC%E5%BC%8F%E5%8C%96/" rel="tag"># 数字格式化</a>
+              <a href="/tags/NumberFormat/" rel="tag"># NumberFormat</a>
+              <a href="/tags/DecimalFormat/" rel="tag"># DecimalFormat</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/03/12/Android-%E5%AD%98%E5%82%A8/" rel="prev" title="Android 存储">
+      <i class="fa fa-chevron-left"></i> Android 存储
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/05/14/Hexo-Github%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" rel="next" title="Hexo Github搭建博客">
+      Hexo Github搭建博客 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NmberFormat"><span class="nav-number">2.</span> <span class="nav-text">NmberFormat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DecimalFormat"><span class="nav-number">3.</span> <span class="nav-text">DecimalFormat</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

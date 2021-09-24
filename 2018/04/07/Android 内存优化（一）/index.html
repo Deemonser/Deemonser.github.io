@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="内存(RAM)对于任何一个软件开发环境都是种非常珍贵的资源，而对于移动操作系统来讲的话，则会显得更加珍贵，因为手机的硬件条件相对于 PC 毕竟是比较落后的。在说 Android APP 的内存优化之前，必须先了解 Java 的内存管理机制，以及在此基础上 Android 是如何对内存进行管理的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 内存优化(一)">
+<meta property="og:url" content="https://deemonser.github.io/2018/04/07/Android%20%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="内存(RAM)对于任何一个软件开发环境都是种非常珍贵的资源，而对于移动操作系统来讲的话，则会显得更加珍贵，因为手机的硬件条件相对于 PC 毕竟是比较落后的。在说 Android APP 的内存优化之前，必须先了解 Java 的内存管理机制，以及在此基础上 Android 是如何对内存进行管理的。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbb53u74j30hs0but90.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbb5wifcj30d40b2q3j.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbb6u8q6j30cx08zq34.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbb79680j30jg0a30t0.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbb8ahf5j30jg0fz752.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbb95z8uj30jg0bu3yt.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbb9ph3zj30jg0bkt9a.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbam82xj30jg08smxt.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbbkj9yj30jg09vmxt.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbcgupvj30jg08zjry.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbbdbeqyj30jg0fzq3p.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbeh2m1j30jg0fzt9f.jpg">
+<meta property="article:published_time" content="2018-04-07T14:52:38.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="内存优化">
+<meta property="article:tag" content="GC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbb53u74j30hs0but90.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2018/04/07/Android%20%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android 内存优化(一) | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2018/04/07/Android%20%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android 内存优化(一)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-04-07 22:52:38" itemprop="dateCreated datePublished" datetime="2018-04-07T22:52:38+08:00">2018-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">Android 性能优化</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbb53u74j30hs0but90.jpg" alt="exels-photo-32364"></p>
+<p>内存(RAM)对于任何一个软件开发环境都是种非常珍贵的资源，而对于移动操作系统来讲的话，则会显得更加珍贵，因为手机的硬件条件相对于 PC 毕竟是比较落后的。在说 Android APP 的内存优化之前，必须先了解 Java 的内存管理机制，以及在此基础上 Android 是如何对内存进行管理的。</p>
+<span id="more"></span>
+
+<br>
+
+<h3 id="Java-内存管理"><a href="#Java-内存管理" class="headerlink" title="Java 内存管理"></a>Java 内存管理</h3><p>在内存管理方面，与 C、C++ 手动管理内存相比，Java 拥有自动管理内存机制，从而帮助程序员提高编码效率，同时不容易出现内存泄漏和内存溢出问题。Java 的自动管理内存机制就是其拥有垃圾收集机制（Garbage Collection，简称 GC），能自动清理不需要的实例对象，回收内存空间。不过，也正是因为如此，一旦出现内存泄漏或溢出方面的问题，如果不理解虚拟机的内存管理机制，那么将很难排查问题。</p>
+<p>说一个概念，<strong>Java虚拟机（JVM）</strong>， 可以简单理解为一种技术思想，虚拟技术理念，而 JVM具体的实现，则存在很多。</p>
+<p>我们平时开发，查看 Java 版本时，会出现这些：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ java -version</span><br><span class="line">java version &quot;1.8.0_121&quot;</span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_121-b13)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.121-b13, mixed mode)</span><br></pre></td></tr></table></figure>
+
+<p>注意最后一行，「HotSpot」 ，<strong>HotSpot VM</strong> 是 JVM 的一种实现, 包含了服务器版和桌面应用程序版, 现时由Oracle维护并发布。所有接下来的探究，大部分都是基于这个 「HotSpot」。</p>
+<br>
+
+<h4 id="运行时数据区域"><a href="#运行时数据区域" class="headerlink" title="运行时数据区域"></a>运行时数据区域</h4><p>首先说一下 Java 的内存分配，Java 虚拟机在执行 Java 程序的过程中，会把它所管理的内存划分为若干个不同的数据区域。这些区域都有各自的用途，以及创建和销毁的时间。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbb5wifcj30d40b2q3j.jpg" alt="VM 运行时数据"></p>
+<ul>
+<li><strong>方法区 ( Method Area )<strong>：方法区存放的是被虚拟机加载的类信息、常量、静态变量、即使编译器编译后的代码等，运行时常量池也在该区域，所有线程共享区域。虽然Java 虚拟机规范把方法区描述为</strong>堆</strong>的一个逻辑部分，但是它却有一个别名叫做Non-Heap（非堆）</li>
+<li>**虚拟机栈 ( VM Stack )**：每个方法在执行的同时都会创建一个栈帧（Stack Frame）用于存储局部变量表、操作数栈、动态链接、方法出口等信息，线程私有区域。每一个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中入栈到出栈的过程。</li>
+<li>**本地方法栈 ( Native Method Stack)**：与虚拟机栈类似，区别是虚拟机栈为虚拟机执行Java方法服务，本地方法栈为虚拟机使用到的Native方法服务。</li>
+<li>**堆 ( Heap)**：JVM管理的内存中最大的一块，所有线程共享；用来存放对象实例，几乎所有的对象实例都在堆上分配内存；此区域也是垃圾收集机制（Garbage Collection）主要的作用区域，内存泄漏就发生在这个区域。</li>
+<li>**程序计数器 ( Program Counter Register)**：可看做是当前线程所执行的字节码的行号指示器，各线程拥有各自独立的程序计数器。如果线程在执行Java方法，这个计数器记录的是正在执行的虚拟机字节码指令地址；如果执行的是Native方法，这个计数器的值为空（Undefined）。此内存区域是唯一一个在 Java 虚拟机规范中没有规定任何内存溢出（OutOfMemoryError） 情况的区域。</li>
+</ul>
+<p>以上，就是 JVM 内存的分配情况，而 Java  的 GC 主要的作用区域就是 <strong>堆（Heap）</strong> 。</p>
+<br>
+
+<h4 id="对象存活的依据"><a href="#对象存活的依据" class="headerlink" title="对象存活的依据"></a>对象存活的依据</h4><p>在堆里面存放着 Java 中几乎所有的对象实例，GC 在对堆进行回收前，首先要确定的是这些对象中，哪些还「存活」，哪些已经「死去」（即不可能再被任何途径使用的对象）。</p>
+<p>这里存在两种算法：<strong>引用计数算法</strong> 和 <strong>可达性分析算法</strong>。</p>
+<br>
+
+<h5 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h5><p><strong>引用计数算法（Reference Counting）</strong>就是给对象添加一个引用计算器，每当有一个地方引用它时，计算器值就加1；当引用失效是，计数器值就减1；任何时刻计数器为 0 的对象就是不可能再被使用的。</p>
+<p><strong>引用计数算法</strong>的实现简单，判定效率也很高，但它很难解决对象之间相互循环引用的问题，因此，主流的 Java 虚拟机并没有选择引用计数算法来管理内存，而是采用<strong>可达性分析算法</strong>。</p>
+<br>
+
+<h5 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h5><p><strong>可达性分析算法 ( Reachability )</strong> 的基本思路就是通过一系列的称为 「GC Roots」的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链（Reference Chain），当一个对象到 GC Roots 没有任何引用链相连时，则证明此对象是不可用的，所有它们将会被判定为是可回收的对象。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbb6u8q6j30cx08zq34.jpg" alt="GC Roots"></p>
+<p>在 Java 语言中，可作为 GC Roots 的对象包括以下几种：</p>
+<ul>
+<li>虚拟机栈中引用的对象</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中 JNI 引用的对象</li>
+</ul>
+<p>这也是 HotSpot 使用的判定对象存活的算法。</p>
+<p>现在，我们知道哪些对象应该被回收，接下来再聊一聊具体如何回收，以及回收所使用用的算法。</p>
+<br>
+
+<h4 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h4><p>由于现在的 GC 基本都采用 <strong>分代收集</strong> 的算法（即：根据对象的存活周期的不同将内存划分为几块，根据各区域的特点采用最适当的收集算法），所以存在一个与之对应的 <strong>Generational Heap Memory 内存模型</strong>。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbb79680j30jg0a30t0.jpg" alt="eneration Heap Memor"></p>
+<p>Generational Heap Memory 模型将内存划分成三个主要区域，其中 JVM 堆分为新生代和老年代：</p>
+<ul>
+<li>Young Generation 新生代<ul>
+<li>一般 new 对象会先存放在此，（ 注意：大对象会直接进入老年代 ）</li>
+<li>该区域的内存管理使用 <strong>Minor GC ( 小GC )</strong></li>
+<li>更进一步分成Eden、From Survivor 和 To Survivor 三个部分</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Old Generation 老年代<ul>
+<li>新生代中执行小粒度的 GC 存活下来的「老」对象。</li>
+<li>该区域的内存管理使用 <strong>Major GC ( 大GC )</strong></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Permanent Generation 持久代<ul>
+<li>持久代就是<strong>方法区</strong>，主要存放的是 Java 类的类信息。</li>
+<li>HotSpot 虚拟机的设计团队选择把GC 分代收集扩展至方法区，或者说使用持久代来实现方法区而已。对于其他虚拟机（如BEA JRockit、IBM J9 等）来说是不存在持久代的概念的。</li>
+</ul>
+</li>
+</ul>
+<p>这三个区域存在明显的层级关系，所以此模型也可以成为<strong>三级Generation的内存模型</strong>。</p>
+<p>在三级Generation内存模型中，每一个区域的大小都是有固定值的，当进入的对象总大小到达某一级内存区域阀值的时候就会触发GC机制，进行垃圾回收，腾出空间以便其他对象进入。</p>
+<p><strong>小GC</strong> 执行非常频繁, 而且速度特别快;<br><strong>大GC</strong> 一般会比 小GC 慢十倍以上。</p>
+<br>
+
+<h4 id="复制收集算法"><a href="#复制收集算法" class="headerlink" title="复制收集算法"></a>复制收集算法</h4><p>在<strong>Young Generation 新生代</strong>中，存放的是最近被新创建对象，此区域最大的特点就是创建的快，被销毁的也很快，每次垃圾收集时都会发现有大量对象死去，只有少量存活，因此选用效率较高的 <strong>复制（Copying）</strong>的收集算法。它的原理就是，将内存按容量划分为大小相等的两块，每次只使用其中的一块，当这一块内存将用完了，就将还存活着的对象复制到另一块内存上面，然后再把已使用过的内存空间一次清理掉。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbb8ahf5j30jg0fz752.jpg" alt="opyin"></p>
+<p>具体的流程如下：</p>
+<ol>
+<li><p>每当我们使用 new 创建一个对象时, 这个对象会被分配到 <strong>新生代</strong> 的 <strong>Eden</strong> 区域（大对象除外）</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbb95z8uj30jg0bu3yt.jpg" alt="new object"></p>
+</li>
+<li><p>当Eden区域内存被分配完时, <strong>小GC</strong> 程序被触发<img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbb9ph3zj30jg0bkt9a.jpg" alt="小 GC"></p>
+<p><strong>引用可达的对象</strong> 会移到 Survivor(幸存者)区域–<strong>S0</strong>, 然后清空Eden区域, 此时<strong>引用不可达的对象</strong>会直接删除, 内存回收。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbam82xj30jg08smxt.jpg" alt="51999-3ccdda6d0fae500"></p>
+</li>
+<li><p>当Eden区域再次分配完后， <strong>小GC</strong>执行， <strong>引用可达的对象</strong> 会移到 Survivor(幸存者)区域，而<strong>引用不可达的对象</strong>会跟随Eden的清空而删除回收。</p>
+<p>需要注意的是, 这次 <strong>引用可达的对象</strong> 移动到的是 <strong>S1</strong> 的幸存者区.<br>而且, S0区域也会执行<strong>小GC</strong>, 将其中还<strong>引用可达的对象</strong>移动到S1区, 且年龄+1. 然后清空S0, 回收其中<strong>引用不可达的对象。</strong>此时, 所有<strong>引用可达的对象</strong>都在S1区, 且S1区的对象存在不同的年龄。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbbkj9yj30jg09vmxt.jpg" alt="51999-bc737169e99d3d5"></p>
+<p>当Eden第三次满时, S0和S1的角色互换了，依此循环。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbcgupvj30jg08zjry.jpg" alt="51999-aca606170dba22b"></p>
+</li>
+</ol>
+<br>
+
+<h4 id="标记—整理收集算法"><a href="#标记—整理收集算法" class="headerlink" title="标记—整理收集算法"></a>标记—整理收集算法</h4><p>在<strong>Old Generation 老年代</strong>中，因为对象存活率高、没有额外空间对它进行分配担保，因此使用<strong>标记—整理算法（Mark-Compact）</strong> 来进行回收。「标记—整理算法」是基于「标记—清除算法」升级而来的，先说一下<strong>标记—清除算法（Mark-Sweep）</strong>，如同它的名字一样，算法分为「标记」和「清除」两个阶段：首先标记出所有需要回收的对象，在标记完成后统一回收所有被标记的对象。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbbdbeqyj30jg0fzq3p.jpg" alt="记—清除算"></p>
+<p>而 <strong>标记—整理算法</strong>  的标记过程仍然与 <strong>标记—清理算法</strong>一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存活的对象都向一端移动，然后直接清理掉端边界以外的内存。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbeh2m1j30jg0fzt9f.jpg" alt="记—整理算法"> </p>
+<p>这种方法既避免了碎片的产生，又不需要两块相同的内存空间，因此，其性价比比较高。</p>
+<p>新生代对象会很快被回收，使用复制算法，空间换时间。<br>老年代对象存活更久，使用标记—整理算法，时间换空间。</p>
+<br>
+
+<h3 id="Android-内存管理"><a href="#Android-内存管理" class="headerlink" title="Android 内存管理"></a>Android 内存管理</h3><p>由于 Android 是建立在 Linux 系统之上的，所以 Android 系统继承了 Linux 的进程隔离机制与最小权限原则，并且在原有 Linux 的进程管理基础上对 UID 的使用做了改进，形成了 Android 应用的「沙盒」机制。</p>
+<p>在 Android 系统中，应用（通常）都在一个独立的沙箱中运行，即每一个 Android 应用程序都在它自己的进程中运行，都拥有一个独立的 Dalvik 虚拟机实例。Dalvik 经过优化，允许在有限的内存中同时高效地运行多个虚拟机的实例，并且每一个 Dalvik 应用作为一个独立的 Linux 进程执行。</p>
+<blockquote>
+<p>普通的 Linux 中启动的应用通常和登陆用户相关联，同一用户的 UID 相同。但是 Android 中给不同的应用都赋予了不同的 UID，这样不同的应用将不能相互访问资源。对应用而言，这样会更加封闭，安全。</p>
+</blockquote>
+<p>简单点说就是在 Android 中每一个应用相当与一个 Linux 中的用户， 默认情况下运行在一个独立进程中的，而这个独立进程正是从 Zygote 孵化出来的 VM 进程，也就是说，每个 App 是运行在独立的 VM 空间的。</p>
+<br>
+
+<h4 id="App-的内存分配"><a href="#App-的内存分配" class="headerlink" title="App 的内存分配"></a>App 的内存分配</h4><p>对于每个 App 进程来说，堆 （Heap）内存被限制在一个虚拟的内存区间内，且定义了逻辑上使用的 「Heap Size」， 这个 「Heap Size」 在系统限制的最大值之内，是随着应用的使用情况而变化的。</p>
+<blockquote>
+<p>注意，Heap 内存的逻辑大小和实际物理内存的大小是不相同的。我们在使用 Memory Monitor 等内存分析工具分析内存时，会看到一个叫做 <strong>Proportional Set Size (PSS)</strong> 的值，这个值才是系统认为的你的 App 所占用的物理内存大小，也就是实际物理内存大小，统计包括了你的应用进程所占用的内存大小，以及共享内存中占用的内存大小(比例分配方式计算)。</p>
+</blockquote>
+<p>Android 是一个多任务系统，为了保证多任务的运行，Android 给每个 App 可使用的堆 （Heap）大小设定了一个限定值。这个值是系统设置的prop值，系统编译时内置的，保存在system/build.prop中。一般国内的手机厂商都会做修改，根据手机配置不同而不同。</p>
+<p>Android 在 4.4 之前一直使用的 Dalvik 虚拟机作为 App 的运行 VM 的，4.4 中引入了 ART 作为开发者备选，5.0起正式将ART作为默认VM了。</p>
+<p>ART 和 Dalvik 都是使用 <a target="_blank" rel="noopener" href="https://link.jianshu.com/?t=https://en.wikipedia.org/wiki/Paging">分页paging</a> 和 <a target="_blank" rel="noopener" href="https://link.jianshu.com/?t=http://en.wikipedia.org/wiki/Memory-mapped_files">内存映射 memory-mapping(mmapping)</a> 来管理内存的。 这就意味着，任何被分配的内存都会持续存在，唯一的释放这块内存的方式就是释放对象引用，让 GC 程序来回收内存。</p>
+<br>
+
+<h4 id="GC-的监听"><a href="#GC-的监听" class="headerlink" title="GC 的监听"></a>GC 的监听</h4><p>GC 操作主要是由系统决定的，但是我们可以监听系统的 GC 过程，以此来分析我们应用程序当前的内存状态。</p>
+<p>以下分别是 dalvikvm 虚拟机 和 ART 虚拟机在 GC 时打印的日志：</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">D/dalvikvm: &lt;GC_Reason&gt; &lt;Amount_freed&gt;, &lt;Heap_stats&gt;, &lt;External_memory_stats&gt;,&lt;Pause_time&gt;</span><br><span class="line"></span><br><span class="line">I/art:&lt;GC_Reason&gt;,&lt;Amount_freed&gt;,&lt;LOS_Space_Status&gt;,&lt;Heap_stats&gt;,&lt;Pause_time&gt;,&lt;Total_time&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>GC Reason</strong>：GC触发原因<ul>
+<li>GC_CONCURRENT：当已分配内存达到某一值时，触发并发GC；</li>
+<li>GC_FOR_MALLOC：当尝试在堆上分配内存不足时触发的GC；系统必须停止应用程序并回收内存；</li>
+<li>GC_HPROF_DUMP_HEAP： 当需要创建HPROF文件来分析堆内存时触发的GC；</li>
+<li>GC_EXPLICIT：当明确的调用GC时，例如调用System.gc()或者通过DDMS工具显式地告诉系统进行GC操作等；</li>
+<li>GC_EXTERNAL_ALLOC： 仅在API级别为10或者更低时（新版本分配内存都在Dalvik堆上）**</li>
+</ul>
+</li>
+<li><strong>Amount freed GC</strong>：回收的内存大小</li>
+<li><strong>Heap stats</strong>：堆上的空闲内存百分比 （已用内存）/（堆上总内存）</li>
+<li><strong>External memory stats</strong>： API级别为10或者更低：（已分配的内存量）/ （即将发生垃圾的极限）</li>
+<li><strong>Pause time</strong>：这次GC操作导致应用程序暂停的时间。关于这个暂停的时间，在2.3之前GC操作是不能并发进行的，也就是系统正在进行GC，那么应用程序就只能阻塞住等待GC结束。而自2.3之后，GC操作改成了并发的方式进行，就是说GC的过程中不会影响到应用程序的正常运行，但是在GC操作的开始和结束的时候会短暂阻塞一段时间。</li>
+</ul>
+<p>ART 的日志与dalvikvm 相比，多了LOS_Space_Status，LOS 是 Large Object Space，大对象占用的空间，这部分内存并不是分配在堆上的，但仍属于应用程序内存空间，主要用来管理 Bitmap 等占内存大的对象，避免因分配大内存导致堆频繁 GC。</p>
+<blockquote>
+<p>Android 在 2.3 的版本当中进行过一次优化，在 2.3 之前 GC 操作是不能并发进行的，也就是系统正在进行 GC，那么应用程序就只能阻塞住，等待 GC 结束。虽说这个阻塞的过程并不会很长，也就是几百毫秒，但是用户在使用我们的程序时还是有可能会感觉到略微的卡顿。</p>
+<p>而自 2.3 之后，GC 操作改成了并发的方式进行，就是说 GC 的过程中不会影响到应用程序的正常运行，但是在GC操作的开始和结束的时候会短暂阻塞一段时间，优化到这种程度，用户已经是完全无法察觉到了。</p>
+</blockquote>
+<br>
+
+<p>在了解 Android 内存管理后，后续的文章，将根据 Android 实际场景，再结合一些工具来优化内存。</p>
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI1MTA1MzM2Nw==&mid=400021278&idx=1&sn=0e971807eb0e9dcc1a81853189a092f3&scene=5&srcid=1019lhTQRdJKb9HCqUHPntbT#rd">Android GC 那点事</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4ad716c72c12">Android App优化之内存优化(序)</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/c4b283848970">Android性能优化（三）之内存管理</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/2bceb820b435?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation">【Android 性能优化】—— 详解内存优化的来龙去脉</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.csdn.net/guolin_blog/article/details/42238627">Android最佳性能实践(一)——合理管理内存</a></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000003984512">内存泄露从入门到精通三部曲之基础知识篇</a></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000003991636">内存泄露从入门到精通三部曲之排查方法篇</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" rel="tag"># 内存优化</a>
+              <a href="/tags/GC/" rel="tag"># GC</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/03/25/2018,%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B/" rel="prev" title="2018,新的开始">
+      <i class="fa fa-chevron-left"></i> 2018,新的开始
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/05/06/Android-%E5%A4%9A%E8%AF%AD%E8%A8%80/" rel="next" title="Android 多语言">
+      Android 多语言 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">Java 内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F"><span class="nav-number">1.1.</span> <span class="nav-text">运行时数据区域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%AD%98%E6%B4%BB%E7%9A%84%E4%BE%9D%E6%8D%AE"><span class="nav-number">1.2.</span> <span class="nav-text">对象存活的依据</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">引用计数算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%AF%E8%BE%BE%E6%80%A7%E5%88%86%E6%9E%90%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">可达性分析算法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E4%BB%A3%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">分代收集算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">复制收集算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E2%80%94%E6%95%B4%E7%90%86%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.5.</span> <span class="nav-text">标记—整理收集算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">Android 内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#App-%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">2.1.</span> <span class="nav-text">App 的内存分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GC-%E7%9A%84%E7%9B%91%E5%90%AC"><span class="nav-number">2.2.</span> <span class="nav-text">GC 的监听</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

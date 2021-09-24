@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="反射是 Java 的高级技能，在平时开发中很少接触到。 在此做一个简单的笔记备忘。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 反射">
+<meta property="og:url" content="https://deemonser.github.io/2015/09/02/Java-%E5%8F%8D%E5%B0%84/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="反射是 Java 的高级技能，在平时开发中很少接触到。 在此做一个简单的笔记备忘。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbet02d5j30m80ett99.jpg">
+<meta property="article:published_time" content="2015-09-02T04:28:19.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="Java 基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbet02d5j30m80ett99.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2015/09/02/Java-%E5%8F%8D%E5%B0%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Java 反射 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2015/09/02/Java-%E5%8F%8D%E5%B0%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 反射
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-09-02 12:28:19" itemprop="dateCreated datePublished" datetime="2015-09-02T12:28:19+08:00">2015-09-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbet02d5j30m80ett99.jpg" alt="coffee"></p>
+<p>反射是 Java 的高级技能，在平时开发中很少接触到。</p>
+<p>在此做一个简单的笔记备忘。</p>
+<span id="more"></span>
+
+<br>
+
+<h3 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h3><p>Java 反射机制是在运行状态中，对于任意一个类（class文件），都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象方法的功能称为java语言的反射机制。</p>
+<p>简单来说，反射就是通过class文件的对象Class，去使用该文件中的成员变量，构造方法，成员方法。</p>
+<br>
+
+<h3 id="Class"><a href="#Class" class="headerlink" title="Class"></a>Class</h3><p>Java 中，所有的类文件都有共同属性，向上抽取，把这些共性内容封装成一个类，这个类就叫 <strong>Class</strong> （描述字节码文件的对象）。</p>
+<p>Class类中包含属性有field（字段）、method（方法）、construction（构造函数）。</p>
+<br>
+
+<h3 id="Class-与-class-的区别"><a href="#Class-与-class-的区别" class="headerlink" title="Class 与 class 的区别"></a>Class 与 class 的区别</h3><ul>
+<li>Class：Class是Java程序中各个Java类的总称；它是反射的基石，通过Class类来使用反射</li>
+<li>class：Java中的类,用于描述一类事物的属性和方法。</li>
+</ul>
+<br>
+
+<h3 id="获取-Class-的-3-种方式"><a href="#获取-Class-的-3-种方式" class="headerlink" title="获取 Class  的 3 种方式"></a>获取 Class  的 3 种方式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cn.itcast.bean.Person;</span><br><span class="line"></span><br><span class="line"><span class="comment">//要想要对字节码文件进行解剖，必须要有字节码文件对象。</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReflectDemo</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException </span>&#123;</span><br><span class="line">                getClassObject_1();</span><br><span class="line">                System.out.println(<span class="string">&quot;--------------------&quot;</span>);</span><br><span class="line">                getClassObject_2();</span><br><span class="line">                System.out.println(<span class="string">&quot;--------------------&quot;</span>);</span><br><span class="line">                getClassObject_3();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * 获取字节码对象的方式：</span></span><br><span class="line"><span class="comment">        * 方式一：Object类中的getClass()方法的。</span></span><br><span class="line"><span class="comment">        * 想要用这种方式，必须要明确具体的类，并创建对象。</span></span><br><span class="line"><span class="comment">        * 麻烦。</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getClassObject_1</span><span class="params">()</span></span>&#123;               </span><br><span class="line">                Person p = <span class="keyword">new</span> Person();</span><br><span class="line">                Class clazz = p.getClass();</span><br><span class="line"></span><br><span class="line">                Person p1 = <span class="keyword">new</span> Person();</span><br><span class="line">                Class clazz1 = p1.getClass();</span><br><span class="line"></span><br><span class="line">                System.out.println(clazz == clazz1);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * 方式二：任何数据类型都具备一个静态的属性.class来获取其对应的Class对象。</span></span><br><span class="line"><span class="comment">        * 相对简单，但是还是要明确用到类中的静态成员。</span></span><br><span class="line"><span class="comment">        * 还是不够扩展。</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getClassObject_2</span><span class="params">()</span></span>&#123;              </span><br><span class="line">                Class clazz = Person.class;</span><br><span class="line">                Class clazz1 = Person.class;</span><br><span class="line"></span><br><span class="line">                System.out.println(clazz == clazz1);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * 方式三：只要通过给定的类的字符串名称就可以获取该类，更为扩展。</span></span><br><span class="line"><span class="comment">        * 可以用Class类中的方法完成。</span></span><br><span class="line"><span class="comment">        * 该方法就是forName。</span></span><br><span class="line"><span class="comment">        * 这种方法只要有名称即可，更为方便，扩展性更强。</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getClassObject_3</span><span class="params">()</span> <span class="keyword">throws</span> ClassNotFoundException </span>&#123;               </span><br><span class="line">                <span class="comment">//可以把类的字符串名称写到配置文件中，然后读取出来。</span></span><br><span class="line">                String className = <span class="string">&quot;cn.itcast.bean.Person&quot;</span>;</span><br><span class="line">                Class clazz = Class.forName(className);</span><br><span class="line"></span><br><span class="line">                System.out.println(clazz);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="获取-Class-中的构造函数"><a href="#获取-Class-中的构造函数" class="headerlink" title="获取 Class 中的构造函数"></a>获取 Class 中的构造函数</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cn.itcast.bean.Person;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationTargetException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReflectDemo</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                createNewObject_1();</span><br><span class="line">                System.out.println(<span class="string">&quot;--------------------&quot;</span>);</span><br><span class="line">                createNewObject_2();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createNewObject_1</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="comment">//早期：new时候，先根据被new的类的名称找寻该类的字节码文件，并加载进内存，</span></span><br><span class="line">                <span class="comment">//并创建该字节码文件对象，并接着创建该字节文件的对应的Person对象。</span></span><br><span class="line">                <span class="comment">//Person p = new Person();</span></span><br><span class="line"></span><br><span class="line">                <span class="comment">//现在：</span></span><br><span class="line">                String name = <span class="string">&quot;cn.itcast.bean.Person&quot;</span>;</span><br><span class="line">                <span class="comment">//找寻该文件类文件，并加载进内存，并产生Class对象。</span></span><br><span class="line">                Class clazz = Class.forName(name);</span><br><span class="line">                <span class="comment">//如何产生该类的对象呢？</span></span><br><span class="line">                Object obj = clazz.newInstance();<span class="comment">//调用Person的空参构造函数</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createNewObject_2</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//Person p = new Person(&quot;小强&quot;,39);</span></span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                * 当获取指定名称对应类中的所体现的对象时。</span></span><br><span class="line"><span class="comment">                * 而该对象初始化不使用空参数构造函数该怎么办呢？</span></span><br><span class="line"><span class="comment">                * 既然是通过指定的构造函数进行对象的初始化。</span></span><br><span class="line"><span class="comment">                * 所以应该先获取到该构造函数，通过字节码文件对象即可完成。</span></span><br><span class="line"><span class="comment">                * 该方法是：getConstructor(parameterTypes);</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line"></span><br><span class="line">                String name = <span class="string">&quot;cn.itcast.bean.Person&quot;</span>;</span><br><span class="line">                <span class="comment">//找寻该名称类文件，并加载进内存，并产生Class对象。</span></span><br><span class="line">                Class clazz = Class.forName(name);</span><br><span class="line">                <span class="comment">//获取到了指定的构造函数对象</span></span><br><span class="line">                Constructor constructor = clazz.getConstructor(<span class="keyword">int</span>.class,String.class);</span><br><span class="line">                <span class="comment">//通过该构造器对象的newInstance方法进行对象的初始化。</span></span><br><span class="line">                Object obj = constructor.newInstance(<span class="number">38</span>,<span class="string">&quot;小明&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="获取-Class-中的属性"><a href="#获取-Class-中的属性" class="headerlink" title="获取 Class 中的属性"></a>获取 Class 中的属性</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cn.itcast.bean.Person;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReflectDemo</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                getFieldDemo();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * 获取字节码文件中的字段。</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getFieldDemo</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                Class clazz = Class.forName(<span class="string">&quot;cn.itcast.bean.Person&quot;</span>);</span><br><span class="line">                </span><br><span class="line">                <span class="comment">//getField只能获取所有可访问公共字段，private获取不到。</span></span><br><span class="line">                <span class="comment">//Field field = claszz.getField(&quot;age&quot;);</span></span><br><span class="line"></span><br><span class="line">                <span class="comment">//getDeclaredField可以获取到公共字段，也可以获取到私有字段。</span></span><br><span class="line">                Field field = clazz.getDeclaredField(<span class="string">&quot;age&quot;</span>);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//对私有字段的访问必须取消权限检查，进行暴力访问。</span></span><br><span class="line">                field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">                Object obj = clazz.newInstance();</span><br><span class="line">                </span><br><span class="line">                <span class="comment">//为对象的属性赋值</span></span><br><span class="line">                field.set(obj,<span class="number">89</span>);</span><br><span class="line">                </span><br><span class="line">                <span class="comment">//获取某对象的某属性值</span></span><br><span class="line">                Object o = field.get(obj);</span><br><span class="line"></span><br><span class="line">                System.out.println(field);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="获取-Class-中的方法"><a href="#获取-Class-中的方法" class="headerlink" title="获取 Class 中的方法"></a>获取 Class 中的方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cn.itcast.bean.Person;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReflectDemo</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                getMethodDemo_1();</span><br><span class="line">                System.out.println(<span class="string">&quot;---------------------------&quot;</span>);</span><br><span class="line">                getMethodDemo_2();</span><br><span class="line">                System.out.println(<span class="string">&quot;---------------------------&quot;</span>);</span><br><span class="line">                getMethodDemo_3();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * 获取指定Class中的公共函数。</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getMethodDemo_1</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">                Class clazz = Class.forName(<span class="string">&quot;cn.itcast.bean.Person&quot;</span>);</span><br><span class="line">                </span><br><span class="line">                Method[] methods = clazz.getMethods();<span class="comment">//获取的都是公有的方法</span></span><br><span class="line"></span><br><span class="line">                methods = clazz.getDeclaredMethods();<span class="comment">//获取本类中所有方法，包括私有。</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">for</span>(Method method : methods)&#123;</span><br><span class="line">                        System.out.println(method);</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getMethodDemo_2</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">                Class clazz = Class.forName(<span class="string">&quot;cn.itcast.bean.Person&quot;</span>);</span><br><span class="line">                </span><br><span class="line">                Method method = clazz.getMethod(<span class="string">&quot;show&quot;</span>,<span class="keyword">null</span>);<span class="comment">//获取空参数一般方法</span></span><br><span class="line"></span><br><span class="line">                Object obj = clazz.newInstance();</span><br><span class="line"></span><br><span class="line">                Constructor constructor = clazz.getConstructor(<span class="keyword">int</span>.class,String.class);</span><br><span class="line">                obj = constructor.newInstance(<span class="number">37</span>,<span class="string">&quot;小明&quot;</span>);</span><br><span class="line"></span><br><span class="line">                method.invoke(obj,<span class="keyword">null</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getMethodDemo_3</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">                Class clazz = Class.forName(<span class="string">&quot;cn.itcast.bean.Person&quot;</span>);</span><br><span class="line">                <span class="comment">//获取非空参数一般方法</span></span><br><span class="line">                Method method = clazz.getMethod(<span class="string">&quot;paramMethod&quot;</span>,String.class,<span class="keyword">int</span>.class);</span><br><span class="line"></span><br><span class="line">                Object obj = clazz.newInstance();</span><br><span class="line"></span><br><span class="line">                Constructor constructor = clazz.getConstructor();</span><br><span class="line">                obj = constructor.newInstance();</span><br><span class="line"></span><br><span class="line">                method.invoke(obj,<span class="string">&quot;小强&quot;</span>,<span class="number">89</span>);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag"># Java 基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2015/08/22/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="prev" title="网络编程">
+      <i class="fa fa-chevron-left"></i> 网络编程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2015/09/03/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" rel="next" title="正则表达式">
+      正则表达式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84"><span class="nav-number">1.</span> <span class="nav-text">反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Class"><span class="nav-number">2.</span> <span class="nav-text">Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Class-%E4%B8%8E-class-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">Class 与 class 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-Class-%E7%9A%84-3-%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">获取 Class  的 3 种方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-Class-%E4%B8%AD%E7%9A%84%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">5.</span> <span class="nav-text">获取 Class 中的构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-Class-%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-number">6.</span> <span class="nav-text">获取 Class 中的属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-Class-%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">7.</span> <span class="nav-text">获取 Class 中的方法</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

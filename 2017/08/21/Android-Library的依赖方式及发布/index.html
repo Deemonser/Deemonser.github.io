@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近发布一个项目，发现以前发布到 JCenter 的步骤都忘光了，又得到处翻资料，真是尴尬….. 还是那句老话，好记性不然烂笔头，在此整理 Android Studio 依赖相关 以及 如何发布项目到 JCenter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Library的依赖方式及发布">
+<meta property="og:url" content="https://deemonser.github.io/2017/08/21/Android-Library%E7%9A%84%E4%BE%9D%E8%B5%96%E6%96%B9%E5%BC%8F%E5%8F%8A%E5%8F%91%E5%B8%83/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="最近发布一个项目，发现以前发布到 JCenter 的步骤都忘光了，又得到处翻资料，真是尴尬….. 还是那句老话，好记性不然烂笔头，在此整理 Android Studio 依赖相关 以及 如何发布项目到 JCenter">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbbh9a6ej30go0b43yv.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbi4f0jj30go0bydgj.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbih5abj30go0bydgj.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbjg8tij30ag0d7wf0.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbbk0jfcj30nk08wt90.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbbkuwqij30go0993zi.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbblu3o7j30go03o74c.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbmr1blj30w20e075v.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbo2xuuj30fi09h3yz.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbq2aehj30hk0jtdgv.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbrcpstj30h90bjwf0.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbseqppj30gi09qt95.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbu65wij30go0a6q3f.jpg">
+<meta property="article:published_time" content="2017-08-20T17:46:26.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="JCenter">
+<meta property="article:tag" content="Android依赖">
+<meta property="article:tag" content="aar">
+<meta property="article:tag" content="本地 Maven 仓库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbbh9a6ej30go0b43yv.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2017/08/21/Android-Library%E7%9A%84%E4%BE%9D%E8%B5%96%E6%96%B9%E5%BC%8F%E5%8F%8A%E5%8F%91%E5%B8%83/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android Library的依赖方式及发布 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2017/08/21/Android-Library%E7%9A%84%E4%BE%9D%E8%B5%96%E6%96%B9%E5%BC%8F%E5%8F%8A%E5%8F%91%E5%B8%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android Library的依赖方式及发布
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-08-21 01:46:26" itemprop="dateCreated datePublished" datetime="2017-08-21T01:46:26+08:00">2017-08-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">Android知识整理</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbbh9a6ej30go0b43yv.jpg"></p>
+<p>最近发布一个项目，发现以前发布到 JCenter 的步骤都忘光了，又得到处翻资料，真是尴尬…..</p>
+<p>还是那句老话，好记性不然烂笔头，在此整理 Android Studio 依赖相关 以及 如何发布项目到 JCenter</p>
+<span id="more"></span>
+
+<br>
+
+<br>
+
+<h3 id="Android-Studio-添加依赖"><a href="#Android-Studio-添加依赖" class="headerlink" title="Android Studio 添加依赖"></a>Android Studio 添加依赖</h3><h4 id="Module-依赖"><a href="#Module-依赖" class="headerlink" title="Module 依赖"></a>Module 依赖</h4><p>module 依赖是指在本地创建一个 module，然后如下步骤，依赖此模块。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbi4f0jj30go0bydgj.jpg" alt="图一"></p>
+<p>这样做的好处就是随时可以修改 module。</p>
+<p>上图可以看到，Android Studio（以下简称 AS）提供了三种依赖方式。</p>
+<br>
+
+<br>
+
+<h4 id="本地依赖"><a href="#本地依赖" class="headerlink" title="本地依赖"></a>本地依赖</h4><p>本地依赖是指，将 jar 或者 aar 直接拷贝到项目的 libs 文件夹下 ，然后对其进行依赖。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbih5abj30go0bydgj.jpg"></p>
+<ul>
+<li>jar 的依赖如图一，拷贝进 libs 目录后，AS 才能识别到。</li>
+<li>aar 的本地依赖官方没有提供解决方案，不过高手在民间。</li>
+</ul>
+<br>
+
+<p>在讲解本地 aar 依赖之前，先科普一下 aar 文件。</p>
+<p>aar 文件是基于 jar 文件之上开发的。因为有些Android Library 需要植入一些安卓特有的文件，比如 AndroidManifest.xml，资源文件，Assets或者JNI。这些文件在 Jar 中是没有的，因此诞生了 aar 文件。</p>
+<p>aar 文件和 jar 一样，只是普通的zip文件。不过具有不同的文件结构。jar文件以classes.jar的名字被嵌入到aar文件中。</p>
+<p>aar文件如下：</p>
+<ul>
+<li>/AndroidManifest.xml (mandatory)</li>
+<li>/classes.jar (mandatory)</li>
+<li>/res/ (mandatory)</li>
+<li>/R.txt (mandatory)</li>
+<li>/assets/ (optional)</li>
+<li>/libs/*.jar (optional)</li>
+<li>/jni/<abi>/*.so (optional)</li>
+<li>/proguard.txt (optional)</li>
+<li>/lint.jar (optional)</li>
+</ul>
+<p>在此说明一下，aar 文件的生成只能在 Android Library 中，也就是gradle脚本的声明是<code>apply plugin: &#39;com.android.library&#39; </code>的 module，然后编译后就会在 <strong>build/outputs/aar</strong>  文件夹里生成aar文件。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbjg8tij30ag0d7wf0.jpg" alt="生成 aar"></p>
+<p>本地 aar 依赖需要在 app 的 build.gradle 文件添加如下内容</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    flatDir &#123;</span><br><span class="line">        dirs <span class="string">&#x27;libs&#x27;</span> <span class="comment">//this way we can find the .aar file in libs folder</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>之后再其它项目里面添加 gradle 依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    compile(name:<span class="string">&#x27;dor&#x27;</span>, ext:<span class="string">&#x27;aar&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上就是 aar 的本地依赖。</p>
+<br>
+
+<br>
+
+<h4 id="远程依赖"><a href="#远程依赖" class="headerlink" title="远程依赖"></a>远程依赖</h4><p>远程依赖就是在 app 的 build.gradle 中直接添加（当然也可以通过图一搜索的方式）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  compile <span class="string">&#x27;com.squareup.picasso:picasso:2.5.2&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样一行代码就完成了依赖，也是最常见的依赖方式。</p>
+<br>
+
+<h4 id="远程依赖库的来源"><a href="#远程依赖库的来源" class="headerlink" title="远程依赖库的来源"></a>远程依赖库的来源</h4><p>我刚开始也不明白AS 是怎样凭借 一行代码得到这些library的。</p>
+<p>查阅资料才知道，AS 是从项目 build.gradle 文件里面定义的Maven 仓库服务器上下载library的。</p>
+<p>Apache Maven 是 Apache 开发的一个工具，提供了用于贡献library的文件服务器。</p>
+<p>总的来说，只有两个标准的 Android library 文件服务器：JCenter 和  Maven Central。</p>
+<p>不管是 「JCenter」还是「Maven Central」 ，两者都是<strong>Maven</strong> 仓库，只是他们维护的服务器不同，由不同的人提供。</p>
+ <br>
+
+<h5 id="JCenter"><a href="#JCenter" class="headerlink" title="JCenter"></a>JCenter</h5><p>JCenter 是一个由 <a target="_blank" rel="noopener" href="https://bintray.com/">bintray.com</a> 维护的Maven仓库 ，整个仓库的内容在 <a target="_blank" rel="noopener" href="http://jcenter.bintray.com/">http://jcenter.bintray.com/</a></p>
+<p>在项目的build.gradle 文件中如下定义仓库，就能使用jcenter了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="Maven-Centra"><a href="#Maven-Centra" class="headerlink" title="Maven Centra"></a>Maven Centra</h5><p>Maven Central 则是由 <a target="_blank" rel="noopener" href="https://sonatype.org/">sonatype.org</a> 维护的Maven仓库，整个仓库的内容在 <a target="_blank" rel="noopener" href="https://oss.sonatype.org/content/repositories/releases/">https://oss.sonatype.org/content/repositories/releases/</a></p>
+<p>在项目的build.gradle 文件中如下定义仓库，就能使用Maven Central了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="jcenter-与-Maven-Central-的区别"><a href="#jcenter-与-Maven-Central-的区别" class="headerlink" title="jcenter 与 Maven Central 的区别"></a>jcenter 与 Maven Central 的区别</h5><p>事实上两个仓库都具有相同的使命：提供Java或者Android library服务。上传到哪个（或者都上传）取决于开发者。</p>
+<p>起初，Android Studio 选择Maven Central作为默认仓库。如果你使用老版本的Android Studio创建一个新项目，mavenCentral()会自动的定义在build.gradle中。</p>
+<p>但是Maven Central的最大问题是对开发者不够友好。上传library异常困难。上传上去的开发者都是某种程度的极客。同时还因为诸如安全方面的其他原因，Android Studio团队决定把默认的仓库替换成jcenter。正如你看到的，一旦使用最新版本的Android Studio创建一个项目，jcenter()自动被定义，而不是mavenCentral()。</p>
+<p>以下是使用Jcenter的原因：</p>
+<ul>
+<li>jcenter通过 CDN 发送library，开发者可以享受到更快的下载体验。</li>
+<li>jcenter是全世界最大的Java仓库，因此在Maven Central 上有的，在jcenter上也极有可能有。</li>
+<li>上传library到仓库很简单，不需要像在 Maven Central上做很多复杂的事情。 </li>
+<li>友好的用户界面 </li>
+<li>如果你想把library上传到 Maven Central ，你可以在bintray网站上直接点击一个按钮就能实现</li>
+</ul>
+<p>基于上述原因，我们发布 Android Library 最好是发布到 Jcenter 上。</p>
+<br>
+
+<h4 id="Gradle-下载依赖库的原理"><a href="#Gradle-下载依赖库的原理" class="headerlink" title="Gradle 下载依赖库的原理"></a>Gradle 下载依赖库的原理</h4><p>在项目的 build.gradle 文件中加入一行代码的时候，这些库是怎样下载到我们的项目中呢？</p>
+<p>一般来说，library 的字符串形式，包含3部分</p>
+<p><code>GROUP_ID:ARTIFACT_ID:VERSION</code></p>
+<p>以冒号「：」为分隔</p>
+<ul>
+<li><p>GROUP_ID</p>
+<p>library的group，通常以开发者包名 加 library的名称来命名group。</p>
+</li>
+<li><p>ARTIFACT_ID</p>
+<p>library的真实名称</p>
+</li>
+<li><p>VERSION</p>
+<p>library 的版本号</p>
+</li>
+</ul>
+<p>例如Android 界大名鼎鼎的 Square 公司的 Library</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  compile <span class="string">&#x27;com.squareup:otto:1.3.7&#x27;</span></span><br><span class="line">  compile <span class="string">&#x27;com.squareup.picasso:picasso:2.5.2&#x27;</span></span><br><span class="line">  compile <span class="string">&#x27;com.squareup.okhttp:okhttp:2.4.0&#x27;</span></span><br><span class="line">  compile <span class="string">&#x27;com.squareup.retrofit:retrofit:1.9.0&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加上述的依赖库后，Gradle 会根据项目的build.gradle 文件中配置的Maven 仓库，询问仓库服务器这个library是否存在，（如果配置了多个仓库，会依次询问这些仓库）如果存在，Gradle 会获得 library 的存储路径，然后 AS 将下载这些文件到我们的电脑上，与我们的项目一起编译。</p>
+<p>一般存储路径都是这样的形式：GROUP_ID/ARTIFACT_ID/VERSION_ID。</p>
+<p>例如：</p>
+<p>Jcenter库的地址：<a target="_blank" rel="noopener" href="http://jcenter.bintray.com/com/squareup/otto/1.3.7">http://jcenter.bintray.com/com/squareup/otto/1.3.7</a> </p>
+<p>Maven Central 库的地址：<a target="_blank" rel="noopener" href="https://oss.sonatype.org/content/repositories/releases/com/squareup/otto/1.3.7/">https://oss.sonatype.org/content/repositories/releases/com/squareup/otto/1.3.7/</a></p>
+<br>
+
+<h3 id="上传-Library-到-JCenter"><a href="#上传-Library-到-JCenter" class="headerlink" title="上传 Library 到 JCenter"></a>上传 Library 到 JCenter</h3><p>我们总是用别人的库，如果自己写一个库分享给别人用，那样不是更酷嘛！</p>
+<p>我们可以通过 Gradle 把项目发布到 Maven 库中，至于选 Maven Central 还是 JCenter，通过前面的介绍，当然是选 JCenter 更好。</p>
+<p>整个发布过程如下图：</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbbk0jfcj30nk08wt90.jpg" alt="上传到 JCenter 的过程"></p>
+<p>可以看到整个过程还是挺清晰的，但不亲自去试试，就不知道有多少坑！</p>
+<br>
+
+<h4 id="1-注册-Bintray-并创建私有-Maven-仓库"><a href="#1-注册-Bintray-并创建私有-Maven-仓库" class="headerlink" title="1.注册 Bintray 并创建私有 Maven 仓库"></a>1.注册 Bintray 并创建私有 Maven 仓库</h4><p> JCenter 是由 Bintray 维护的 Maven 库，所有首先得去 Bintray 网站注册一个账号。</p>
+<p>就是因为注册这一步有个巨坑，害得自己填了好久。</p>
+<p>打开 <a target="_blank" rel="noopener" href="https://bintray.com/">Bintray官网</a> ，天真的我就直接点了 <strong>START YOUR FREE TRIAL</strong> ，然后欲哭无泪。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbbkuwqij30go0993zi.jpg" alt="Bintray 组织注册"></p>
+<p>Bintray 官网在2016年底改版了，直接点注册是组织用户，而非个人用户，这将导致最后一直提交失败。</p>
+<p>最后只能重新注册新的个人账户。</p>
+<p>个人账户注册在首页的底部，要把页面拉下去才看得到。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbblu3o7j30go03o74c.jpg" alt="Bintray 个人注册"></p>
+<p>或者直接点击这个 <a target="_blank" rel="noopener" href="https://bintray.com/signup/oss">注册个人账户</a></p>
+<p>后边注册的步骤就很简单了，有 <code>github </code>或者 <code>google</code> 账户的直接登录就行了，如果需要注册这里的邮箱不能是国内的邮箱。</p>
+<br>
+
+<p>登录上之后，点击右上角的小箭头 Edit Profile —&gt; API Key —&gt; 输入密码 —&gt; 复制 API Key。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbmr1blj30w20e075v.jpg" alt="获取 API Key"></p>
+<p>这个 API Key 在后面会有用到。</p>
+<p>然后创建私有的 Maven 仓库，在个人首页点击 <strong>Add New Repository</strong> </p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbo2xuuj30fi09h3yz.jpg" alt="添加仓库"></p>
+<p>然后按照下图填写内容</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbq2aehj30hk0jtdgv.jpg" alt="创建仓库"></p>
+<p>最后点击 <strong>Create</strong> 创建，这样就创建了仓库。</p>
+<br>
+
+<h4 id="2-配置项目"><a href="#2-配置项目" class="headerlink" title="2. 配置项目"></a>2. 配置项目</h4><p>接下来就是配置要发布的项目，这里借助 <a target="_blank" rel="noopener" href="https://github.com/novoda/bintray-release">bintray-release</a> 这个开源库来快速发布，注意，这个插件只能帮助 <strong>android library</strong>  的 module 来实现快速发布。</p>
+<p>首先是在项目的根目录 build.gradle 中配置如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">&#x27;com.android.tools.build:gradle:2.3.0&#x27;</span></span><br><span class="line">        <span class="comment">// <span class="doctag">NOTE:</span> Do not place your application dependencies here; they belong</span></span><br><span class="line">        <span class="comment">// in the individual module build.gradle files</span></span><br><span class="line">        <span class="comment">//首先添加这个</span></span><br><span class="line">        classpath <span class="string">&#x27;com.novoda:bintray-release:+&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">task <span class="title">clean</span><span class="params">(type: Delete)</span> </span>&#123;</span><br><span class="line">    delete rootProject.buildDir</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//开源库中有中文注释,添加下面这些</span></span><br><span class="line">allprojects &#123;</span><br><span class="line">    tasks.withType(Javadoc) &#123;</span><br><span class="line">        options &#123;</span><br><span class="line">            encoding <span class="string">&quot;UTF-8&quot;</span></span><br><span class="line">            charSet <span class="string">&#x27;UTF-8&#x27;</span></span><br><span class="line">            links <span class="string">&quot;http://docs.oracle.com/javase/7/docs/api&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在将要发布的 module 下的 build.gradle 中添加如下配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//for upload</span></span><br><span class="line">apply plugin: <span class="string">&#x27;com.novoda.bintray-release&#x27;</span></span><br><span class="line">publish &#123;</span><br><span class="line">    userOrg = <span class="string">&#x27;deemons&#x27;</span> <span class="comment">//注册的用户名</span></span><br><span class="line">    groupId = <span class="string">&#x27;com.deemons.dor&#x27;</span> <span class="comment">//引用时第一部分</span></span><br><span class="line">    artifactId = <span class="string">&#x27;dor&#x27;</span> <span class="comment">//引用时的第二部分</span></span><br><span class="line">    publishVersion = <span class="string">&#x27;0.2.0&#x27;</span> <span class="comment">//引用时的第三部分，版本号 </span></span><br><span class="line">    desc = <span class="string">&#x27;android network&#x27;</span><span class="comment">//描述</span></span><br><span class="line">    website = <span class="string">&#x27;https://github.com/Deemonser/Dor&#x27;</span><span class="comment">//项目地址</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 并且，需要忽略错误信息：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line"></span><br><span class="line"> lintOptions &#123;</span><br><span class="line">        abortOnError <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完成上面的配置后，就可以通过命令上传项目到 Bintray 。</p>
+<br>
+
+<h4 id="3-提交项目到-Bintray"><a href="#3-提交项目到-Bintray" class="headerlink" title="3.提交项目到 Bintray"></a>3.提交项目到 Bintray</h4><p>执行下面这个命令</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew clean build bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_KEY -PdryRun=<span class="keyword">false</span></span><br></pre></td></tr></table></figure>
+
+<p>替换里面的 <code>BINTRAY_USERNAME</code>  (注册的用户名) 和 <code>BINTRAY_KEY</code> （分配的 API_Key）。 </p>
+<p>如果没报错，并且看到BUILD SUCCESS，就表示上传成功了。</p>
+<p>在 mac 下，如果出现拒绝该命令<code>./gradlew: Permission denied</code>，可以先运行 <code>chmod +x gradlew</code> 。</p>
+<p>这时候在自己的 Bintray 上，点击前面创建的 maven 仓库。 </p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbrcpstj30h90bjwf0.jpg" alt="maven 仓库"></p>
+<p>可以看到发布上来的 library 了</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbbseqppj30gi09qt95.jpg" alt="上传的 library"></p>
+<br>
+
+<h4 id="4-将-Bintray-的项目发布到-JCenter"><a href="#4-将-Bintray-的项目发布到-JCenter" class="headerlink" title="4.将 Bintray 的项目发布到 JCenter"></a>4.将 Bintray 的项目发布到 JCenter</h4><p>点击刚刚上传的项目，看到下面的详细信息。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbu65wij30go0a6q3f.jpg" alt="发布到 JCenter"></p>
+<p>这时候，点击右下角的 <strong>Add to JCenter</strong> 按钮后，跳转到一个提交页面。</p>
+<p>然后什么也不做，直接点击Send。</p>
+<p>然后就是漫长的等待Bintrary 的审核，如果请求审核通过，会收到一封邮件。</p>
+<p>最后就是测试 <strong>一行代码</strong> 依赖。</p>
+<p>如果成功了，那就大功告成啦~</p>
+<br>
+
+<h3 id="本地仓库"><a href="#本地仓库" class="headerlink" title="本地仓库"></a>本地仓库</h3><p>远程依赖的方式，不仅仅适用于上面 JCenter 和 Maven Central 两个常见的远程库，其实我们自己也可以创建一个本地的依赖库，区别就在于，一个是远程云端仓库，另一个是本地自建的仓库，但他们用法相同。<br><br></p>
+<h4 id="本地仓库路径"><a href="#本地仓库路径" class="headerlink" title="本地仓库路径"></a>本地仓库路径</h4><p>本地仓库路径有两个：</p>
+<ul>
+<li>构建时，指定 maven 在本地存储的地方。</li>
+<li>maven本地仓库的默认位置：在用户的目录下.m2/repository/的仓库目录。</li>
+</ul>
+<p>构建时，不论如何指定本地仓库，同时会在默认仓库会生成同样一份依赖库。</p>
+<br>
+
+<h4 id="指定本地仓库路径"><a href="#指定本地仓库路径" class="headerlink" title="指定本地仓库路径"></a>指定本地仓库路径</h4><p>自定义本地路径</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    <span class="comment">//绝对路径</span></span><br><span class="line">    maven &#123; url <span class="string">&#x27;/Users/deemons/.m2/repository&#x27;</span> &#125;</span><br><span class="line">    <span class="comment">//相对路径</span></span><br><span class="line">    <span class="comment">//maven &#123; url uri(&#x27;../myRepo&#x27;) &#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>默认本地路径：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    mavenLocal()<span class="comment">//用户的目录下.m2/repository/的仓库目录</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="发布本地库"><a href="#发布本地库" class="headerlink" title="发布本地库"></a>发布本地库</h4><p>在 Library 的 gradle.build 文件中添加</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;maven&#x27;</span></span><br><span class="line">uploadArchives&#123;</span><br><span class="line">    repositories.mavenDeployer&#123;</span><br><span class="line">        <span class="comment">// 本地仓库路径</span></span><br><span class="line">        repository(<span class="attr">url:</span><span class="string">&quot;file:/Users/deemons/.m2/repository&quot;</span>)</span><br><span class="line">        <span class="comment">// 唯一标识</span></span><br><span class="line">        pom.groupId = <span class="string">&quot;com.android.test&quot;</span></span><br><span class="line">        <span class="comment">// 项目名称</span></span><br><span class="line">        pom.artifactId = <span class="string">&quot;test&quot;</span></span><br><span class="line">        <span class="comment">// 版本号</span></span><br><span class="line">        pom.version = <span class="string">&quot;1.0.0&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后，在 AS 右侧 gradle 栏中，找到 uploadArchives 这个Task，点击执行。</p>
+<p>在项目中使用的话，首先在根 build.gradle 文件中配置仓库路径</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    	...</span><br><span class="line">     mavenLocal()</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>其次，直接当做远程仓库去依赖：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile <span class="string">&#x27;com.android.test:test:1.0.0&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="aar-的作用"><a href="#aar-的作用" class="headerlink" title="@aar 的作用"></a>@aar 的作用</h3><p>在项目中，经常看到这种依赖</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">compile <span class="string">&#x27;com.android.support:appcompat-v7:22.1.1@aar&#x27;</span></span><br><span class="line">compile <span class="string">&#x27;com.android.support:support-v4:22.1.1@jar&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意 <code>@aar</code> 和 <code>@jar</code> ，我们一般不会用到两个东西，有时候加上也没什么问题，那这到底有什么作用？</p>
+<p>翻墙查找 stack overflow ，终于找到了答案。</p>
+<p>它有两个作用：</p>
+<ul>
+<li>如果不添加 <code>@</code> 这种后缀，那么这个依赖库的类型将由其作者决定。如果添加<code>@aar</code> ，则表示指定这个依赖库的类型是 aar，同理，<code>@jar</code> 指定依赖库是 jar。</li>
+<li>添加 <code>@</code> 后缀后，将不会下载此库的依赖，即禁止这个库传递依赖。</li>
+</ul>
+<p>因此，为了确保添加 <code>@</code> 后缀时，能完全下载此库的依赖关系树，应该这样编写：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">compile (<span class="string">&#x27;com.android.support:appcompat-v7:22.1.1@aar&#x27;</span>) &#123;</span><br><span class="line">    transitive = <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="http://blog.csdn.net/wzgiceman/article/details/53707042">新版Bintray-极简上传Library到JCenter</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/cff4684803f3">Android studio中使用Maven发布本地仓库</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30157575/why-should-i-include-a-gradle-dependency-as-aar">Why should I include a gradle dependency as @aar</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JCenter/" rel="tag"># JCenter</a>
+              <a href="/tags/Android%E4%BE%9D%E8%B5%96/" rel="tag"># Android依赖</a>
+              <a href="/tags/aar/" rel="tag"># aar</a>
+              <a href="/tags/%E6%9C%AC%E5%9C%B0-Maven-%E4%BB%93%E5%BA%93/" rel="tag"># 本地 Maven 仓库</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/07/22/Android-%E5%BC%82%E6%AD%A5%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/" rel="prev" title="Android 异步消息处理机制">
+      <i class="fa fa-chevron-left"></i> Android 异步消息处理机制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/08/30/Android%E8%87%AA%E5%AE%9A%E4%B9%89View-Paint-%E8%AF%A6%E8%A7%A3/" rel="next" title="Android自定义View-Paint 详解">
+      Android自定义View-Paint 详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-Studio-%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="nav-number">1.</span> <span class="nav-text">Android Studio 添加依赖</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Module-%E4%BE%9D%E8%B5%96"><span class="nav-number">1.1.</span> <span class="nav-text">Module 依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E4%BE%9D%E8%B5%96"><span class="nav-number">1.2.</span> <span class="nav-text">本地依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E4%BE%9D%E8%B5%96"><span class="nav-number">1.3.</span> <span class="nav-text">远程依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E4%BE%9D%E8%B5%96%E5%BA%93%E7%9A%84%E6%9D%A5%E6%BA%90"><span class="nav-number">1.4.</span> <span class="nav-text">远程依赖库的来源</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#JCenter"><span class="nav-number">1.4.1.</span> <span class="nav-text">JCenter</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Maven-Centra"><span class="nav-number">1.4.2.</span> <span class="nav-text">Maven Centra</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#jcenter-%E4%B8%8E-Maven-Central-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.4.3.</span> <span class="nav-text">jcenter 与 Maven Central 的区别</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gradle-%E4%B8%8B%E8%BD%BD%E4%BE%9D%E8%B5%96%E5%BA%93%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">1.5.</span> <span class="nav-text">Gradle 下载依赖库的原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0-Library-%E5%88%B0-JCenter"><span class="nav-number">2.</span> <span class="nav-text">上传 Library 到 JCenter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%B3%A8%E5%86%8C-Bintray-%E5%B9%B6%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%89-Maven-%E4%BB%93%E5%BA%93"><span class="nav-number">2.1.</span> <span class="nav-text">1.注册 Bintray 并创建私有 Maven 仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AE%E9%A1%B9%E7%9B%AE"><span class="nav-number">2.2.</span> <span class="nav-text">2. 配置项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%8F%90%E4%BA%A4%E9%A1%B9%E7%9B%AE%E5%88%B0-Bintray"><span class="nav-number">2.3.</span> <span class="nav-text">3.提交项目到 Bintray</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%B0%86-Bintray-%E7%9A%84%E9%A1%B9%E7%9B%AE%E5%8F%91%E5%B8%83%E5%88%B0-JCenter"><span class="nav-number">2.4.</span> <span class="nav-text">4.将 Bintray 的项目发布到 JCenter</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E4%BB%93%E5%BA%93"><span class="nav-number">3.</span> <span class="nav-text">本地仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E4%BB%93%E5%BA%93%E8%B7%AF%E5%BE%84"><span class="nav-number">3.1.</span> <span class="nav-text">本地仓库路径</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E6%9C%AC%E5%9C%B0%E4%BB%93%E5%BA%93%E8%B7%AF%E5%BE%84"><span class="nav-number">3.2.</span> <span class="nav-text">指定本地仓库路径</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E6%9C%AC%E5%9C%B0%E5%BA%93"><span class="nav-number">3.3.</span> <span class="nav-text">发布本地库</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#aar-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">@aar 的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

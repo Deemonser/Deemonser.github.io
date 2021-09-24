@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前段时间，刚换工作，因公司业务的关系，接触了 Android 多语言。 以前，从没考虑过国际化，所以对这块也是一知半解，借此机会就做一下整理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 多语言">
+<meta property="og:url" content="https://deemonser.github.io/2018/05/06/Android-%E5%A4%9A%E8%AF%AD%E8%A8%80/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="前段时间，刚换工作，因公司业务的关系，接触了 Android 多语言。 以前，从没考虑过国际化，所以对这块也是一知半解，借此机会就做一下整理。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbzehvcj30hs0bugmg.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbzsmbxj309c06bdft.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbc1a62xj30ph0k640o.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbc2klmaj30hw0df3yt.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbc4hjnej310u0hcn0p.jpg">
+<meta property="article:published_time" content="2018-05-06T06:25:20.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="国际化">
+<meta property="article:tag" content="多语言">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbzehvcj30hs0bugmg.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2018/05/06/Android-%E5%A4%9A%E8%AF%AD%E8%A8%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android 多语言 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2018/05/06/Android-%E5%A4%9A%E8%AF%AD%E8%A8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android 多语言
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-05-06 14:25:20" itemprop="dateCreated datePublished" datetime="2018-05-06T14:25:20+08:00">2018-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">Android知识整理</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbzehvcj30hs0bugmg.jpg" alt="pexels-photo-268438"></p>
+<p>前段时间，刚换工作，因公司业务的关系，接触了 Android 多语言。</p>
+<p>以前，从没考虑过国际化，所以对这块也是一知半解，借此机会就做一下整理。</p>
+<span id="more"></span>
+
+<h3 id="多语言"><a href="#多语言" class="headerlink" title="多语言"></a>多语言</h3><p>Android 的多语言实现，大部分工作都交给了 framwork 层的资源进程调度框架，对于应用层的开发来说非常简单，得益于 Android 独特的资源文件管理方式，代码可以不和资源关联，通过 R 文件提供的索引来间接引用某一资源，所有只要在特定文件夹内提供对应的资源供系统调用就行啦。<br>简单来说，我们通常在 <code>res-values</code> 的<code>strings.xml</code> 或者 <code>arrays.xml</code>文件中提供字符串资源，这里是提供默认资源的地方。如果需要添加台湾繁体，则需要新建 <code>values-zh-rTW</code> 的文件夹，以及提供台湾繁体的字符串资源文件<code>strings.xml</code>。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbbzsmbxj309c06bdft.jpg" alt="多语言"></p>
+<p><code>values</code> 文件夹的名称规则是 <code>values-语言-地区</code> ，更多名称见下面的附录。</p>
+<p>注意：不同语言的字符串资源的名称要一样，即索引要相同。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//默认的中文资源</span><br><span class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span> <span class="attr">name</span>=<span class="string">&quot;app_language&quot;</span>&gt;</span>语言<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br><span class="line"></span><br><span class="line">//台湾繁体资源</span><br><span class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span> <span class="attr">name</span>=<span class="string">&quot;app_language&quot;</span>&gt;</span>語言<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果在需要的资源目录下找不到对应的资源 ID，就会到默认文件夹内寻找，如果还找不到，就会报错。</p>
+<br>
+
+<h3 id="全局查找替换"><a href="#全局查找替换" class="headerlink" title="全局查找替换"></a>全局查找替换</h3><p>如果整个项目代码非常规范，所有的字符串资源都放在了<code>strings.xml</code> 或者<code>arrays.xml</code>中，那多语言就非常省心了。</p>
+<p>但往往事与愿违，这个项目在我之前，已经经手四五个人了，编码风格迥异，代码规范就是没有规范，更加谈不上什么架构模式了、性能优化啦，所有东西都很随意，哎，都是泪~ </p>
+<p>说回正题，因此项目的字符串资源一部分在 <code>strings.xml</code> 中，更多的是散落在项目的各个角落，因此，第一步就是要将字符串资源统一整合到 <code>strings.xml</code> 或者 <code>arrays.xml</code>中。</p>
+<p>刚开始还想着偷懒，写个脚本，寻找所有 xml 文件中的 <code>android:text=&quot;xxxx&quot;</code> 然后替换，但项目中不仅仅是系统控件，还有一些自定义控件，命名空间和名称都不相同，如果是仅仅通过中文字符串匹配，那么一些注释怎样排除呢？同时代码中也有很多字符串，也有很多注释…….考虑到这么多复杂场景，如果哪位大牛能把这个脚本写出来，造福所有 Android 开发者，那就好啦~<br>算了，还是自己手动一个个替换吧~<br>打开全局搜索面板，输入 中文字符串的正则匹配 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">^((?!(\*|<span class="comment">//)).)+[\u4e00-\u9fa5]</span></span><br></pre></td></tr></table></figure>
+<p>还可以根据需要进行过滤等操作。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbc1a62xj30ph0k640o.jpg" alt="全局搜索中文字符串"></p>
+<p>如果找到字符串，那么 AS 提供了非常方便的替换字符串的操作。<br>将光标移动到字符串位置，按下智能提示的快捷键（我的因按键冲突改过快捷键），选择<code>Extract string resource</code> 就能自动帮你完成操作了。这里盗了一个图，来看看效果。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbc2klmaj30hw0df3yt.jpg" alt="extract_resource"></p>
+<br>
+
+<h3 id="翻译"><a href="#翻译" class="headerlink" title="翻译"></a>翻译</h3><p>如果将所有字符串资源都规范的整合到<code>strings.xml</code> 中，那么有很多插件，能帮我们一键完成翻译的工作。</p>
+<p>比如：<a target="_blank" rel="noopener" href="https://github.com/westlinkin/AndroidLocalizationer">AndroidLocalizationer</a> 、<a target="_blank" rel="noopener" href="https://github.com/13671447200/BaiduTranslationInternationalization">BaiduTranslationInternationalizatio</a><br>这个插件虽好，但也存在不少问题，首先是字符串中出现一些特殊字符，那么翻译出来就会大段大段错位，还是得手动一个个修改回去，非常麻烦。</p>
+<p>因为是将简体中文翻译成繁体，所有有一个非常方便的方法，就是直接将<code>strings.xml</code> 中的内容扔进谷歌翻译，什么特殊字符啥的都不用担心，当然，这种方式仅限于简体转繁体。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbc4hjnej310u0hcn0p.jpg" alt="google 翻译"></p>
+<p>当然，机器翻译都有一个问题，就是翻译都比较生硬。区域的不同导致同一个东西的叫法也有差异，比如内地人说「软件」，但台湾人习惯说「软体」。所以简繁体翻译并没有想象的那么简单，这里提供一个比较智能的简体与繁体转换的网站 <a target="_blank" rel="noopener" href="https://brushes8.com/zhong-wen-jian-ti-fan-ti-zhuan-huan">简/繁体转换</a> ，效果比谷歌好很多。<br>相对于「简/繁体转换」，「中/英文转换」存在的问题就更多了，不仅仅是翻译正确与否的问题，字符串长度的变化还会引起页面排版的变化。<br>因此，相对好的做法就是先用机器翻译，然后人工核对翻译，最后运行起来看看排版效果，如果不行就再做调整。</p>
+<br>
+
+<h3 id="多语言切换"><a href="#多语言切换" class="headerlink" title="多语言切换"></a>多语言切换</h3><p>这里的语言切换类似微信，是应用内的语言切换，和系统语言无关。</p>
+<p>参照 <a target="_blank" rel="noopener" href="http://developer.android.com/reference/android/content/res/Configuration.html">Android 开发者官网</a> 上的描述，Configuration 包含了设备的所有的配置信息，这些配置信息会影响应用获取的资源。例如 string 资源，就是根据 Configuration 的 locale 属性来判断该取哪种语言的 string 资源，默认是 value 文件夹下的。</p>
+<p>主要代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Resources resources = context.getResources();</span><br><span class="line">Configuration config = resources.getConfiguration();<span class="comment">//获得设置对象</span></span><br><span class="line">DisplayMetrics dm = resources.getDisplayMetrics();<span class="comment">//获得屏幕参数：主要是分辨率，像素等。</span></span><br><span class="line">config.locale = Locale.ENGLISH;<span class="comment">//设置为英文</span></span><br><span class="line">resources.updateConfiguration(config, dm);</span><br></pre></td></tr></table></figure>
+<p>在设置完语言后，并不会马上生效，必须重新启动页面。大多数都是做法是直接退出整个 APP，然后重新启动，这种做法有点粗暴，体检不好，微信的做法是重启回到主页面。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Intent intent = <span class="keyword">new</span> Intent();</span><br><span class="line">intent.setAction(<span class="string">&quot;android.intent.action.VIEW&quot;</span>);</span><br><span class="line">intent.setData(Uri.parse(<span class="string">&quot;app://trade&quot;</span>));</span><br><span class="line">intent.setPackage(getPackageName());	<span class="comment">//隐式启动时，最好指定包名</span></span><br><span class="line">intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | <span class="comment">//清空当前栈</span></span><br><span class="line">                Intent.FLAG_ACTIVITY_NEW_TASK | <span class="comment">//启动新栈</span></span><br><span class="line">                Intent.FLAG_ACTIVITY_CLEAR_TOP); <span class="comment">// 清除当前页面</span></span><br><span class="line">startActivity(intent);</span><br></pre></td></tr></table></figure>
+<p>项目因为组件化，这里采用隐式启动，但是这里有一个坑，因为保不齐，手机里面会有其符合要求的 Activity ，因此最好指定包名。</p>
+<p>如果应用更改了语言，退出后再进来，还是会跟随系统，所有可以将语言类型用 SP 存起来，在刚刚进来时初始化语言。</p>
+<p>我遇到一个问题是，在 application 中初始化语言不生效？？？ 只好又拿到 欢迎页去初始化了。<br>还有就是更换语言后，在 webview 页面退出来后会失效，因此只能在 <code>onPoause()</code> 时重新设置语言。</p>
+<br>
+
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><h4 id="多国语言文件夹命名对应表"><a href="#多国语言文件夹命名对应表" class="headerlink" title="多国语言文件夹命名对应表"></a>多国语言文件夹命名对应表</h4><table>
+<thead>
+<tr>
+<th>国家</th>
+<th>Folder Name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>中文（中国）</td>
+<td>values-zh-rCN</td>
+</tr>
+<tr>
+<td>中文（台湾）</td>
+<td>values-zh-rTW</td>
+</tr>
+<tr>
+<td>中文（香港）</td>
+<td>values-zh-rHK</td>
+</tr>
+<tr>
+<td>英语（美国）</td>
+<td>values-en-rUS</td>
+</tr>
+<tr>
+<td>英语（英国）</td>
+<td>values-en-rGB</td>
+</tr>
+<tr>
+<td>英文（澳大利亚）</td>
+<td>values-en-rAU</td>
+</tr>
+<tr>
+<td>英文（加拿大）</td>
+<td>values-en-rCA</td>
+</tr>
+<tr>
+<td>英文（爱尔兰）</td>
+<td>values-en-rIE</td>
+</tr>
+<tr>
+<td>英文（印度）</td>
+<td>values-en-rIN</td>
+</tr>
+<tr>
+<td>英文（新西兰）</td>
+<td>values-en-rNZ</td>
+</tr>
+<tr>
+<td>英文（新加坡）</td>
+<td>values-en-rSG</td>
+</tr>
+<tr>
+<td>英文（南非）</td>
+<td>values-en-rZA</td>
+</tr>
+<tr>
+<td>阿拉伯文（埃及）</td>
+<td>values-ar-rEG</td>
+</tr>
+<tr>
+<td>阿拉伯文（以色列）</td>
+<td>values-ar-rIL</td>
+</tr>
+<tr>
+<td>保加利亚文</td>
+<td>values-bg-rBG</td>
+</tr>
+<tr>
+<td>加泰罗尼亚文</td>
+<td>values-ca-rES</td>
+</tr>
+<tr>
+<td>捷克文</td>
+<td>values-cs-rCZ</td>
+</tr>
+<tr>
+<td>丹麦文</td>
+<td>values-da-rDK</td>
+</tr>
+<tr>
+<td>德文（奥地利）</td>
+<td>values-de-rAT</td>
+</tr>
+<tr>
+<td>德文（瑞士）</td>
+<td>values-de-rCH</td>
+</tr>
+<tr>
+<td>德文（德国）</td>
+<td>values-de-rDE</td>
+</tr>
+<tr>
+<td>德文（列支敦士登）</td>
+<td>values-de-rLI</td>
+</tr>
+<tr>
+<td>希腊文</td>
+<td>values-el-rGR</td>
+</tr>
+<tr>
+<td>西班牙文（西班牙）</td>
+<td>values-es-rES</td>
+</tr>
+<tr>
+<td>西班牙文（美国）</td>
+<td>values-es-rUS</td>
+</tr>
+<tr>
+<td>芬兰文（芬兰）</td>
+<td>values-fi-rFI</td>
+</tr>
+<tr>
+<td>法文（比利时）</td>
+<td>values-fr-rBE</td>
+</tr>
+<tr>
+<td>法文（加拿大）</td>
+<td>values-fr-rCA</td>
+</tr>
+<tr>
+<td>法文（瑞士）</td>
+<td>values-fr-rCH</td>
+</tr>
+<tr>
+<td>法文（法国）</td>
+<td>values-fr-rFR</td>
+</tr>
+<tr>
+<td>希伯来文</td>
+<td>values-iw-rIL</td>
+</tr>
+<tr>
+<td>印地文</td>
+<td>values-hi-rIN</td>
+</tr>
+<tr>
+<td>克罗里亚文</td>
+<td>values-hr-rHR</td>
+</tr>
+<tr>
+<td>匈牙利文</td>
+<td>values-hu-rHU</td>
+</tr>
+<tr>
+<td>印度尼西亚文</td>
+<td>values-in-rID</td>
+</tr>
+<tr>
+<td>意大利文（瑞士）</td>
+<td>values-it-rCH</td>
+</tr>
+<tr>
+<td>意大利文（意大利）</td>
+<td>values-it-rIT</td>
+</tr>
+<tr>
+<td>日文</td>
+<td>values-ja-rJP</td>
+</tr>
+<tr>
+<td>韩文</td>
+<td>values-ko-rKR</td>
+</tr>
+<tr>
+<td>立陶宛文</td>
+<td>valueslt-rLT</td>
+</tr>
+<tr>
+<td>拉脱维亚文</td>
+<td>values-lv-rLV</td>
+</tr>
+<tr>
+<td>挪威博克马尔文</td>
+<td>values-nb-rNO</td>
+</tr>
+<tr>
+<td>荷兰文(比利时)</td>
+<td>values-nl-BE</td>
+</tr>
+<tr>
+<td>荷兰文（荷兰）</td>
+<td>values-nl-rNL</td>
+</tr>
+<tr>
+<td>波兰文</td>
+<td>values-pl-rPL</td>
+</tr>
+<tr>
+<td>葡萄牙文（巴西）</td>
+<td>values-pt-rBR</td>
+</tr>
+<tr>
+<td>葡萄牙文（葡萄牙）</td>
+<td>values-pt-rPT</td>
+</tr>
+<tr>
+<td>罗马尼亚文</td>
+<td>values-ro-rRO</td>
+</tr>
+<tr>
+<td>俄文</td>
+<td>values-ru-rRU</td>
+</tr>
+<tr>
+<td>斯洛伐克文</td>
+<td>values-sk-rSK</td>
+</tr>
+<tr>
+<td>斯洛文尼亚文</td>
+<td>values-sl-rSI</td>
+</tr>
+<tr>
+<td>塞尔维亚文</td>
+<td>values-sr-rRS</td>
+</tr>
+<tr>
+<td>瑞典文</td>
+<td>values-sv-rSE</td>
+</tr>
+<tr>
+<td>泰文</td>
+<td>values-th-rTH</td>
+</tr>
+<tr>
+<td>塔加洛语</td>
+<td>values-tl-rPH</td>
+</tr>
+<tr>
+<td>土耳其文</td>
+<td>values–r-rTR</td>
+</tr>
+<tr>
+<td>乌克兰文</td>
+<td>values-uk-rUA</td>
+</tr>
+<tr>
+<td>越南文</td>
+<td>values-vi-rVN</td>
+</tr>
+</tbody></table>
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="http://www.cnblogs.com/angel88/p/7967853.html">Android实现多语言so easy</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.jcodecraeer.com/a/anzhuokaifa/2017/1017/8600.html">Android-国际化(多语言)切换详解及实例</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/myth13141314/article/details/62037194">Android（国际化）多语言的实现和切换</a></p>
+<p><a target="_blank" rel="noopener" href="https://jaeger.itscoder.com/android/2016/05/14/switch-language-on-android-app.html">Android App 多语言切换</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BD%E9%99%85%E5%8C%96/" rel="tag"># 国际化</a>
+              <a href="/tags/%E5%A4%9A%E8%AF%AD%E8%A8%80/" rel="tag"># 多语言</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/04/07/Android%20%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89/" rel="prev" title="Android 内存优化(一)">
+      <i class="fa fa-chevron-left"></i> Android 内存优化(一)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/05/10/Android-%E7%AD%BE%E5%90%8D%E9%82%A3%E7%82%B9%E4%BA%8B%E5%84%BF/" rel="next" title="Android 签名那点事儿">
+      Android 签名那点事儿 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%AF%AD%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">多语言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E6%9F%A5%E6%89%BE%E6%9B%BF%E6%8D%A2"><span class="nav-number">2.</span> <span class="nav-text">全局查找替换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BF%BB%E8%AF%91"><span class="nav-number">3.</span> <span class="nav-text">翻译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%AF%AD%E8%A8%80%E5%88%87%E6%8D%A2"><span class="nav-number">4.</span> <span class="nav-text">多语言切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%84%E5%BD%95"><span class="nav-number">5.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%9B%BD%E8%AF%AD%E8%A8%80%E6%96%87%E4%BB%B6%E5%A4%B9%E5%91%BD%E5%90%8D%E5%AF%B9%E5%BA%94%E8%A1%A8"><span class="nav-number">5.1.</span> <span class="nav-text">多国语言文件夹命名对应表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

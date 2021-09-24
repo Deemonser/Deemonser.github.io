@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前面，介绍了 Java5.0 引入的注解，现在来介绍注解处理机制。 注解处理机制 &#x3D; 注解 + 注解处理器 注解处理器和注解一般共同组成 Java Library ，它对外提供了特定的功能。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 注解处理器">
+<meta property="og:url" content="https://deemonser.github.io/2017/09/28/Java-%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="前面，介绍了 Java5.0 引入的注解，现在来介绍注解处理机制。 注解处理机制 &#x3D; 注解 + 注解处理器 注解处理器和注解一般共同组成 Java Library ，它对外提供了特定的功能。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbey5h2rj30hs0bvq3o.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbez2h3xj30f00bumxm.jpg">
+<meta property="article:published_time" content="2017-09-28T14:43:35.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="APT">
+<meta property="article:tag" content="Annotation Processing Tool">
+<meta property="article:tag" content="Javapoet">
+<meta property="article:tag" content="AbstractorProcessor">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbey5h2rj30hs0bvq3o.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2017/09/28/Java-%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Java 注解处理器 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2017/09/28/Java-%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 注解处理器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-09-28 22:43:35" itemprop="dateCreated datePublished" datetime="2017-09-28T22:43:35+08:00">2017-09-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AOP/" itemprop="url" rel="index"><span itemprop="name">AOP</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbey5h2rj30hs0bvq3o.jpg" alt="apt"></p>
+<p>前面，介绍了 Java5.0 引入的注解，现在来介绍注解处理机制。</p>
+<p><strong>注解处理机制 = 注解 + 注解处理器</strong></p>
+<p>注解处理器和注解一般共同组成 <code>Java Library</code> ，它对外提供了特定的功能。</p>
+<span id="more"></span>
+
+<br>
+
+<br>
+
+<h3 id="注解处理器"><a href="#注解处理器" class="headerlink" title="注解处理器"></a>注解处理器</h3><p>注解处理器 APT(Annotation Processing Tool)，在编译期间，JVM 可以加载注解处理器来处理对应的注解，处理方式一般是根据注解信息生成代码，避免我们重复一些无聊的代码。</p>
+<p>先来一张 Android 的 AOP (Aspect-Oriented Programming 面向切面编程) 的图来理解 APT 的作用。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbez2h3xj30f00bumxm.jpg" alt="aop"></p>
+<p>APT 的作用范围只是在源码时期处理注解。</p>
+<p>注解处理器在 Java 5 引入，但那时并没有标准化的 API 可用，需通过 APT（Annotation Processing Tool）结合 Mirror API（com.sun.mirror）来实现。</p>
+<p> Java 6 开始，注解处理器被规范化为 Pluggable Annotation Processing，定义在 JSR 269 标准中， 在标准库中提供了 API， APT 被集成到 Javac 工具中。</p>
+<br>
+
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>在这之前，需要做一些准备。</p>
+<p>一般注解处理器都是对外提供一些功能，而且注解处理器的 API 定义在 Java 的标准库中。</p>
+<p>所以会单独新建一个<code>Java Library</code> ，并且 <code>build.gradle</code> 文件添加如下依赖：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: <span class="string">&#x27;java&#x27;</span></span><br><span class="line">  </span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="function">compile <span class="title">project</span><span class="params">(<span class="string">&#x27;:lib&#x27;</span>)</span> <span class="comment">//依赖的注解</span></span></span><br><span class="line"><span class="function">    compile &#x27;com.google.auto.service:auto-service:1.0-rc2&#x27;<span class="comment">//用于生成 META-INF 配置</span></span></span><br><span class="line"><span class="function">    compile &#x27;com.squareup:javapoet:1.4.0&#x27;<span class="comment">// 用于自动生成代码</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//  解决build警告：编码GBK的不可映射字符</span></span></span><br><span class="line"><span class="function">tasks.<span class="title">withType</span><span class="params">(JavaCompile)</span> </span>&#123;</span><br><span class="line">    options.encoding = <span class="string">&quot;UTF-8&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>另外，我们的注解也会单独新建一个<code>Java Library</code> 来专门存放，这样注解与注解处理器在两个 Library ，相互隔离。</p>
+<br>
+
+<h3 id="AbstractorProcessor"><a href="#AbstractorProcessor" class="headerlink" title="AbstractorProcessor"></a>AbstractorProcessor</h3><p>注解处理器的 API 定义在 <code>javax.annotation.processing</code> 包中，其中 <code>Processor</code> 接口定义注解处理器，其子类 <code>AbstractorProcessor</code> 是一个抽象类，它额外添加了便捷方法，我们一般使用这个子类进行注解处理。</p>
+<p>首先，新建一个自定义注解处理器 <code>MyProcessor</code>，然后继承 <code>AbstractorProcessor</code> ，它有四个重要的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProcessor</span> <span class="keyword">extends</span> <span class="title">AbstractProcessor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span>	<span class="comment">//init对一些工具进行初始化。</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ProcessingEnvironment env)</span></span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span>	<span class="comment">//真正处理注解，生成java代码的地方。</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">process</span><span class="params">(Set&lt;? extends TypeElement&gt; annoations, RoundEnvironment env)</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span>	<span class="comment">//表示该注解处理器可以处理哪些注解</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Set&lt;String&gt; <span class="title">getSupportedAnnotationTypes</span><span class="params">()</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span>	<span class="comment">//表示可以处理的 java 版本</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SourceVersion <span class="title">getSupportedSourceVersion</span><span class="params">()</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面有注释，每个方法都有其对应的功能。</p>
+<p>但现在，我们一般不这么写，现在许多方法可以直接使用注解替代：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AutoService(Processor.class)</span>	<span class="comment">//自动生成 Processor 文件的 META-INF 配置信息。</span></span><br><span class="line"><span class="meta">@SupportedSourceVersion(SourceVersion.RELEASE_8)</span>	<span class="comment">//java版本支持</span></span><br><span class="line"><span class="meta">@SupportedAnnotationTypes(&#123;	//标注注解处理器支持的注解类型</span></span><br><span class="line"><span class="meta">        &quot;com.deemons.modulerouter.RouterService&quot;,</span></span><br><span class="line"><span class="meta">        &quot;com.deemons.modulerouter.RouterLogic&quot;,</span></span><br><span class="line"><span class="meta">        &quot;com.deemons.modulerouter.RouterAction&quot;</span></span><br><span class="line"><span class="meta">&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotationProcessor</span> <span class="keyword">extends</span> <span class="title">AbstractProcessor</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> Filer mFiler; <span class="comment">//文件相关的辅助类</span></span><br><span class="line">    <span class="keyword">public</span> Elements mElements; <span class="comment">//元素相关的辅助类</span></span><br><span class="line">    <span class="keyword">public</span> Messager mMessager; <span class="comment">//日志相关的辅助类</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">process</span><span class="params">(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv)</span> </span>&#123;</span><br><span class="line">        mFiler = processingEnv.getFiler();</span><br><span class="line">        mElements = processingEnv.getElementUtils();</span><br><span class="line">        mMessager = processingEnv.getMessager();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，这里用了许多注解来简化方法，我们先来解释几个注解：</p>
+<ul>
+<li><p><code>@AutoService</code> 是 Google 出的一个库，它主要用于注解 <code>Processor</code>，对其生成 <code>META-INF</code> 配置信息。</p>
+<p>它的引入方式为 <code>compile &#39;com.google.auto.service:auto-service:1.0-rc2&#39;</code></p>
+</li>
+<li><p><code>@SupportedSourceVersion</code> 声明可以处理的Java版本，和<code>getSupportedSourceVersion()</code> 方法的作用相同。</p>
+</li>
+<li><p><code>@SupportedAnnotationTypes</code> 声明此注解处理器支持的注解，格式必须是 「包名+注解名」。</p>
+</li>
+</ul>
+<br>
+
+<p>此外，还有几个重要的类需要解释：</p>
+<ul>
+<li>processingEnv 其实就是 <code>AbstractProcessor</code> 的成员变量<code>ProcessingEnvironment</code> ，它提供了很多工具类。</li>
+</ul>
+<ul>
+<li>Filer 文件相关的辅助类，它可以创建文件。</li>
+<li>Messager 日志相关的辅助类，用于打印注解处理器中的日志到控制台。</li>
+<li>Elements 元素相关的辅助类。这个类非常重要，下面会重点介绍。</li>
+</ul>
+<br>
+
+<h4 id="Elements"><a href="#Elements" class="headerlink" title="Elements"></a>Elements</h4><p>Elements 元素，源代码中的每一部分都是一个特定的元素类型，分别代表了包、类、方法等等。</p>
+<p>Elementd 的每一个子类都代表一种特定类型：</p>
+<ul>
+<li>PackageElement    表示一个包程序元素。提供对有关包极其成员的信息访问</li>
+<li>ExecutableElement    表示某个类或接口的方法、构造方法或初始化程序（静态或实例），包括注释类型元素。</li>
+<li>TypeElement    表示一个类或接口程序元素。提供对有关类型极其成员的信息访问。</li>
+<li>TypeParameterElement    表示一般类、接口、方法或构造方法元素的类型参数。</li>
+<li>VariableElement    表示一个字段、enum常量、方法或构造方法参数、局部变量或异常参数。</li>
+</ul>
+<p>下面来列举一个普通的类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example;<span class="comment">//包 PackageElement    </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> </span>&#123; <span class="comment">// 类 TypeElement</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> a; <span class="comment">// 字段 VariableElement</span></span><br><span class="line">	<span class="keyword">private</span> Foo other; <span class="comment">//字段 VariableElement</span></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Foo</span><span class="params">()</span> </span>&#123;&#125; <span class="comment">//方法 ExecuteableElement</span></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setA</span><span class="params">( //方法 ExecuteableElement</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="keyword">int</span> newA //参数 TypeParameterElement</span></span></span><br><span class="line"><span class="params"><span class="function">	)</span> </span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这些 <code>Element</code> 元素，相当于 XML 中的 DOM 树，可以通过一个元素去访问它的父元素或者子元素。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">element.getEnclosingElement();<span class="comment">// 获取父元素</span></span><br><span class="line">element.getEnclosedElements();<span class="comment">// 获取子元素</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<br>
+
+<h4 id="Message"><a href="#Message" class="headerlink" title="Message"></a>Message</h4><p>Messager 是日志输出工具。</p>
+<p>虽然是编译时执行 Processor，但也是可以输入日志信息用于调试的。</p>
+<p>Processor 日志输出的位置在编译器下方的 Gradle Console 窗口中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">process</span><span class="params">(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment env)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//取得Messager对象</span></span><br><span class="line">    Messager messager = processingEnv.getMessager();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//输出日志</span></span><br><span class="line">        System.out.println(<span class="string">&quot;=============&quot;</span>);</span><br><span class="line">        messager.printMessage(Diagnostic.Kind.OTHER,<span class="string">&quot;Diagnostic.Kind.OTHER&quot;</span>);</span><br><span class="line">        messager.printMessage(Diagnostic.Kind.NOTE,<span class="string">&quot;Diagnostic.Kind.NOTE&quot;</span>);</span><br><span class="line">  		messager.printMessage(Diagnostic.Kind.MANDATORY_WARNING,</span><br><span class="line">                        				<span class="string">&quot;Diagnostic.Kind.MANDATORY_WARNING&quot;</span>);</span><br><span class="line">        messager.printMessage(Diagnostic.Kind.WARNING,<span class="string">&quot;Diagnostic.Kind.WARNING&quot;</span>);</span><br><span class="line">        messager.printMessage(Diagnostic.Kind.ERROR,<span class="string">&quot;Diagnostic.Kind.ERROR&quot;</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Messager也有日志级别的选择。</p>
+<ul>
+<li>Diagnostic.Kind.OTHER</li>
+<li>Diagnostic.Kind.NOTE</li>
+<li>Diagnostic.Kind.MANDATORY_WARNING</li>
+<li>Diagnostic.Kind.WARNING   </li>
+<li>Diagnostic.Kind.ERROR注解处理器出错，打印此日志后，编译会失败。</li>
+</ul>
+<p>打印的结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">注: Diagnostic.Kind.OTHER</span><br><span class="line">注: Diagnostic.Kind.NOTE</span><br><span class="line">警告: Diagnostic.Kind.MANDATORY_WARNING</span><br><span class="line">警告: Diagnostic.Kind.WARNING</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="process"><a href="#process" class="headerlink" title="process()"></a>process()</h3><p><code>process(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv)</code> 是注解处理器的核心方法，必须实现。</p>
+<p>APT 会扫描源码中所有的相关注解，然后会回调<code>process()</code> 这个方法，如果没有扫描到声明的相关注解，则不会回调此方法。</p>
+<p>它的实现一般可以分为两个步骤，首先收集信息，然后根据收集的信息生成代码。</p>
+<ul>
+<li>收集信息主要依靠 <code>RoundEnvironment</code>  来获取想要的 Elements  。</li>
+<li>生成代码则需要用到一个库 <a target="_blank" rel="noopener" href="https://github.com/square/javapoet">Javapoet</a> 。</li>
+</ul>
+<br>
+
+<p>先介绍这个方法发两个参数<code>Set&lt;? extends TypeElement&gt;</code> 和 <code>RoundEnvironment</code>。</p>
+<br>
+
+<h4 id="Set-lt-extends-TypeElement-gt"><a href="#Set-lt-extends-TypeElement-gt" class="headerlink" title="Set&lt;? extends TypeElement&gt;"></a>Set&lt;? extends TypeElement&gt;</h4><p>将返回所有的由该Processor处理，并待处理的 Annotations。</p>
+<p>属于该Processor处理的注解，但并未被使用，不存在与这个集合里。</p>
+<br>
+
+<h4 id="RoundEnvironment"><a href="#RoundEnvironment" class="headerlink" title="RoundEnvironment"></a>RoundEnvironment</h4><p>表示当前或是之前的运行环境，可以通过该对象查找到需要的注解。</p>
+<p>常使用的方式是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Element element : roundEnv.getElementsAnnotatedWith(RouterService.class)) &#123;</span><br><span class="line">     <span class="comment">//取出所有被@RouterService 标记的元素，然后遍历 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> Element 中并没有子类特定的扩展方法，这时候往往需要强制类型转换。</p>
+<p>如果能确定取出的元素类型，一般可以这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;? extends Element&gt; annotatedWith = roundEnv.getElementsAnnotatedWith(RouterService.class);</span><br><span class="line"><span class="keyword">for</span> (TypeElement typeElement : ElementFilter.typesIn(annotatedWith)) &#123;</span><br><span class="line">     help.serviceElement = typeElement;</span><br><span class="line">     help.processName = typeElement.getAnnotation(RouterService.class).value();<span class="comment">//获取注解的值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>ElementFilter</code> 是一个工具类，它能过滤出特定类型的元素。</p>
+<p>这种方式比强制类型转换优雅许多，推荐使用这种工具类。</p>
+<br>
+
+<br>
+
+<h3 id="Javapoet"><a href="#Javapoet" class="headerlink" title="Javapoet"></a>Javapoet</h3><p><a target="_blank" rel="noopener" href="https://github.com/square/javapoet">Javapoet</a> 是 square 公司开源的库，他能优雅的生成代码，让你从重复无聊的代码中解放出来。</p>
+<p>如果英文好，可以直接看 <a target="_blank" rel="noopener" href="https://github.com/square/javapoet">Github</a>  上的文档。依赖方式：</p>
+<p><code>compile &#39;com.squareup:javapoet:1.4.0&#39;</code></p>
+<br>
+
+<h4 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h4><p>javapoet 里面常用的几个类：</p>
+<ul>
+<li><code>MethodSpec</code> 代表一个构造函数或方法声明。</li>
+<li><code>TypeSpec</code> 代表一个类，接口，或者枚举声明。</li>
+<li><code>FieldSpec</code> 代表一个成员变量，一个字段声明。</li>
+<li><code>JavaFile</code>包含一个顶级类的 Java 文件。</li>
+</ul>
+<p>如果我们想生成下面的类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.helloworld;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Hello, JavaPoet!&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么，我们使用 Javapoet 如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">MethodSpec main = MethodSpec.methodBuilder(<span class="string">&quot;main&quot;</span>)<span class="comment">//构造名为 main 方法</span></span><br><span class="line">    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)<span class="comment">//添加关键字public、final、static等，可添加多个</span></span><br><span class="line">    .returns(<span class="keyword">void</span>.class)<span class="comment">//设置方法发返回的类型</span></span><br><span class="line">    .addParameter(String[].class, <span class="string">&quot;args&quot;</span>)<span class="comment">//设置方法的参数</span></span><br><span class="line">    .addStatement(<span class="string">&quot;$T.out.println($S)&quot;</span>, System.class, <span class="string">&quot;Hello, JavaPoet!&quot;</span>)<span class="comment">//在方法里添加语句。</span></span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line">TypeSpec helloWorld = TypeSpec.classBuilder(<span class="string">&quot;HelloWorld&quot;</span>)<span class="comment">//构造名为 HelloWorld 的类 </span></span><br><span class="line">    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)<span class="comment">//添加关键字</span></span><br><span class="line">    .addMethod(main)<span class="comment">//添加方法</span></span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line">JavaFile javaFile = JavaFile.builder(<span class="string">&quot;com.example.helloworld&quot;</span>, helloWorld)<span class="comment">//在指定位置构建文件</span></span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line">javaFile.writeTo(processingEnv.getFiler());<span class="comment">//写入文件里</span></span><br></pre></td></tr></table></figure>
+
+<p>上面就是一些基础方法是使用，比如设置关键字<code>addModifiers</code>、设置返回类型<code>returns</code>、添加方法参数<code>addParameter</code>、添加语句<code>addStatement</code>等，以上都有注释。</p>
+<br>
+
+<h4 id="复杂参数"><a href="#复杂参数" class="headerlink" title="复杂参数"></a>复杂参数</h4><p>有时候，我们的方法有复杂的参数，那如何定义呢？比如集合</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">MethodSpec method = MethodSpec.methodBuilder(<span class="string">&quot;testList&quot;</span>)</span><br><span class="line">              .addModifiers(Modifier.PUBLIC)</span><br><span class="line">              .returns(TypeName.VOID)</span><br><span class="line">              .addParameter(ParameterizedTypeName.get(</span><br><span class="line">                      ClassName.get(ArrayList.class),</span><br><span class="line">                      ClassName.get(packageName, <span class="string">&quot;TestBean&quot;</span>))</span><br><span class="line">                      , <span class="string">&quot;beanList&quot;</span>)</span><br><span class="line">  			.build();</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testList</span><span class="params">(ArrayList&lt;TestBean&gt; beanList)</span></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上只是简单的 <code>ArrayList</code> ，如果是更加复杂的 <code>HashMap</code> 呢？而且如果里面继续嵌套<code>ArrayList</code> 呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MethodSpec method = MethodSpec.methodBuilder(<span class="string">&quot;testHashMap&quot;</span>)</span><br><span class="line">              .addModifiers(Modifier.PUBLIC)</span><br><span class="line">              .returns(TypeName.VOID)</span><br><span class="line">              .addParameter(ParameterizedTypeName.get(</span><br><span class="line">                      ClassName.get(HashMap.class),</span><br><span class="line">                		ClassName.get(String.class),</span><br><span class="line">                		ParameterizedTypeName.get(</span><br><span class="line">                      	ClassName.get(ArrayList.class),</span><br><span class="line">                      	ClassName.get(packageName,<span class="string">&quot;TestBean&quot;</span>))</span><br><span class="line">              		), <span class="string">&quot;hashMap&quot;</span>)</span><br><span class="line">  			.build();</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testHashMap</span><span class="params">(HashMap&lt;String, ArrayList&lt;TestBean&gt; hashMap)</span></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，<code>ParameterizedTypeName</code> 可以无限循环嵌套，任何复杂的参数，都可以使用<code>ParameterizedTypeName</code> 自定义出来。</p>
+<br>
+
+<h4 id="复杂变量"><a href="#复杂变量" class="headerlink" title="复杂变量"></a>复杂变量</h4><p>我们首先定义一个简单的成员变量</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">TypeSpec helloWorld = TypeSpec.classBuilder(<span class="string">&quot;test&quot;</span>)</span><br><span class="line">    .addModifiers(Modifier.PUBLIC)</span><br><span class="line">    .addField(String.class, <span class="string">&quot;name&quot;</span>, Modifier.PRIVATE, Modifier.FINAL) <span class="comment">//添加成员变量</span></span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> class <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是简单的添加变量，如果还需要对变量进行赋值呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FieldSpec fielSpec = FieldSpec.builder(String.class, <span class="string">&quot;version&quot;</span>)</span><br><span class="line">    .addModifiers(Modifier.PRIVATE, Modifier.FINAL)</span><br><span class="line">    .initializer(<span class="string">&quot;$S + $L&quot;</span>, <span class="string">&quot;Lollipop v.&quot;</span>, <span class="number">5.0d</span>) <span class="comment">//$S $L 都是占位符</span></span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line">TypeSpec helloWorld = TypeSpec.classBuilder(<span class="string">&quot;test&quot;</span>)</span><br><span class="line">    .addModifiers(Modifier.PUBLIC)</span><br><span class="line">    .addField(fielSpec) <span class="comment">//添加成员变量</span></span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> class <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name = <span class="string">&quot;Lollipop v.&quot;</span> + <span class="number">5.0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="控制流"><a href="#控制流" class="headerlink" title="控制流"></a>控制流</h4><p>如果遇到判定、循环、选择等，可以使用<code>beginControlFlow</code> 和<code>endControlFlow</code>，就像这样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MethodSpec main = MethodSpec.methodBuilder(<span class="string">&quot;main&quot;</span>)</span><br><span class="line">    .addStatement(<span class="string">&quot;int total = 0&quot;</span>)	<span class="comment">//添加语句</span></span><br><span class="line">    .beginControlFlow(<span class="string">&quot;for (int i = 0; i &lt; 10; i++)&quot;</span>)	<span class="comment">//开始控制流，即此语句后添加大括号 &#123;</span></span><br><span class="line">    .addStatement(<span class="string">&quot;total += i&quot;</span>)	<span class="comment">//在控制流里面添加语句</span></span><br><span class="line">    .endControlFlow()	<span class="comment">//结束流，即 &#125;</span></span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> total = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    total += i;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h4><p>构造方法使用 <code>MethodSpec.constructorBuilder()</code>  ：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MethodSpec flux = MethodSpec.constructorBuilder()	<span class="comment">//创建构造方法</span></span><br><span class="line">    .addModifiers(Modifier.PUBLIC)	<span class="comment">//添加关键字</span></span><br><span class="line">    .addParameter(String.class, <span class="string">&quot;greeting&quot;</span>)	<span class="comment">//添加方法参数</span></span><br><span class="line">    .addStatement(<span class="string">&quot;this.$N = $N&quot;</span>, <span class="string">&quot;greeting&quot;</span>, <span class="string">&quot;greeting&quot;</span>)	<span class="comment">//添加语句</span></span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line">TypeSpec helloWorld = TypeSpec.classBuilder(<span class="string">&quot;HelloWorld&quot;</span>)</span><br><span class="line">    .addModifiers(Modifier.PUBLIC)</span><br><span class="line">    .addField(String.class, <span class="string">&quot;greeting&quot;</span>, Modifier.PRIVATE, Modifier.FINAL) <span class="comment">//添加成员变量</span></span><br><span class="line">    .addMethod(flux)</span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> String greeting;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">HelloWorld</span><span class="params">(String greeting)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.greeting = greeting;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="占位符"><a href="#占位符" class="headerlink" title="占位符"></a>占位符</h4><p>我们经常会用到占位符，这里有四种占位符：</p>
+<ul>
+<li><code>$S</code> for Strings 用于字符串等。</li>
+<li><code>$T</code> for Types 用于类。例如使用字节码<code>Class</code>来填写类 <code>new $T()</code> </li>
+<li><code>$N</code> for Names 用于自己生成的方法名或者变量名等等</li>
+<li><code>$L</code> for Literals 用于字面值，例如使用类元素<code>TypeElement</code>来填写 <code>$L.class</code> </li>
+</ul>
+<p>这些占位符需要多运用才能理解，特别是<code>$L</code> 字面量，有点难理解，却又用途广泛。</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><p>还有一些其他比较常用的方法：</p>
+<ul>
+<li><code>MethodSpec.addAnnotation(Override.class);</code> 方法上面添加注解</li>
+<li><code>TypeSpec.enumBuilder(&quot;XXX&quot;)</code> 生成一个XXX的枚举</li>
+<li><code>TypeSpec.interfaceBuilder(&quot;HelloWorld&quot;)</code> 生成一个 HelloWorld 接口</li>
+<li><code>TypeSpec.addSuperinterface()</code> 继承一个类，或者实现抽象方法、接口。</li>
+</ul>
+<br>
+
+<p>至此，使用 Javapoet 来生成代码也就无压力了。</p>
+<br>
+
+<h3 id="处理过程"><a href="#处理过程" class="headerlink" title="处理过程"></a>处理过程</h3><p>这里说一下注解处理器的一个流程。</p>
+<p>APT可以扫描源码中的所有注解，并将相关的注解回调到注解处理器中的<code>process()</code> 方法中，我们依据这些注解来提取信息，并生成代码，然后添加到源码中。</p>
+<p>但如果生成的代码中也有注解，那么仅扫描一次源码肯定是有问题的。为了能避免这一问题，APT 至少会扫描两次源码。如果第二次扫描后继续生成有注解的代码，那么类似递归一样会再次扫描，直到不再出现新注解。所以，这个流程可以无限递归。</p>
+<p>因此，在生成的代码中如果需要添加注解，一定要慎重，避免出现死循环。</p>
+<br>
+
+<br>
+
+<h3 id="annotationProcessor"><a href="#annotationProcessor" class="headerlink" title="annotationProcessor"></a>annotationProcessor</h3><p>注解处理器写出来后，需要IDE 来加载这些注解处理器。</p>
+<p>刚开始，Android studio 中加载注解处理器的方式是使用第三方插件 <code>android-apt</code> ，但随着 Android Gradle 插件 2.2 版本发布之后， <code>android-apt</code> 作者在官网发表声明称，后续将不会继续维护 <code>android-apt</code>，并推荐大家使用 Android 官方插件提供的相同能力。Android Gradle 插件提供了名为 <code>annotationProcessor</code> 的功能来完全代替 <code>android-apt</code>。</p>
+<br>
+
+<p>现在看看 <code>annotationProcessor</code> 的使用方式：</p>
+<p>首先，确保 Android 工程的 Gradle 插件版在 2.2 及以上，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">&#x27;com.android.tools.build:gradle:2.2.1&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其次，使用<code>annotationProcessor</code> 声明注解依赖，以依赖 Dagger 2 为例： </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    compile <span class="string">&#x27;com.google.dagger:dagger:2.0&#x27;</span></span><br><span class="line">    annotationProcessor <span class="string">&#x27;com.google.dagger:dagger-compiler:2.0&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，现在使用<code>annotationProcessor</code>  相较于以前使用<code>android-apt</code> 方便了很多。</p>
+<br>
+
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/u010278882/article/details/50766809">注解和注解处理器</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/u010405231/article/details/52210401">Android编译时注解框架5-语法讲解</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/square/javapoet">JavaPoet 文档</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/95f12f72f69a">javapoet——让你从重复无聊的代码中解放出来</a></li>
+<li><a target="_blank" rel="noopener" href="http://android.walfud.com/javapoet-%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86/">JavaPoet 看这一篇就够了</a></li>
+</ul>
+<br>
+
+<br>
+
+<br>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/APT/" rel="tag"># APT</a>
+              <a href="/tags/Annotation-Processing-Tool/" rel="tag"># Annotation Processing Tool</a>
+              <a href="/tags/Javapoet/" rel="tag"># Javapoet</a>
+              <a href="/tags/AbstractorProcessor/" rel="tag"># AbstractorProcessor</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/09/21/OOP%E4%B8%8EAOP/" rel="prev" title="OOP 与 AOP">
+      <i class="fa fa-chevron-left"></i> OOP 与 AOP
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/10/10/AspectJ/" rel="next" title="AspectJ">
+      AspectJ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">注解处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87"><span class="nav-number">2.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AbstractorProcessor"><span class="nav-number">3.</span> <span class="nav-text">AbstractorProcessor</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Elements"><span class="nav-number">3.1.</span> <span class="nav-text">Elements</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Message"><span class="nav-number">3.2.</span> <span class="nav-text">Message</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#process"><span class="nav-number">4.</span> <span class="nav-text">process()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Set-lt-extends-TypeElement-gt"><span class="nav-number">4.1.</span> <span class="nav-text">Set&lt;? extends TypeElement&gt;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RoundEnvironment"><span class="nav-number">4.2.</span> <span class="nav-text">RoundEnvironment</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Javapoet"><span class="nav-number">5.</span> <span class="nav-text">Javapoet</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80"><span class="nav-number">5.1.</span> <span class="nav-text">基础</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%8F%82%E6%95%B0"><span class="nav-number">5.2.</span> <span class="nav-text">复杂参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%8F%98%E9%87%8F"><span class="nav-number">5.3.</span> <span class="nav-text">复杂变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-number">5.4.</span> <span class="nav-text">控制流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="nav-number">5.5.</span> <span class="nav-text">构造方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-number">5.6.</span> <span class="nav-text">占位符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">5.7.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B"><span class="nav-number">6.</span> <span class="nav-text">处理过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#annotationProcessor"><span class="nav-number">7.</span> <span class="nav-text">annotationProcessor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

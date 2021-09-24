@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="公司启用钉钉打卡了，刚开始还挺不适应，总是忘记打卡。 所以就想着，这打卡能不能实现自动化，每天都要记住打卡这个动作，一点儿也不猿。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Accessibility">
+<meta property="og:url" content="https://deemonser.github.io/2018/07/13/Android-Accessibility/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="公司启用钉钉打卡了，刚开始还挺不适应，总是忘记打卡。 所以就想着，这打卡能不能实现自动化，每天都要记住打卡这个动作，一点儿也不猿。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbfcikij30go0b3t9n.jpg">
+<meta property="article:published_time" content="2018-07-12T16:25:19.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="Accessibility">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbfcikij30go0b3t9n.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2018/07/13/Android-Accessibility/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android Accessibility | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2018/07/13/Android-Accessibility/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android Accessibility
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-07-13 00:25:19" itemprop="dateCreated datePublished" datetime="2018-07-13T00:25:19+08:00">2018-07-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">Android知识整理</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbbfcikij30go0b3t9n.jpg" alt="fulvio-ambrosanio-733582-unsplash_meitu_1"></p>
+<p>公司启用钉钉打卡了，刚开始还挺不适应，总是忘记打卡。</p>
+<p>所以就想着，这打卡能不能实现自动化，每天都要记住打卡这个动作，一点儿也不猿。</p>
+<span id="more"></span>
+<p>首先，分析一下，钉钉打卡，必须要在公司附近的范围内，其次，只能是拥有 GPS 定位的钉钉 APP 才行，所以，公司 WiFi 的连接断开，刚好可以作为上下班打卡的时机。</p>
+<p>钉钉的打卡页面肯定不会允许第三方应用打开，因此要实现自动打卡功能，肯定需要模拟用户发出点击事件。</p>
+<p>能模拟点击事件的，首先想到了<strong>Android 辅助功能</strong> 。</p>
+<br>
+### AccessibilityService
+
+<p>辅助功能（AccessibilityService）是 Android 系统提供给的一种服务，本身是继承 Service 类的。这个服务提供了增强的用户界面，旨在帮助残障人士或者可能暂时无法与设备充分交互的人们。</p>
+<p>当然，现在 AccessibilityService 已经基本偏离了它设计的初衷。</p>
+<p>借助 AccessibilityService ，可以实现对页面的监听及模拟点击控制等。</p>
+<br>
+
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>使用 AccessibilityService 实际上只需要以下三步即可：</p>
+<h4 id="1-继承-AccessibilityService"><a href="#1-继承-AccessibilityService" class="headerlink" title="1.继承 AccessibilityService"></a>1.继承 AccessibilityService</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AutoPunchCardService</span> : <span class="type">AccessibilityService</span></span>()&#123;</span><br><span class="line">	<span class="comment">//可选。系统会在成功连接上你的服务的时候调用这个方法，在这个方法里你可以做一下初始化工作，</span></span><br><span class="line">    <span class="comment">//例如设备的声音震动管理，也可以调用setServiceInfo()进行配置工作</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onServiceConnected</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onServiceConnected()</span><br><span class="line">        LogUtils.d(<span class="string">&quot;onServiceConnected&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//必须。这个在系统想要中断AccessibilityService返给的响应时会调用。在整个生命周期里会被调用多次。</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onInterrupt</span><span class="params">()</span></span> &#123;</span><br><span class="line">        LogUtils.d(<span class="string">&quot;onInterrupt&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//通过这个函数可以接收系统发送来的AccessibilityEvent，</span></span><br><span class="line">    <span class="comment">//接收来的AccessibilityEvent是经过过滤的，过滤是在配置工作时设置的。</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onAccessibilityEvent</span><span class="params">(event: <span class="type">AccessibilityEvent</span>)</span></span> &#123;</span><br><span class="line">        LogUtils.d(<span class="string">&quot;事件--&gt; <span class="variable">$event</span>.eventType ,app包名--&gt; <span class="variable">$event</span>.packageName&quot;</span>)</span><br><span class="line">        <span class="keyword">when</span> (event.eventType) &#123;</span><br><span class="line">            AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED  <span class="comment">//收到通知栏消息</span></span><br><span class="line">            -&gt; LogUtils.d(<span class="string">&quot;=== 收到通知栏消息&quot;</span>)</span><br><span class="line">            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED    <span class="comment">//界面状态改变</span></span><br><span class="line">            -&gt; LogUtils.d(<span class="string">&quot;=== 界面状态改变，&quot;</span> + event.toString())</span><br><span class="line">            AccessibilityEvent.TYPE_VIEW_CLICKED   <span class="comment">//点击事件</span></span><br><span class="line">            -&gt;  LogUtils.d(<span class="string">&quot;=== 点击事件&quot;</span> + event.toString())</span><br><span class="line">            AccessibilityEvent.CONTENT_CHANGE_TYPE_TEXT <span class="comment">//文本改变</span></span><br><span class="line">            -&gt; LogUtils.d(<span class="string">&quot;=== 文本改变&quot;</span>)</span><br><span class="line">        &#125;<span class="comment">//省略其他的一堆可以监听的事件</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//可选。在系统将要关闭这个AccessibilityService会被调用。在这个方法中进行一些释放资源的工作</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onUnbind</span><span class="params">(intent: <span class="type">Intent</span>?)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">        LogUtils.d(<span class="string">&quot;onUnbind&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onUnbind(intent)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="2-新建配置文件"><a href="#2-新建配置文件" class="headerlink" title="2.新建配置文件"></a>2.新建配置文件</h4><p>在资源目录 res 下新建 xml 文件夹，新建 accessibility_service_config.xml文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">accessibility-service</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:description</span>=<span class="string">&quot;@string/accessibility_service_description&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:packageNames</span>=<span class="string">&quot;com.alibaba.android.rimet&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:accessibilityEventTypes</span>=<span class="string">&quot;typeAllMask&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:accessibilityFlags</span>=<span class="string">&quot;flagDefault&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:accessibilityFeedbackType</span>=<span class="string">&quot;feedbackSpoken&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:notificationTimeout</span>=<span class="string">&quot;100&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:canRetrieveWindowContent</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag"> <span class="attr">android:settingsActivity</span>=<span class="string">&quot;com.example.android.accessibility.ServiceSettingsActivity&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>其中 description 是描述；</p>
+<p>packageNames 是要监控的 APP 包名；</p>
+<p>accessibilityEventTypes 指监控的的事件，typeAllMask  /  AccessibilityEvent.TYPES_ALL_MASK：全局事件响应</p>
+<br>
+
+<h4 id="3-AndroidMainifest-中注册"><a href="#3-AndroidMainifest-中注册" class="headerlink" title="3.AndroidMainifest 中注册"></a>3.AndroidMainifest 中注册</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">service</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">&quot;.AutoPunchCardService&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:description</span>=<span class="string">&quot;@string/accessibility_service_description&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:label</span>=<span class="string">&quot;@string/accessibility_service_label&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:permission</span>=<span class="string">&quot;android.permission.BIND_ACCESSIBILITY_SERVICE&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.accessibilityservice.AccessibilityService&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:name</span>=<span class="string">&quot;android.accessibilityservice&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:resource</span>=<span class="string">&quot;@xml/accessibility_service_config&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这样基本上就算配置完成了，不过，想要运行起来，还得用户手动开启辅助设置。</p>
+<br>
+
+<h3 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h3><h4 id="1-服务是否开启"><a href="#1-服务是否开启" class="headerlink" title="1.服务是否开启"></a>1.服务是否开启</h4><p>AccessibilityService 的服务想要运行，就得让用户手动开启它，那如何判断开启呢？</p>
+<p>这需要通过下面的方法：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">isAccessibilitySettingsOn</span><span class="params">(context: <span class="type">Context</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">    <span class="keyword">val</span> service = context.packageName + File.separator + AutoPunchCardService::<span class="keyword">class</span>.java.canonicalName</span><br><span class="line">    <span class="keyword">val</span> accessibilityEnabled = Settings.Secure.getInt(context.contentResolver,</span><br><span class="line">        Settings.Secure.ACCESSIBILITY_ENABLED)</span><br><span class="line">    <span class="keyword">val</span> splitter = TextUtils.SimpleStringSplitter(<span class="string">&#x27;:&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> (accessibilityEnabled != <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    <span class="keyword">val</span> value = Settings.Secure.getString(context.contentResolver,</span><br><span class="line">        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    splitter.setString(value)</span><br><span class="line">    <span class="keyword">return</span> splitter.contains(service)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-跳转到无障碍设置界面"><a href="#2-跳转到无障碍设置界面" class="headerlink" title="2.跳转到无障碍设置界面"></a>2.跳转到无障碍设置界面</h4><p>如果通过判断，发现用户没有开启，就得让用户去打开它， <strong>无障碍设置界面</strong> 的设置一般非常深，用户难以到达，这时就得直接打开 <strong>无障碍设置界面</strong> 的设置页面了。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="模拟点击事件"><a href="#模拟点击事件" class="headerlink" title="模拟点击事件"></a>模拟点击事件</h3><p>经过上面的步骤，此时可以正常使用 AccessibilityService，现在来模拟点击事件。</p>
+<p>首先，需要寻找界面元素信息，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AccessibilityNodeInfo rootNode = getRootInActiveWindow() </span><br></pre></td></tr></table></figure>
+
+<p>此方法可以获取当前 Activity 的根节点窗口信息，再通过下面两种方式获取具体的节点信息。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通过文字，获取控件信息</span></span><br><span class="line">List&lt;AccessibilityNodeInfo&gt; list = rootNode.findAccessibilityNodeInfosByText(<span class="string">&quot;工作&quot;</span>);</span><br><span class="line"><span class="comment">//通过 id ，获取控件信息，注意 ID 的格式</span></span><br><span class="line">List&lt;AccessibilityNodeInfo&gt; list = rootNode.findAccessibilityNodeInfosByViewId(<span class="string">&quot;com.alibaba.android.rimet:id/home_bottom_tab_button_work&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>文本内容很容易获取，看界面就知道，但有时候文本控件不可点击，需要点击父控件，因此文本点击一般这么写：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">click</span><span class="params">(viewText: <span class="type">String</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">    <span class="keyword">val</span> nodeInfo = rootInActiveWindow</span><br><span class="line">    <span class="keyword">try</span> &#123;<span class="comment">//点击前滞留1s</span></span><br><span class="line">        Thread.sleep(<span class="number">1000</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: InterruptedException) &#123;</span><br><span class="line">        e.printStackTrace()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (nodeInfo == <span class="literal">null</span>) &#123;</span><br><span class="line">        LogUtils.d(<span class="string">&quot;点击失败，rootWindow为空&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">val</span> list = nodeInfo.findAccessibilityNodeInfosByText(viewText)</span><br><span class="line">    <span class="keyword">if</span> (list.isEmpty()) &#123;<span class="comment">//没有该文字的控件</span></span><br><span class="line">        LogUtils.d(<span class="string">&quot;点击失败，&quot;</span> + viewText + <span class="string">&quot;控件列表为空&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (info <span class="keyword">in</span> list) &#123;</span><br><span class="line">            <span class="keyword">if</span> (viewText == info?.text?.toString()) &#123;</span><br><span class="line">                <span class="keyword">return</span> onclick(info)  <span class="comment">//遍历点击</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">onclick</span><span class="params">(view: <span class="type">AccessibilityNodeInfo</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (view == <span class="literal">null</span>) &#123;</span><br><span class="line">        LogUtils.d(<span class="string">&quot;node 为空无法点击&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (view.isClickable) &#123;</span><br><span class="line">        view.performAction(AccessibilityNodeInfo.ACTION_CLICK)</span><br><span class="line">        LogUtils.d(<span class="string">&quot;view name&quot;</span> + view.className + <span class="string">&quot;+点击成功&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (view.parent == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> onclick(view.parent)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>ViewId 一般需要用到工具 <strong>Android Device Monitor</strong> 来查看，目前，这个工具在 AS 3.1中打不开了，</p>
+<p>需要到  <code>Android SDK/tools/monitor</code> 运行，通过 <strong>Hierarchy View</strong> 查看 ID 后，需要注意 ID 是书写格式，前面有包名。<br>最后，模拟点击事件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK)</span><br></pre></td></tr></table></figure>
+<p>还可以模拟 Home，Back 键</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//后退键</span></span><br><span class="line">performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);</span><br><span class="line"><span class="comment">//Home键</span></span><br><span class="line">performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);</span><br><span class="line"><span class="comment">//模拟左滑</span></span><br><span class="line">performGlobalAction(AccessibilityService.GESTURE_SWIPE_LEFT);</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>AccessibilityService 确实强大，网上一些微信抢红包，答题负责工具，都是借此完成。</p>
+<p>但它不是万能的，钉钉上的打卡页面是 WebView ，因此无法完成节点寻找，更不可能模拟点击事件。</p>
+<p>因此，想通过模拟点击来完成打卡， AccessibilityService 无法胜任，最后，还是得 Root 。</p>
+<p>通过 Root 后执行 shell 命令来完成模拟点击事件。</p>
+<br>
+
+<h3 id="设置页面的常量表"><a href="#设置页面的常量表" class="headerlink" title="设置页面的常量表"></a>设置页面的常量表</h3><p>为了方便，这里列出设置界面所有的 Action 常量</p>
+<table>
+<thead>
+<tr>
+<th align="left">常量字段</th>
+<th align="left">示意</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ACTION_SETTINGS</td>
+<td align="left">系统设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_APN_SETTINGS</td>
+<td align="left">APN设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_LOCATION_SOURCE_SETTINGS</td>
+<td align="left">定位设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_AIRPLANE_MODE_SETTINGS</td>
+<td align="left">更多连接方式设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_DATA_ROAMING_SETTINGS</td>
+<td align="left">双卡和移动网络设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_ACCESSIBILITY_SETTINGS</td>
+<td align="left">无障碍设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_SYNC_SETTINGS</td>
+<td align="left">同步设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_ADD_ACCOUNT</td>
+<td align="left">添加账户界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_NETWORK_OPERATOR_SETTINGS</td>
+<td align="left">选取运营商的界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_SECURITY_SETTINGS</td>
+<td align="left">安全设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_PRIVACY_SETTINGS</td>
+<td align="left">备份重置设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_VPN_SETTINGS</td>
+<td align="left">VPN设置界面,可能不存在</td>
+</tr>
+<tr>
+<td align="left">ACTION_WIFI_SETTINGS</td>
+<td align="left">无线网设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_WIFI_IP_SETTINGS</td>
+<td align="left">WIFI的IP设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_BLUETOOTH_SETTINGS</td>
+<td align="left">蓝牙设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_CAST_SETTINGS</td>
+<td align="left">投射设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_DATE_SETTINGS</td>
+<td align="left">日期时间设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_SOUND_SETTINGS</td>
+<td align="left">声音设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_DISPLAY_SETTINGS</td>
+<td align="left">显示设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_LOCALE_SETTINGS</td>
+<td align="left">语言设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_VOICE_INPUT_SETTINGS</td>
+<td align="left">辅助应用和语音输入设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_INPUT_METHOD_SETTINGS</td>
+<td align="left">语言和输入法设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_USER_DICTIONARY_SETTINGS</td>
+<td align="left">个人字典设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_INTERNAL_STORAGE_SETTINGS</td>
+<td align="left">存储空间设置的界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_SEARCH_SETTINGS</td>
+<td align="left">搜索设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_APPLICATION_DEVELOPMENT_SETTINGS</td>
+<td align="left">开发者选项设置</td>
+</tr>
+<tr>
+<td align="left">ACTION_DEVICE_INFO_SETTINGS</td>
+<td align="left">手机状态信息的界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_DREAM_SETTINGS</td>
+<td align="left">互动屏保设置的界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_NOTIFICATION_LISTENER_SETTINGS</td>
+<td align="left">通知使用权设置的界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS</td>
+<td align="left">勿扰权限设置的界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_CAPTIONING_SETTINGS</td>
+<td align="left">字幕设置的界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_PRINT_SETTINGS</td>
+<td align="left">打印设置界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_BATTERY_SAVER_SETTINGS</td>
+<td align="left">节电助手界面</td>
+</tr>
+<tr>
+<td align="left">ACTION_HOME_SETTINGS</td>
+<td align="left">主屏幕设置界面</td>
+</tr>
+</tbody></table>
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/nishitouzhuma/article/details/51584606">Android AccessibilityService使用注意</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/959217070c87">(AccessibilityService) Android 辅助功能笔记</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/itchq/articles/5648657.html">Android Accessibility辅助功能类的学习</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/eclipsexys/article/details/53560013">AccessibilityService从入门到出轨</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5cac6d439eeb?from=timeline">微信检查被删好友（Android Accessibility 学习实践 ）</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Accessibility/" rel="tag"># Accessibility</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/06/16/Android-Studio-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" rel="prev" title="Android Studio 常见问题">
+      <i class="fa fa-chevron-left"></i> Android Studio 常见问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/07/29/IDEA-Plugin-%E5%BC%80%E5%8F%91%E6%8E%A2%E7%B4%A2/" rel="next" title="IDEA Plugin 开发探索">
+      IDEA Plugin 开发探索 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%BB%A7%E6%89%BF-AccessibilityService"><span class="nav-number">1.1.</span> <span class="nav-text">1.继承 AccessibilityService</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%96%B0%E5%BB%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">2.新建配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-AndroidMainifest-%E4%B8%AD%E6%B3%A8%E5%86%8C"><span class="nav-number">1.3.</span> <span class="nav-text">3.AndroidMainifest 中注册</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">相关方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%9C%8D%E5%8A%A1%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AF"><span class="nav-number">2.1.</span> <span class="nav-text">1.服务是否开启</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%B7%B3%E8%BD%AC%E5%88%B0%E6%97%A0%E9%9A%9C%E7%A2%8D%E8%AE%BE%E7%BD%AE%E7%95%8C%E9%9D%A2"><span class="nav-number">2.2.</span> <span class="nav-text">2.跳转到无障碍设置界面</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">模拟点击事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number">4.</span> <span class="nav-text">后记</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%B8%B8%E9%87%8F%E8%A1%A8"><span class="nav-number">5.</span> <span class="nav-text">设置页面的常量表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

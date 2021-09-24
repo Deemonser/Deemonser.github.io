@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前言之前利用 hexo 在 Github 上搭建了个人博客后，感觉还是不错的。但博客的域名是二级域名，每次访问都是 用户名.github.io 这样，感觉很 low ，所以想着去买个域名，然后绑定到自己的博客上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="博客绑定域名">
+<meta property="og:url" content="https://deemonser.github.io/2017/07/11/%E5%8D%9A%E5%AE%A2%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="前言之前利用 hexo 在 Github 上搭建了个人博客后，感觉还是不错的。但博客的域名是二级域名，每次访问都是 用户名.github.io 这样，感觉很 low ，所以想着去买个域名，然后绑定到自己的博客上。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbgc83a9j30go09wjss.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbgcq54zj317g0fsmyq.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbgeksbyj30it0ca0tq.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbgfgnbrj3107074aao.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbggyrfhj30fr09q74d.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbgicl6nj30eq08r74m.jpg">
+<meta property="article:published_time" content="2017-07-11T15:31:23.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="搭建博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbgc83a9j30go09wjss.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2017/07/11/%E5%8D%9A%E5%AE%A2%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>博客绑定域名 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2017/07/11/%E5%8D%9A%E5%AE%A2%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          博客绑定域名
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-07-11 23:31:23" itemprop="dateCreated datePublished" datetime="2017-07-11T23:31:23+08:00">2017-07-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbgc83a9j30go09wjss.jpg" alt="blog"></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>之前利用 <strong>hexo</strong> 在 <strong>Github</strong> 上搭建了个人博客后，感觉还是不错的。但博客的域名是二级域名，每次访问都是 <code>用户名.github.io</code> 这样，感觉很 low ，所以想着去买个域名，然后绑定到自己的博客上。</p>
+<span id="more"></span>
+
+<p>这里记录下绑定域名的过程。</p>
+<br>
+
+<br>
+
+<h3 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h3><p>首先，需要购买一个域名。</p>
+<p>购买域名的地方很多，我为了方便就直接去 <a target="_blank" rel="noopener" href="https://wanwang.aliyun.com/?utm_medium=text&utm_source=baidu&utm_campaign=ymsj&utm_content=se_3504">阿里云</a> 购买的。</p>
+<p>域名的价格也是不等，便宜的一年几块钱，贵的上万，所以呢，看你自己选咯~</p>
+<br>
+
+<p><strong>买域名的时候，还要购买域名解析服务</strong> </p>
+<p>开始，我也挺蒙圈，「域名解析服务是啥？」，后来看了它的 <a target="_blank" rel="noopener" href="https://help.aliyun.com/knowledge_detail/39792.html">文档</a> 才了解。</p>
+<p>域名注册好之后，只说明你对这个域名拥有了使用权，在进行域名解析之后，这个域名才能发挥它的作用，经过解析的域名可以作为网址访问自己的网站，因此<strong>“域名解析”</strong>是使用域名的必备环节。</p>
+<br>
+
+<p>对了，中国域名（.cn）在购买之前需要提交资料进行审核备案，完成之后才能购。</p>
+<p>购买成功后，如下查看：</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbgcq54zj317g0fsmyq.jpg" alt="购买域名"></p>
+<p>点击域名 可以进行域名解析的配置。</p>
+<br>
+
+<h3 id="配置域名解析"><a href="#配置域名解析" class="headerlink" title="配置域名解析"></a>配置域名解析</h3><p>绑定域名分2种情况：带 www 和不带 www 的。</p>
+<p>域名配置最常见有2种方式，CNAME 和 A 记录，CNAME 填写域名，A记录填写 IP。</p>
+<p>由于不带 www 方式只能采用 A 记录，为了保证无论是否添加www都可以访问，统一用 A 记录就好。</p>
+<br>
+
+<p>A 记录需要填写 IP 地址，所以必须先用命令来 ping 一下  <code>用户名.github.io</code>  的IP，得到博客的IP地址。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbgeksbyj30it0ca0tq.jpg" alt="查看域名IP"></p>
+<p>然后到你的域名DNS设置页，配置两个 A 记录，一个带 www ，一个不带 www ，填写博客的IP ，如下：</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbgfgnbrj3107074aao.jpg" alt="配置域名解析"></p>
+<p>如果配置时遇到冲突，就把其他的删除掉，就可以了。</p>
+<p>如果域名解析配置好之后，在浏览器上直接访问刚刚购买的域名，它会指向GitHub的404页面。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbggyrfhj30fr09q74d.jpg" alt="Github 404"></p>
+<p>网站报出了<strong>404</strong>错误，这说明我们的域名已经成功映射到了Github网站。</p>
+<p>想要访问页面，需要实现个人博客向个人域名的映射。</p>
+<br>
+
+<br>
+
+<h3 id="映射域名"><a href="#映射域名" class="headerlink" title="映射域名"></a>映射域名</h3><p>网上有教程说是直接在 GitHub 上配置 域名映射，或者 在 Github 的项目上添加 <strong>CNAME</strong>文件，这样做的话，在当时肯定是可以成功的。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbgicl6nj30eq08r74m.jpg" alt="Github 域名映射"></p>
+<p>但如果 hexo 重新部署后，远程的工程会和本地保持同步，将CNAME文件删除，所以并不建议这样做。</p>
+<p>配置 CNAME 需要在 本地 hexo 根目录下的 source文件夹下，这里的所有文件都会原样复制（除了md文件）到public目录的。</p>
+<ol>
+<li>首先，在 根目录下的 source 文件夹下 创建一个 名为 「CNAME」的文件，注意是文件，不是文件夹，名称全部大写，并且不带后缀的。</li>
+<li>然后用记事本打开后，添加映射的域名，就是你购买的域名，注意不带www。如 <code>deemons.cn</code></li>
+<li>添加后保存，<code>hexo clean</code> 清理下缓存，然后重新部署到 Github。</li>
+</ol>
+<p>这个时候你就可以用自己的域名访问自己的博客，大功告成！</p>
+<br>
+
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/cea41e5c9b2a">hexo搭建的Github博客绑定域名</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.liuxianan.com/build-blog-website-by-hexo-github.html">使用hexo+github搭建免费个人博客详细教程</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" rel="tag"># 搭建博客</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/07/11/Android%E8%87%AA%E5%AE%9A%E4%B9%89View-Canvas-%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/" rel="prev" title="Android自定义View-Canvas 基础操作">
+      <i class="fa fa-chevron-left"></i> Android自定义View-Canvas 基础操作
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/07/22/Android-%E5%BC%82%E6%AD%A5%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/" rel="next" title="Android 异步消息处理机制">
+      Android 异步消息处理机制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%AD%E4%B9%B0%E5%9F%9F%E5%90%8D"><span class="nav-number">2.</span> <span class="nav-text">购买域名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">配置域名解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%A0%E5%B0%84%E5%9F%9F%E5%90%8D"><span class="nav-number">4.</span> <span class="nav-text">映射域名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

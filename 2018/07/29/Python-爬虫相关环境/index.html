@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一时兴起，想用 python 玩儿一下爬虫，顺便体验 python 这门语言。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 爬虫相关环境">
+<meta property="og:url" content="https://deemonser.github.io/2018/07/29/Python-%E7%88%AC%E8%99%AB%E7%9B%B8%E5%85%B3%E7%8E%AF%E5%A2%83/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="一时兴起，想用 python 玩儿一下爬虫，顺便体验 python 这门语言。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbfp85w9j30go0b30u3.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbfpss2ej30vj0gz40a.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbfrr5jkj30ut0iwmzf.jpg">
+<meta property="article:published_time" content="2018-07-29T12:27:40.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="anaconda">
+<meta property="article:tag" content="pyCharm">
+<meta property="article:tag" content="requests">
+<meta property="article:tag" content="chromedriver">
+<meta property="article:tag" content="Selenium">
+<meta property="article:tag" content="beautifulsoup">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbfp85w9j30go0b30u3.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2018/07/29/Python-%E7%88%AC%E8%99%AB%E7%9B%B8%E5%85%B3%E7%8E%AF%E5%A2%83/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Python 爬虫相关环境 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2018/07/29/Python-%E7%88%AC%E8%99%AB%E7%9B%B8%E5%85%B3%E7%8E%AF%E5%A2%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 爬虫相关环境
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-07-29 20:27:40" itemprop="dateCreated datePublished" datetime="2018-07-29T20:27:40+08:00">2018-07-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python-%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Python 基础</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbfp85w9j30go0b30u3.jpg" alt="nada-636066-unsplash"></p>
+<p>一时兴起，想用 python 玩儿一下爬虫，顺便体验 python 这门语言。</p>
+<span id="more"></span>
+
+<br>
+
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Python 学习，推荐使用 Anaconda ，不过我习惯的 JetBreain 公司的工具，所以还安装了 PyCharm ，在使用时因为依赖导入失败，搞了好半天，原因是下载的 Python 解释器太多，已经傻傻分不清了~</p>
+<ol>
+<li><p>首先，Mac 系统自带 Python 路径为<code>／System／Library／Frameworks／Python.framework/Version</code> </p>
+<p>这里可能会有多个 Python 版本，里面 Current 存放系统当前 Python 版本</p>
+<p>（注：若使用<code>python --version</code>命令是查看用户当前python版本而不是系统python版本）</p>
+</li>
+<li><p>安装 Anaconda3 后，Python 3.6 的目录 <code>~/anaconda/anaconda3/python.app/Contents/MacOS/python</code></p>
+</li>
+<li><p>Homebrew是一个包管理器，他将工具统统安装到了 <code>/usr/local/Cellar </code>目录中，并在 <code>/usr/local/bin</code>  中创建符号链接。</p>
+</li>
+<li><p>在玩 <strong>Tensortflow</strong> 时，安装过的虚拟环境 <code>~/anaconda/anaconda3/envs/tensorflow/bin/python</code></p>
+</li>
+</ol>
+<p>说实话，还是第一次接触到这种同一个语言，这么多环境的情况，感觉很蒙圈~</p>
+<p>因此，PyCharm 选择解释器时，连路径在哪都不知道，浪费了很多时间。</p>
+<br>
+
+<h3 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h3><p>在使用 Python 语言编写程序时，需要下载一个 Python 解释器，除此之外还有 Python 包文件，其中包括<strong>自带包</strong>和 <strong>第三方包</strong> 。</p>
+<p>第三方包都放在 <strong>site-packages</strong> 文件夹里面</p>
+<p>一个 Python 环境中需要有一个<strong>解释器</strong>, 和一个<strong>包集合</strong> 。<br>而 Python 存在多个版本，2.x 和 3.x 完全不兼容，有时又需要切换环境，这么多麻烦事情，自然需要一个工具来管理，<strong>Anaconda</strong> 就是来管理你的安装环境和各种工具包的。</p>
+<br>
+### Anaconda
+
+<p><strong>Anaconda</strong> 是专注于数据分析的Python发行版本，包含了 <strong>conda</strong>、<strong>Python</strong> 等190多个科学包及其依赖项。</p>
+<p><strong>Python</strong>  我们都知道，而 <strong>conda</strong> 是什么呢？</p>
+<p><strong>conda</strong> 是开源包（packages）和虚拟环境（environment）的管理系统。</p>
+<ul>
+<li><strong>packages 管理：</strong> 可以使用 conda 来安装、更新 、卸载工具包 ，并且它更关注于数据科学相关的工具包。在安装 anaconda 时就预先集成了像 Numpy、Scipy、 pandas、Scikit-learn 这些在数据分析中常用的包。另外值得一提的是，conda 并不仅仅管理Python的工具包，它也能安装非python的包。比如在新版的 Anaconda 中就可以安装R语言的集成开发环境 Rstudio。</li>
+<li><strong>虚拟环境管理：</strong> 在conda中可以建立多个虚拟环境，用于隔离不同项目所需的不同版本的工具包，以防止版本上的冲突。对纠结于 Python 版本的同学们，我们也可以建立 Python2 和 Python3 两个环境，来分别运行不同版本的 Python 代码。</li>
+</ul>
+<p>推荐使用 Anaconda ，一次性安装所有的相关文件，简单方便。</p>
+<br>
+
+<p><a target="_blank" rel="noopener" href="https://www.anaconda.com/download/#macos"><strong>Anaconda 的下载地址</strong></a></p>
+<p>这里有两个版本，一个 <strong>Python 3.6</strong> ，另一个 <strong>Python 2.7</strong> 。</p>
+<p>推荐使用新的 <strong>Python 3.6</strong> ，因为 <strong>Python 2.x</strong> 迟早会停止维护。</p>
+<p>根据提示进行安装后，会出现这么一些文件：</p>
+<ul>
+<li><strong>Anaconda Navigtor</strong> ：用于管理工具包和环境的图形用户界面，后续涉及的众多管理命令也可以在 Navigator 中手工实现。</li>
+<li><strong>Jupyter notebook</strong> ：基于web的交互式计算环境，可以编辑易于人们阅读的文档，用于展示数据分析的过程。</li>
+<li><strong>qtconsole</strong> ：一个可执行 IPython 的仿终端图形界面程序，相比 Python Shell 界面，qtconsole 可以直接显示代码生成的图形，实现多行代码输入执行，以及内置许多有用的功能和函数。</li>
+<li><strong>spyder</strong> ：一个使用Python语言、跨平台的、科学运算集成开发环境。</li>
+</ul>
+<br>
+
+<p>安装完成后，首先配置 Anaconda 的环境变量，打开环境变量文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open ~/.bash_profile</span><br></pre></td></tr></table></figure>
+
+<p>添加一行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Anaconda3  此处填写 Anaconda 的安装路径</span></span><br><span class="line">export PATH=&quot;/Users/deemons/anaconda/anaconda3/bin:$PATH&quot;</span><br></pre></td></tr></table></figure>
+
+<p>保存后，更新配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~/.bash_profile</span><br></pre></td></tr></table></figure>
+
+<p>然后，输入 <code>python</code> ，查看配置是否生效</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ python</span><br><span class="line">Python 3.6.3 |Anaconda custom (64-bit)| (default, Oct  6 2017, 12:04:38) </span><br><span class="line">[GCC 4.2.1 Compatible Clang 4.0.1 (tags/RELEASE_401/final)] on darwin</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p>可以看到，现在的 python 默认改为 Anaconda 里面自带的 Python 了。</p>
+<p>我们还需要对所有工具包进行升级，以避免可能发生的错误。打开终端，在命令行中输入：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda upgrade --all</span><br></pre></td></tr></table></figure>
+<p>等待着所有工具更新完成后，就可以愉快的使用了 Python 了。</p>
+<br>
+
+<h3 id="PyCharm-配置"><a href="#PyCharm-配置" class="headerlink" title="PyCharm 配置"></a>PyCharm 配置</h3><p><strong>Anaconda</strong> 已经自带了 web 版编辑器了，打开 <strong>Anaconda</strong> 就可以看到 <strong>Jupyter</strong> </p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbfpss2ej30vj0gz40a.jpg" alt="web python"></p>
+<p>但还是不习惯用这个，对用惯了 IDEA 的我来说，<strong>PyCharm</strong> 是最好的选择。</p>
+<p><a target="_blank" rel="noopener" href="https://www.jetbrains.com/pycharm/download/#section=mac">PyCharm 下载地址</a></p>
+<p>这个也没什么好说的，下载后按照提示安装好。</p>
+<p>现在，关键的来了。</p>
+<p>我得将 <strong>PyCharm</strong> 的解释器设置成 <strong>Anaconda</strong> ，否则，使用 <strong>Anaconda</strong> 下载下来的那么多第三方包在<strong>PyCharm</strong> 都不能正常导入使用。<br>打开 <strong>PyCharm</strong> ，进入设置，选择 <strong>Anaconda</strong> 的 Python 解释器：<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbfrr5jkj30ut0iwmzf.jpg" alt="pycharm interpreter"></p>
+<p>如此，<strong>PyCharm</strong> 就可以正常使用了。</p>
+<br>
+
+<h3 id="爬虫环境安装"><a href="#爬虫环境安装" class="headerlink" title="爬虫环境安装"></a>爬虫环境安装</h3><p>首先，爬虫需要安装哪些环境？<br>参考了<a target="_blank" rel="noopener" href="http://www.cnblogs.com/Albert-Lee/p/6238866.html">Python爬虫小白入门（四）PhatomJS+Selenium第一篇</a> 系列文章后，需要安装这些包：</p>
+<ul>
+<li><p><strong>requests</strong><br>requests 是 Python 中的网络请求库。</p>
+</li>
+<li><p><strong>beautifulsoup</strong></p>
+<p>beautifulsoup 库可以方便的解析 HTML 的内容，也就说，可以方便提前所有可见的网页内容。</p>
+</li>
+<li><p><strong>Selenium</strong></p>
+<p>Selenium是一个自动化测试框架，它能够模拟人工操作，比如能在浏览器中点击按钮、在输入框中输入文本、自动填充表单、还能进行浏览器窗口的切换、对弹出窗口进行操作。</p>
+</li>
+</ul>
+<br>
+
+<h4 id="requests"><a href="#requests" class="headerlink" title="requests"></a>requests</h4><p>这个库可以直接使用 <strong>conda</strong> 进行安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install requests</span><br></pre></td></tr></table></figure>
+
+<p>这里是 <strong>requests</strong>  的<a target="_blank" rel="noopener" href="http://docs.python-requests.org/en/master/api/">英文官方文档</a> 和 <a target="_blank" rel="noopener" href="http://docs.python-requests.org/zh_CN/latest/user/quickstart.html">中文官方文档</a> 。</p>
+<p>基本的用法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests <span class="comment">#导入requests库</span></span><br><span class="line"></span><br><span class="line">r = requests.get(<span class="string">&#x27;https://deemons.cn&#x27;</span>) <span class="comment"># 向目标 url 地址发送 get 请求，返回一个response对象</span></span><br><span class="line"><span class="built_in">print</span>(r.text) <span class="comment">#r.text是http response的网页HTML</span></span><br></pre></td></tr></table></figure>
+<p>通过 reueests 发起网络请求，然后获取网站的 HTML 信息。<br><br></p>
+<p>####beautifulsoup</p>
+<p>beautifulsoup 库 有多个版本，这里安装 <strong>beautifulsoup4</strong> </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install beautifulsoup4</span><br></pre></td></tr></table></figure>
+<p>这里是 <strong>beautifulsoup4</strong> 的<a target="_blank" rel="noopener" href="https://beautifulsoup.readthedocs.io/zh_CN/latest/">官方文档</a></p>
+<p>同时，还需要安装 <strong>lxml</strong> 来配合工作。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install lxml</span><br></pre></td></tr></table></figure>
+
+<p><strong>lxml</strong> 是一个解析器，<strong>beautifulsoup4</strong> 可以使用它来解析HTML，然后提取内容。</p>
+<p>如果，不安装 <strong>lxml</strong> ，<strong>beautifulsoup4</strong> 会使用 Python 内置的解析器。</p>
+<p>文档解析器对照表如下：</p>
+<table>
+<thead>
+<tr>
+<th>解析器</th>
+<th>使用方法</th>
+<th>优势</th>
+<th>劣势</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Python标准库</td>
+<td>BeautifulSoup(markup,”html.parser”)</td>
+<td>1. Python的内置标准库 2. 执行速度适 3. 中文档容错能力强</td>
+<td>Python 2.7.3 or 3.2.2)前 的版本中文档容错能力差</td>
+</tr>
+<tr>
+<td>lxml HTML 解析器</td>
+<td>BeautifulSoup(markup,”lxml”)</td>
+<td>1. 速度快 2. 文档容错能力强</td>
+<td>需要安装C语言库</td>
+</tr>
+<tr>
+<td>lxml XML 解析器</td>
+<td>BeautifulSoup(markup,[“lxml-xml”])  BeautifulSoup(markup,”xml”)</td>
+<td>1. 速度快 2. 唯一支持XML的解析器</td>
+<td>需要安装C语言库</td>
+</tr>
+<tr>
+<td>html5lib</td>
+<td>BeautifulSoup(markup,”html5lib”)</td>
+<td>1. 最好的容错性 2. 以浏览器的方式解析文档 3. 生成HTML5格式的文档</td>
+<td>速度慢，不依赖外部扩展</td>
+</tr>
+</tbody></table>
+<br>
+
+<h4 id="Selenium"><a href="#Selenium" class="headerlink" title="Selenium"></a>Selenium</h4><p><strong>Selenium</strong> 这是一个自动化测试框架，能模拟人工在浏览器上的操作。安装方式</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install selenium</span><br></pre></td></tr></table></figure>
+
+<p>Selenium Python 语言官网：<a target="_blank" rel="noopener" href="http://selenium-python.readthedocs.io/index.html">Selenium with Python</a></p>
+<p>如果需要使用 Chorme 浏览器，必须下载当前 Chorme 版本相匹配的驱动，<a target="_blank" rel="noopener" href="http://chromedriver.storage.googleapis.com/index.html">Chorme 驱动下载地址</a></p>
+<p>chrome和 chromedriver 的版本映射表</p>
+<table>
+<thead>
+<tr>
+<th align="center">chromedriver版本</th>
+<th>支持的Chrome版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">v2.40</td>
+<td>v66-68</td>
+</tr>
+<tr>
+<td align="center">v2.39</td>
+<td>v66-68</td>
+</tr>
+<tr>
+<td align="center">v2.38</td>
+<td>v65-67</td>
+</tr>
+<tr>
+<td align="center">v2.37</td>
+<td>v64-66</td>
+</tr>
+<tr>
+<td align="center">v2.36</td>
+<td>v63-65</td>
+</tr>
+<tr>
+<td align="center">v2.35</td>
+<td>v62-64</td>
+</tr>
+<tr>
+<td align="center">v2.34</td>
+<td>v61-63</td>
+</tr>
+<tr>
+<td align="center">v2.33</td>
+<td>v60-62</td>
+</tr>
+<tr>
+<td align="center">v2.32</td>
+<td>v59-61</td>
+</tr>
+<tr>
+<td align="center">v2.31</td>
+<td>v58-60</td>
+</tr>
+<tr>
+<td align="center">v2.30</td>
+<td>v58-60</td>
+</tr>
+</tbody></table>
+<p>Mac 下，将下载的文件解压，提取出 <strong>chromedriver</strong> 文件，并移动到 <code>/usr/bin/</code> 目录下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ cd /usr/bin</span><br><span class="line">➜  bin open .</span><br><span class="line">➜  bin chromedriver --version</span><br></pre></td></tr></table></figure>
+
+<p>同时，可以配置 chromedriver 变成类似 <strong>PhatomJs</strong> 无界面形式。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建chrome参数对象</span></span><br><span class="line">opt = webdriver.ChromeOptions()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把chrome设置成无界面模式，不论windows还是linux都可以，自动适配对应参数</span></span><br><span class="line">opt.set_headless()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建chrome无界面对象</span></span><br><span class="line">driver = webdriver.Chrome(options=opt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 访问百度</span></span><br><span class="line">driver.get(<span class="string">&#x27;https://baidu.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#打印内容</span></span><br><span class="line"><span class="built_in">print</span>(driver.page_source)</span><br></pre></td></tr></table></figure>
+
+<p>或者，还可以这么写</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#selenium:3.12.0</span></span><br><span class="line"><span class="comment">#webdriver:2.38</span></span><br><span class="line"><span class="comment">#chrome.exe: 65.0.3325.181（正式版本） （32 位）</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options</span><br><span class="line">chrome_options = Options()</span><br><span class="line">chrome_options.add_argument(<span class="string">&#x27;window-size=1920x3000&#x27;</span>) <span class="comment">#指定浏览器分辨率</span></span><br><span class="line">chrome_options.add_argument(<span class="string">&#x27;--disable-gpu&#x27;</span>) <span class="comment">#谷歌文档提到需要加上这个属性来规避bug</span></span><br><span class="line">chrome_options.add_argument(<span class="string">&#x27;--hide-scrollbars&#x27;</span>) <span class="comment">#隐藏滚动条, 应对一些特殊页面</span></span><br><span class="line">chrome_options.add_argument(<span class="string">&#x27;blink-settings=imagesEnabled=false&#x27;</span>) <span class="comment">#不加载图片, 提升速度</span></span><br><span class="line">chrome_options.add_argument(<span class="string">&#x27;--headless&#x27;</span>) <span class="comment">#浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败</span></span><br><span class="line">chrome_options.binary_location = <span class="string">r&quot;C:\Program Files (x86)\Google\Chrome\Application\chrome.exe&quot;</span> <span class="comment">#手动指定使用的浏览器位置</span></span><br><span class="line"></span><br><span class="line">driver=webdriver.Chrome(chrome_options=chrome_options)</span><br><span class="line">driver.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;hao123&#x27;</span> <span class="keyword">in</span> driver.page_source)</span><br><span class="line"></span><br><span class="line">driver.close() <span class="comment">#切记关闭浏览器，回收资源</span></span><br></pre></td></tr></table></figure>
+
+<p>到此，爬虫的基本环境算是搭建好了。</p>
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Albert-Lee/p/6226699.html">Python爬虫小白入门（一）写在前面</a> 系列</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/javalixy/article/details/77874715">使用python3的Selenium启动chromedriver</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/dbf20c6792fe">Mac下安装Anaconda，以及在PyCharm中的配置</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_15158911/article/details/72403832">selenium使用chrome浏览器</a></p>
+<p><a target="_blank" rel="noopener" href="http://python.jobbole.com/87522/">致Python初学者：Anaconda入门使用指南</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/eaee1fadc1e9">Anaconda完全入门指南</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39810861/article/details/80700639">从无到有：一周搞定爬虫（Python3.x + Selenium + Chrome + ChromeDriver）</a></p>
+<br>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/anaconda/" rel="tag"># anaconda</a>
+              <a href="/tags/pyCharm/" rel="tag"># pyCharm</a>
+              <a href="/tags/requests/" rel="tag"># requests</a>
+              <a href="/tags/chromedriver/" rel="tag"># chromedriver</a>
+              <a href="/tags/Selenium/" rel="tag"># Selenium</a>
+              <a href="/tags/beautifulsoup/" rel="tag"># beautifulsoup</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/29/IDEA-Plugin-%E5%BC%80%E5%8F%91%E6%8E%A2%E7%B4%A2/" rel="prev" title="IDEA Plugin 开发探索">
+      <i class="fa fa-chevron-left"></i> IDEA Plugin 开发探索
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/30/Android%20ADB%20Shell%20%E5%91%BD%E4%BB%A4/" rel="next" title="Android ADB Shell 命令">
+      Android ADB Shell 命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python"><span class="nav-number">2.</span> <span class="nav-text">Python</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PyCharm-%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">PyCharm 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%88%AC%E8%99%AB%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85"><span class="nav-number">4.</span> <span class="nav-text">爬虫环境安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#requests"><span class="nav-number">4.1.</span> <span class="nav-text">requests</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Selenium"><span class="nav-number">4.2.</span> <span class="nav-text">Selenium</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="App 要上架 Google play ，之前都是在国内应用市场上架，对 Google play 上架流程不熟悉，所有记录下来。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GooglePlay 上架流程">
+<meta property="og:url" content="https://deemonser.github.io/2019/08/26/GooglePlay%20%E4%B8%8A%E6%9E%B6%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="App 要上架 Google play ，之前都是在国内应用市场上架，对 Google play 上架流程不熟悉，所有记录下来。">
+<meta property="og:locale">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/231636_.jpg">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813111742746.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813111711124.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813113830443.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813114204789.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813134240839.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813142646785.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813151243860.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813151214792.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813151143083.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813161756974.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813171106662.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813171318372.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813171924491.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813164904074.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813164827724.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813165124417.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813165310935.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813165846669.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813170819600.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813173220606.png">
+<meta property="og:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813173042148.png">
+<meta property="article:published_time" content="2019-08-26T12:46:23.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="google play">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/231636_.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2019/08/26/GooglePlay%20%E4%B8%8A%E6%9E%B6%E6%B5%81%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>GooglePlay 上架流程 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2019/08/26/GooglePlay%20%E4%B8%8A%E6%9E%B6%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GooglePlay 上架流程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-08-26 20:46:23" itemprop="dateCreated datePublished" datetime="2019-08-26T20:46:23+08:00">2019-08-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">Android记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/231636_.jpg" alt="231636_"></p>
+<p>App 要上架 Google play ，之前都是在国内应用市场上架，对 Google play 上架流程不熟悉，所有记录下来。</p>
+<span id="more"></span>
+
+<br>
+
+<h3 id="Google-Play-开发者政策"><a href="#Google-Play-开发者政策" class="headerlink" title="Google Play 开发者政策"></a>Google Play 开发者政策</h3><p>所有提供内容，都需要遵循 <a target="_blank" rel="noopener" href="https://play.google.com/intl/zh-CN/about/developer-content-policy/index.html#!?modal_active=none">Google play 开发者政策</a></p>
+<p>![政策解读](<a target="_blank" rel="noopener" href="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/google">https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/google</a> 政策相关.png)</p>
+<p>更多详细类容，请见下面「参考-政策相关」</p>
+<br>
+
+<h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3><ol>
+<li><p>公司名称</p>
+</li>
+<li><p>应用名称 （50 字符）</p>
+</li>
+<li><p>应用简短说明 （80 字符）</p>
+</li>
+<li><p>应用详细说明 （4000 字符）</p>
+</li>
+<li><p>版本新功能说明</p>
+</li>
+<li><p>屏幕截图 （详情见流程中截图）</p>
+</li>
+<li><p>高清分辨图标 (512x512，详情见流程中截图)</p>
+</li>
+<li><p>置顶大图 （1024 x 500，详情见流程中截图）</p>
+</li>
+<li><p>宣传视频（选填，仅限 YouTube 网址）</p>
+</li>
+<li><p>官网地址（选填）</p>
+</li>
+<li><p>电子邮箱</p>
+</li>
+<li><p>电话（选填）</p>
+</li>
+<li><p>隐私政策网址</p>
+<p>（免费生成地址 <a target="_blank" rel="noopener" href="http://www.freeprivacypolicy.com或/">www.freeprivacypolicy.com或</a> <a target="_blank" rel="noopener" href="https://privacypolicies.com/%EF%BC%89">https://privacypolicies.com/）</a></p>
+</li>
+</ol>
+<br>
+
+<h3 id="上架流程"><a href="#上架流程" class="headerlink" title="上架流程"></a>上架流程</h3><h4 id="1-申请开通账号"><a href="#1-申请开通账号" class="headerlink" title="1.申请开通账号"></a>1.申请开通账号</h4><ol>
+<li><p>注册 Google 账号</p>
+<ul>
+<li><p>访问:<a target="_blank" rel="noopener" href="https://link.jianshu.com/?t=https://accounts.google.com/SignUp">https://accounts.google.com/SignUp</a></p>
+</li>
+<li><p>填写信息</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813111742746.png" alt="image-20190813111742746"></p>
+</li>
+<li><p>验证手机号</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813111711124.png" alt="image-20190813111742746"></p>
+</li>
+<li><p>验证邮箱</p>
+</li>
+</ul>
+</li>
+<li><p>开通开发者账号（付钱 $25）</p>
+<ul>
+<li><p>访问 <a target="_blank" rel="noopener" href="https://link.jianshu.com/?t=https://play.google.com/apps/publish/signup/">https://play.google.com/apps/publish/signup/</a></p>
+</li>
+<li><p>勾选协议，填写信用卡信息</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813113830443.png" alt="image-20190813113830443"></p>
+</li>
+<li><p>支付 25 美元后，开通开发者账号。</p>
+</li>
+</ul>
+</li>
+</ol>
+<br>
+
+<h4 id="2-创建应用"><a href="#2-创建应用" class="headerlink" title="2.创建应用"></a>2.创建应用</h4><ul>
+<li><p>访问 <a target="_blank" rel="noopener" href="https://play.google.com/apps/publish">https://play.google.com/apps/publish</a></p>
+</li>
+<li><p>点击创建新应用</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813114204789.png" alt="image-20190813114204789"></p>
+</li>
+<li><p>填写语言及应用名称，此处默认语言会影响到后面的 APP 介绍，所以填写 「英文」，名称填写 「CrediMe」。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813134240839.png" alt="image-20190813134240839"></p>
+</li>
+</ul>
+<br>
+
+<h4 id="3-填写资料"><a href="#3-填写资料" class="headerlink" title="3.填写资料"></a>3.填写资料</h4><ul>
+<li><p>左边导航栏选择「商品详细」，填写简短说明，以及详细说明。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813142646785.png" alt="image-20190813142646785"></p>
+</li>
+<li><p>上传屏幕截图， 图透明图片，边长限制 320~3840像素，至少需要2 张，每种类型最多 8 张。（只需填写手机类型） </p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813151243860.png" alt="image-20190813151243860"></p>
+</li>
+<li><p>滑动滚轮，上传高分辨率图标（512 x 512，png）、置顶大图（1024 x 500，不透明图片），宣传视频</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813151214792.png" alt="image-20190813151214792"></p>
+</li>
+<li><p>填写应用类型，类别，官网，电子邮件，内容分级稍后填写。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813151143083.png" alt="image-20190813151143083"></p>
+</li>
+<li><p>填写联系电话及隐私政策网址，最后保存信息。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813161756974.png" alt="image-20190813161756974"></p>
+</li>
+</ul>
+<br>
+
+<h4 id="4-上传-APK"><a href="#4-上传-APK" class="headerlink" title="4. 上传 APK"></a>4. 上传 APK</h4><p>左边点击「应用版本」,创建新版本。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813171106662.png" alt="image-20190813171106662"></p>
+<p>在「Google Play App Signing」选项，此计划会生成新签名保存在商店，然后替换 Apk 中的签名，好处是不会存在遗失签名文件而导致的问题，坏处是一些第三方对接需要用到签名的地方要重新填写配置并测试，此计划不会影响发布，所以建议退出计划。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813171318372.png" alt="image-20190813171318372"></p>
+<p>然后，上传 APK，然后填写新功能说明。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813171924491.png" alt="image-20190813171924491"></p>
+<p>页面右下角，点击保存后。</p>
+<p>到此，上传 Apk 已经完成。</p>
+<br>
+
+<p><strong>注意：</strong></p>
+<p>应用版本分为：<strong>正式版、Beta 版、Alpha版、内部测试版</strong></p>
+<p>一般上架的流程是：先发布 <strong>内部测试版</strong>，内部人员测试完后，发布 <strong>Alpha 版</strong>，邀请更多的人员进行测试，然后再发布 <strong>Beta 版</strong>，所有人都可以进行下载app进行测试体验，最后才是发布<strong>正式版</strong>。</p>
+<p>具体的详情请参考：<a target="_blank" rel="noopener" href="https://support.google.com/googleplay/android-developer/answer/3131213#start&closed_open_beta&multiply_test&closed_beta&open_beta&closed_groups&games&version_codes&track_status&when_internal_test&internal_test&create_additional_track">设置开放式测试、封闭式测试或内部测试</a> </p>
+<p><strong>上传apk后，一般会提示需要删除apk的调试信息：在Google Play上发布APK或Android App Bundle之前，请关闭其调试功能。只需要在 <code>AndroidManufest.xml</code> 文件中的 application 块中添加添加<code>android:debuggable=&quot;false&quot;</code>即可。</strong></p>
+<p>另外，移除项目中创建的所有日志文件或静态测试文件。<br>您还应移除您添加到代码中的所有 <code>Debug</code> 跟踪调用，例如 <code>startMethodTracing()</code> 和 <code>stopMethodTracing()</code> 方法调用。</p>
+<p>如果使用 <code>WebView</code> 显示付费内容或使用 <code> JavaScript</code> 接口，请确保停用针对应用的调试，因为调试将允许用户使用 <code>Chrome DevTools</code> 注入脚本和提取内容。要停用调试，请使用 <code>WebView.setWebContentsDebuggingEnabled()</code> 方法。</p>
+<p>详情请参考：<a target="_blank" rel="noopener" href="https://developer.android.com/studio/publish/preparing#publishing-configure">准备发布</a></p>
+<br>
+
+
+
+<h4 id="5-内容分级"><a href="#5-内容分级" class="headerlink" title="5. 内容分级"></a>5. 内容分级</h4><p>左边导航栏点击「内容分级」，然后继续</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813164904074.png" alt="image-20190813164904074"></p>
+<p>填写电子邮箱，选择应用类别，如果都不是，则选择其它类别。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813164827724.png" alt="image-20190813164827724"></p>
+<p>点击应用类别后会进入调查问卷页</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813165124417.png" alt="image-20190813165124417"></p>
+<p>然后就是一系列的单选，基本上都选择否。完成后点击保存调查问卷，再点击判断分级，建议直接更改年龄为成年人阶段，避免 google 政策影响。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813165310935.png" alt="image-20190813165310935"></p>
+<p>最后，确认分级。</p>
+<br>
+
+<h4 id="6-定价及发布范围"><a href="#6-定价及发布范围" class="headerlink" title="6. 定价及发布范围"></a>6. 定价及发布范围</h4><p>左边选择「定价和发布范围」，选择免费，在「国家、地区」选择发布的地区。</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813165846669.png" alt="image-20190813165846669"></p>
+<p>下滑页面到最后，内容准则和美国出口法律是必须要选中的</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813170819600.png" alt="image-20190813170819600"></p>
+<p>最后保存草稿。</p>
+<br>
+
+<h4 id="7-发布"><a href="#7-发布" class="headerlink" title="7. 发布"></a>7. 发布</h4><p>以上所有信息填写完后，左边对应的栏目旁边的对号会变成绿色</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813173220606.png" alt="image-20190813173220606"></p>
+<p>点击 「应用版本」，在正式版中，选择「修改版本」</p>
+<p><img src="https://deemonsblog-1257944663.cos.ap-guangzhou.myqcloud.com/blog/image-20190813173042148.png" alt="image-20190813173042148"></p>
+<p>进入应用管理页面，再点击查看 –&gt;&gt; 提交发布，即可发布应用。</p>
+<p>如果第一次上传应用并发布，这时候需要等待 Google 审核，一般都是 3 天左右，具体时间还是得看 Google。</p>
+<p>如果审核被拒绝，Google 会发邮件告知原因</p>
+<br>
+
+
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><h4 id="发布相关"><a href="#发布相关" class="headerlink" title="发布相关"></a>发布相关</h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e40e78a279b7">Google Play 应用上架流程（有图有真相）</a></p>
+<p><a target="_blank" rel="noopener" href="https://medium.com/@Aaron_930/android-%E4%B8%8A%E6%9E%B6-play-store-%E8%AF%A6%E7%BB%86%E6%95%99%E5%AD%A6-6b7a006db388">Android 上架 Play Store 详细教学</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/5bf3e2eee51d4504f52b46c3">Googlplay 应用发布(上架)流程，有图有现场</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/fc6af87a6a39">在Google Play发布应用流程</a></p>
+<h4 id="政策相关"><a href="#政策相关" class="headerlink" title="政策相关"></a>政策相关</h4><p><a target="_blank" rel="noopener" href="https://play.google.com/intl/zh-CN/about/developer-content-policy/index.html#!?modal_active=none">Google play 开发者政策中心官网</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/a136e93f18a8">千万别违规，Google Play 开发者政策解读</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/77a5791ccb10">很可惜！又一个小伙伴的应用被暂停</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/310e94e6d07f">Google Play 账号关联问题解决</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/565a65a900a7">Google Play ASO 系列 - 最重要的长尾词 </a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/47f2b89d95d2">Google Play 上架的那些坑 </a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/jacksinrow/article/details/82693006">处理 Google Play 市场上架，引出的一系列旧项目问题 </a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/google-play/" rel="tag"># google play</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/26/Firebase%20%E9%9B%86%E6%88%90%20Google%E3%80%81Facebook%E7%99%BB%E5%BD%95/" rel="prev" title="Firebase 集成 Google、Facebook登录">
+      <i class="fa fa-chevron-left"></i> Firebase 集成 Google、Facebook登录
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Google-Play-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%BF%E7%AD%96"><span class="nav-number">1.</span> <span class="nav-text">Google Play 开发者政策</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="nav-number">2.</span> <span class="nav-text">前期准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E6%9E%B6%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">上架流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%94%B3%E8%AF%B7%E5%BC%80%E9%80%9A%E8%B4%A6%E5%8F%B7"><span class="nav-number">3.1.</span> <span class="nav-text">1.申请开通账号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">2.创建应用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%A1%AB%E5%86%99%E8%B5%84%E6%96%99"><span class="nav-number">3.3.</span> <span class="nav-text">3.填写资料</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E4%B8%8A%E4%BC%A0-APK"><span class="nav-number">3.4.</span> <span class="nav-text">4. 上传 APK</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E5%86%85%E5%AE%B9%E5%88%86%E7%BA%A7"><span class="nav-number">3.5.</span> <span class="nav-text">5. 内容分级</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E5%AE%9A%E4%BB%B7%E5%8F%8A%E5%8F%91%E5%B8%83%E8%8C%83%E5%9B%B4"><span class="nav-number">3.6.</span> <span class="nav-text">6. 定价及发布范围</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-%E5%8F%91%E5%B8%83"><span class="nav-number">3.7.</span> <span class="nav-text">7. 发布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E7%9B%B8%E5%85%B3"><span class="nav-number">4.1.</span> <span class="nav-text">发布相关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%BF%E7%AD%96%E7%9B%B8%E5%85%B3"><span class="nav-number">4.2.</span> <span class="nav-text">政策相关</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

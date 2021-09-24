@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前言以前记录的 Java 学习笔记，现在被翻出来了，所以就想着把这些 Java 基础重新归档整理，搬到博客上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java概述">
+<meta property="og:url" content="https://deemonser.github.io/2015/07/23/Java%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="前言以前记录的 Java 学习笔记，现在被翻出来了，所以就想着把这些 Java 基础重新归档整理，搬到博客上。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbfd3qjqj307n053q2v.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbfe34i6j30g9066jrl.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbff679wj30go0avwfp.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbffxuvij30e802tgll.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbfhu4b9j30as01ydfs.jpg">
+<meta property="article:published_time" content="2015-07-23T08:15:52.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="Java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbfd3qjqj307n053q2v.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2015/07/23/Java%E6%A6%82%E8%BF%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Java概述 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2015/07/23/Java%E6%A6%82%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java概述
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-07-23 16:15:52" itemprop="dateCreated datePublished" datetime="2015-07-23T16:15:52+08:00">2015-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbfd3qjqj307n053q2v.jpg" alt="java"></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>以前记录的 <strong>Java</strong> 学习笔记，现在被翻出来了，所以就想着把这些 <strong>Java</strong> 基础重新归档整理，搬到博客上。 </p>
+<span id="more"></span>
+
+<br>
+
+<br>
+
+<h3 id="Java-简介"><a href="#Java-简介" class="headerlink" title="Java 简介"></a>Java 简介</h3><p>1995 年 SUN（StanfordUniversity Network）公司推出了 Java 这一门高级编程语言，最大特点是跨平台。</p>
+<p>Java 是一门面向 Internet 的编程语言，目前已经成为 Web 应用程序的首选开发语言，具有简单易学，完全面向对象，安全可靠，跨平台等特点。</p>
+<br>
+
+<h3 id="Java-的三种技术架构"><a href="#Java-的三种技术架构" class="headerlink" title="Java 的三种技术架构"></a>Java 的三种技术架构</h3><p>目前，java主要有三种技术架构：</p>
+<ul>
+<li><p>JAVAEE（Java Platform Enterprise Edition）企业版</p>
+<p>它是为开发企业环境下的应用程序提供的一套解决方案。该技术体系中包含的技术如：Servlet Jsp等，主要针对于Web应用程序开发。</p>
+</li>
+<li><p>JAVASE（java Platform Standard Edition）标准版</p>
+<p>它是为开发普通桌面和商务应用程序提供的解决方案。该技术体系是其他两者的基础，可以完成一些桌面应用程序的开发，比如Java版的扫雷、QQ等。</p>
+</li>
+<li><p>JAVAME（Java Platform Micro Edition）小型版</p>
+<p>它是为开发电子消费产品和嵌入式设备提供的解决方案。该技术体系主要应用于小型电子消费产品，如手机中的应用程序等。</p>
+</li>
+</ul>
+<br>
+
+<h3 id="Java-最大特性：跨平台"><a href="#Java-最大特性：跨平台" class="headerlink" title="Java 最大特性：跨平台"></a>Java 最大特性：跨平台</h3><p>跨平台性是指，通过 <strong>Java</strong> 语言编写的应用程序在<strong>不同的操作系统</strong>平台中都可以运行。</p>
+<p>它实现的原理是 在需要运行 Java 应用程序的操作系统中，先安装一个其系统对应的 <strong>Java 虚拟机</strong> （JVM：Java Virtual Machine），由 JVM 来调用系统底层指令，去解析、执行 Java 程序，从而在该操作系统中运行。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbfe34i6j30g9066jrl.jpg" alt="Java 虚拟机机制"></p>
+<p>所以同一个 Java 程序在各个不同的操作系统中都可以执行，这样就实现了 Java 程序的跨平台性。</p>
+<br>
+
+<h3 id="开发环境和工具"><a href="#开发环境和工具" class="headerlink" title="开发环境和工具"></a>开发环境和工具</h3><p>使用任何一门语言之前，都必须首先搭建环境。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbff679wj30go0avwfp.jpg" alt="JDK 与JRE"></p>
+<br>
+
+<h4 id="JRE"><a href="#JRE" class="headerlink" title="JRE"></a>JRE</h4><p>JRE 全称是 Java Runtime Environment： <strong>Java 运行环境</strong>。</p>
+<p>包括 <strong>Java 虚拟机（ JVM ）</strong>和 <strong>Java 程序所需的核心类库</strong> 等，是运行 Java 程序所必须的环境。</p>
+<br>
+
+<h4 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h4><p>JDK 全称是 Java Development Kit：<strong>Java 开发工具包</strong> 。</p>
+<p>JDK 不仅包含了 <strong>Java 的开发工具</strong>，也包括了 <strong>JRE</strong>。 JDK 是提供给 Java 开发人员使用的。</p>
+<p><strong>Java 的开发工具</strong> 有 <strong>编译工具（ javac.exe ）、打包工具 ( jar.exe )</strong> 等。</p>
+<br>
+
+<p>所以，我们只需要安装 JDK 即可。 </p>
+<p><a target="_blank" rel="noopener" href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">下载地址</a></p>
+<br>
+
+<h4 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h4><p>下载安装 JDK 后，在DOS命令行窗口中，可以在其bin目录下执行 javac 命令，但这样非常不方便。</p>
+<p>为了在DOS命令行窗口中，在任何目录下都能够执行javac命令，就需要将javac.exe命令文件所在目录的<br>路径放入path环境变量中，这就是配置环境变量。</p>
+<blockquote>
+<p>原理:</p>
+<p>在DOS命令提示符窗口中输入某个命令后，Windows系统会首先在当前目录下查找是否存在该命令文件可以执行。如果没有，Windows系统就会在path环境变量路径中查找。如果查找到，就会执行该命令。如果还没有找到，那么就会提示如下信息。</p>
+</blockquote>
+<br>
+
+<p>配置方法如下：</p>
+<ol>
+<li>右击 我的电脑 -&gt;属性 -&gt;高级 -&gt;环境变量 -&gt; 在 <strong>系统变量</strong> 中找到 <code>path</code>.</li>
+<li>点击新建 -&gt; 变量名：<code>JAVA_HOME</code>，变量值：你的java所在路径，如：C:\Java\jdk1.7.0_21，这个值只要到这目录就差不多了，不要在后面加\bin等东西了。</li>
+<li>然后找到 path -&gt; 双击，值里面别去改它， 在最前面加 <code>%JAVA_HOME%\bin;</code> ( 注意 英文分号）。</li>
+<li>设置环境变量 <strong>classpath</strong> ，值：<code>.;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\tools.jar </code>最前面有个点，代表的是当前路径，最后面最好不加分号。</li>
+</ol>
+<p>为了验证是否配置成功，在任意位置新开一个 DOS 命令窗口，再输入 <strong>java -version</strong> ，如果能正常显示 java 的版本号，就说明配置成功了。 </p>
+<br>            
+
+<h4 id="javac-命令和-java-命令"><a href="#javac-命令和-java-命令" class="headerlink" title="javac 命令和 java 命令"></a>javac 命令和 java 命令</h4><p>java运行分两部分：一个是编译，一个是运行。</p>
+<ul>
+<li>javac：负责的是编译部分，当执行javac时，会启动java的编译器程序，对指定扩展名的 .java 文件进行编译。生成了 JVM 可以识别的字节码文件，也就是class文件，java的运行程序。</li>
+<li>java：负责运行的部分。会启动 JVM 加载运行时所需要的类库，并对 class 文件进行执行。</li>
+</ul>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbffxuvij30e802tgll.jpg" alt="java 编译运行"></p>
+<br>
+
+<h3 id="Hello-World！"><a href="#Hello-World！" class="headerlink" title="Hello World！"></a>Hello World！</h3><p><code>Hello World</code> 代表学习计算机语言的第一个入门小程序。现在泛指接触任何新事物的第一步。</p>
+<p>学习 java，第一步就是著名的 <code>Hello World</code> ，现在就写第一个 Java 程序。</p>
+<ol>
+<li><p>新建一个文件 <code>Hello.java</code> (.java 是后缀名)，打开后编辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hello</span></span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;hello world!&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>保存后，打开 cmd 命令，cd到文件目录下，首先编译: <code>javac  Hello.java</code></p>
+</li>
+<li><p>然后运行：<code>java Hello</code></p>
+</li>
+</ol>
+<p> ​<img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbfhu4b9j30as01ydfs.jpg" alt="hello world"></p>
+<p>可以看到 DOS 窗口里面，打印了 「hello world！」，这句是程序里面写的。</p>
+<p>至此，完成了第一个 Java 程序。</p>
+<br>
+
+<h3 id="常见的-cmd-命令"><a href="#常见的-cmd-命令" class="headerlink" title="常见的 cmd 命令"></a>常见的 cmd 命令</h3><p>cmd 命令窗口的启动：<code>win+R</code> 唤出 Window 运行命令，输入<code>cmd</code>  运行 cmd 窗口。</p>
+<p>e:    e(盘符)+” : “ 转到E盘</p>
+<p>ipconfig：    查看IP配置</p>
+<p>dir    ：    列出当前目录下的文件以及文件夹</p>
+<p>md    ：    创建目录（文件夹）</p>
+<p>rd    ：    删除目录</p>
+<p>cd    ：    进入指定目录</p>
+<p>cd..    ：    退出当前目录，返回到上一级目录</p>
+<p>cd\    ：    退回到根目录</p>
+<p>del    ：    删除文件</p>
+<p>del*：    删除所有文件</p>
+<p>del*.文件扩展名：    删除同一类型的文件</p>
+<p>echo：    创建文件。</p>
+<p>cls：    清屏</p>
+<p>help：    显示所有命令及描述</p>
+<p>exit：    退出dos命令行<br>​    </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag"># Java基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2015/07/28/Java-%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80%EF%BC%88%E4%B8%80%EF%BC%89/" rel="next" title="Java 语法基础（一）">
+      Java 语法基础（一） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">Java 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-%E7%9A%84%E4%B8%89%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">Java 的三种技术架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-%E6%9C%80%E5%A4%A7%E7%89%B9%E6%80%A7%EF%BC%9A%E8%B7%A8%E5%B9%B3%E5%8F%B0"><span class="nav-number">4.</span> <span class="nav-text">Java 最大特性：跨平台</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%92%8C%E5%B7%A5%E5%85%B7"><span class="nav-number">5.</span> <span class="nav-text">开发环境和工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JRE"><span class="nav-number">5.1.</span> <span class="nav-text">JRE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK"><span class="nav-number">5.2.</span> <span class="nav-text">JDK</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">5.3.</span> <span class="nav-text">配置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#javac-%E5%91%BD%E4%BB%A4%E5%92%8C-java-%E5%91%BD%E4%BB%A4"><span class="nav-number">5.4.</span> <span class="nav-text">javac 命令和 java 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hello-World%EF%BC%81"><span class="nav-number">6.</span> <span class="nav-text">Hello World！</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84-cmd-%E5%91%BD%E4%BB%A4"><span class="nav-number">7.</span> <span class="nav-text">常见的 cmd 命令</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

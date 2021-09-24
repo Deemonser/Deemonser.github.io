@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近学习了 扔物线  的 Android 开发进阶: 自定义 View 1-2 Paint 详解 后受益匪浅。 对 Path 类讲的非常详细，所以做个笔记，以便翻阅。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android自定义View-Paint 详解">
+<meta property="og:url" content="https://deemonser.github.io/2017/08/30/Android%E8%87%AA%E5%AE%9A%E4%B9%89View-Paint-%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="最近学习了 扔物线  的 Android 开发进阶: 自定义 View 1-2 Paint 详解 后受益匪浅。 对 Path 类讲的非常详细，所以做个笔记，以便翻阅。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbd9s5phj30go0b4js5.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbdaq0fkj30j909y0tb.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdb3nzcj30k90baaaf.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbdc60mwj30j109r0t4.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbdczjdkj306n05zwec.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdddxp4j306n05zwec.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbdexkidj30l4088js2.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdfagnej30n50780te.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbdgvnylj30go0opdhg.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdh6sw6j30go0ci3z0.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbdj4y0ag30eg0b4npd.gif">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbdm9hreg30eg0b4npd.gif">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbdnti80j30ce05imx2.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdorgdxj30e706dwee.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdpnu3gj30dw0ecmxq.jpg">
+<meta property="article:published_time" content="2017-08-30T14:40:15.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="自定义View">
+<meta property="article:tag" content="Canvas">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbd9s5phj30go0b4js5.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2017/08/30/Android%E8%87%AA%E5%AE%9A%E4%B9%89View-Paint-%E8%AF%A6%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android自定义View-Paint 详解 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2017/08/30/Android%E8%87%AA%E5%AE%9A%E4%B9%89View-Paint-%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android自定义View-Paint 详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-08-30 22:40:15" itemprop="dateCreated datePublished" datetime="2017-08-30T22:40:15+08:00">2017-08-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android%E8%87%AA%E5%AE%9A%E4%B9%89-View/" itemprop="url" rel="index"><span itemprop="name">Android自定义 View</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbd9s5phj30go0b4js5.jpg" alt="paint"></p>
+<p>最近学习了 <strong>扔物线</strong>  的 <a target="_blank" rel="noopener" href="http://hencoder.com/ui-1-2/">Android 开发进阶: 自定义 View 1-2 Paint 详解</a> 后受益匪浅。</p>
+<p>对 <strong>Path</strong> 类讲的非常详细，所以做个笔记，以便翻阅。</p>
+<span id="more"></span>
+
+<p>Path 在自定义View 中主要控制绘制的颜色以及效果。</p>
+<br>
+
+<h3 id="颜色"><a href="#颜色" class="headerlink" title="颜色"></a>颜色</h3><p>Canvas 绘制内容时，有三层对颜色的处理：</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbdaq0fkj30j909y0tb.jpg" alt="img"></p>
+<h4 id="基本颜色"><a href="#基本颜色" class="headerlink" title="基本颜色"></a>基本颜色</h4><p>基本颜色的绘制有三种方式</p>
+<ul>
+<li>canvas.drawColor/ARGB()  方法是填充整个画板的底色</li>
+<li>drawBitmap()  的颜色，是直接由 <code> Bitmap</code> 对象来提供，用于图片</li>
+<li>Paint 参数控制图形和文字的颜色</li>
+</ul>
+<p>Paint 参数控制基本颜色有两种方式，一种直接设置颜色，另一种间接设置颜色。</p>
+<h5 id="1-直接设置"><a href="#1-直接设置" class="headerlink" title="1.直接设置"></a>1.直接设置</h5><p>直接设置就非常简单，就是 Paint 的两个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">paint.setColor(Color.parseColor(<span class="string">&quot;#009688&quot;</span>));  </span><br><span class="line"></span><br><span class="line">paint.setARGB(<span class="number">100</span>, <span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>);  </span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="2-通过-Shader-间接设置"><a href="#2-通过-Shader-间接设置" class="headerlink" title="2.通过 Shader 间接设置"></a>2.通过 Shader 间接设置</h5><p>Shader 的中文叫做「着色器」，也是用于设置绘制颜色的。「着色器」不是 Android 独有的，它是图形领域里一个通用的概念，它和直接设置颜色的区别是，着色器设置的是一个颜色方案，或者说是一套着色规则。</p>
+<p>当设置了 Shader 之后 Paint 在绘制图形和文字时就不使用 setColor/ARGB()  设置的颜色了，而是使用 Shader  的方案中的颜色。</p>
+<br>
+
+<p>在 Android 的绘制里使用 Shader ，并不直接用 Shader 这个类，而是用它的5个子类</p>
+<ul>
+<li> <code>LinearGradient</code> </li>
+<li> <code>RadialGradient</code></li>
+<li> <code>SweepGradient</code> </li>
+<li> <code>BitmapShader</code></li>
+<li> <code>ComposeShader</code> </li>
+</ul>
+<h6 id="LinearGradient-线性渐变"><a href="#LinearGradient-线性渐变" class="headerlink" title="LinearGradient 线性渐变"></a>LinearGradient 线性渐变</h6><p>设置两个点和两种颜色，以这两个点作为端点，使用两种颜色的渐变来绘制颜色</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Shader shader = <span class="keyword">new</span> LinearGradient(<span class="number">100</span>, <span class="number">100</span>, 	<span class="comment">//渐变的两个端点的位置 x,y</span></span><br><span class="line">                                   <span class="number">500</span>, <span class="number">500</span>, </span><br><span class="line">                                   Color.parseColor(<span class="string">&quot;#E91E63&quot;</span>),	<span class="comment">//两端点的颜色</span></span><br><span class="line">                                   Color.parseColor(<span class="string">&quot;#2196F3&quot;</span>), </span><br><span class="line">                                   Shader.TileMode.CLAMP	<span class="comment">//端点范围之外的着色规则，类型是Shader.TileMode</span></span><br><span class="line">                                  );</span><br><span class="line">paint.setShader(shader);</span><br><span class="line">canvas.drawCircle(<span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>, paint);  </span><br></pre></td></tr></table></figure>
+
+<p>LinearGradient 的其他参数很简单，只是最后一个参数 tile ，是 Shader.TileMode 类型。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdb3nzcj30k90baaaf.jpg" alt="LinearGradient"></p>
+<p>TileMode有三个可选值：</p>
+<ul>
+<li>CLAMP 会在端点之外延续端点处的颜色</li>
+<li>MIRROR 是镜像模式</li>
+<li>REPEAT 是重复模式</li>
+</ul>
+<br>
+
+
+<h6 id="RadialGradient-辐射渐变"><a href="#RadialGradient-辐射渐变" class="headerlink" title="RadialGradient 辐射渐变"></a>RadialGradient 辐射渐变</h6><p>辐射渐变就是从中心向周围辐射状的渐变</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Shader shader = <span class="keyword">new</span> RadialGradient(<span class="number">300</span>, <span class="number">300</span>, 	<span class="comment">//辐射中心的坐标</span></span><br><span class="line">                                   <span class="number">200</span>, 		<span class="comment">//辐射半径</span></span><br><span class="line">                                   Color.parseColor(<span class="string">&quot;#E91E63&quot;</span>),	<span class="comment">//辐射中心的颜色</span></span><br><span class="line">                                   Color.parseColor(<span class="string">&quot;#2196F3&quot;</span>), <span class="comment">//辐射边缘的颜色 </span></span><br><span class="line">                                   Shader.TileMode.CLAMP);	<span class="comment">//辐射范围之外的着色模式，类型是Shader.TileMode</span></span><br><span class="line">paint.setShader(shader);</span><br><span class="line">canvas.drawCircle(<span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>, paint);  </span><br></pre></td></tr></table></figure>
+
+<p>辐射渐变的参数 也很简单，最后一个 范围之外的模式 和前面的相同。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbdc60mwj30j109r0t4.jpg" alt="RadialGradient"></p>
+<br>
+
+<h6 id="SweepGradient-扫描渐变"><a href="#SweepGradient-扫描渐变" class="headerlink" title="SweepGradient 扫描渐变"></a>SweepGradient 扫描渐变</h6><p>扫描渐变和雷达扫描的效果类似，以 X 轴正方向为起始位置，顺时针扫描。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Shader shader = <span class="keyword">new</span> SweepGradient(<span class="number">300</span>, <span class="number">300</span>, 		<span class="comment">//扫描的中心</span></span><br><span class="line">                                  Color.parseColor(<span class="string">&quot;#E91E63&quot;</span>), 	<span class="comment">//扫描的起始颜色，浅红色</span></span><br><span class="line">                                  Color.parseColor(<span class="string">&quot;#2196F3&quot;</span>));	<span class="comment">//扫描的终止颜色，蓝色</span></span><br><span class="line">paint.setShader(shader);</span><br><span class="line">canvas.drawCircle(<span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>, paint);  </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbdczjdkj306n05zwec.jpg" alt="SweepGradient"></p>
+<br>
+
+<h6 id="BitmapShader"><a href="#BitmapShader" class="headerlink" title="BitmapShader"></a>BitmapShader</h6><p>这个是用Bitmap 的像素来作为图形或文字的填充</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.batman);  </span><br><span class="line">Shader shader = <span class="keyword">new</span> BitmapShader(bitmap, 	<span class="comment">//Bitmap对象</span></span><br><span class="line">                                 Shader.TileMode.CLAMP, 	<span class="comment">//横向的TileMode</span></span><br><span class="line">                                 Shader.TileMode.CLAMP);  	<span class="comment">//纵向的TileMode</span></span><br><span class="line">paint.setShader(shader);</span><br><span class="line">canvas.drawCircle(<span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>, paint);  </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdddxp4j306n05zwec.jpg" alt="BitmapShader"></p>
+<br>
+
+<h6 id="ComposeShader-混合着色器"><a href="#ComposeShader-混合着色器" class="headerlink" title="ComposeShader 混合着色器"></a>ComposeShader 混合着色器</h6><p>混合就是把两个  Shader  一起使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一个 Shader：头像的 Bitmap</span></span><br><span class="line">Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.batman);  </span><br><span class="line">Shader shader1 = <span class="keyword">new</span> BitmapShader(bitmap1, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二个 Shader：标识的 Bitmap</span></span><br><span class="line">Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.batman_logo);  </span><br><span class="line">Shader shader2 = <span class="keyword">new</span> BitmapShader(bitmap2, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ComposeShader：结合两个 Shader</span></span><br><span class="line">Shader shader = <span class="keyword">new</span> ComposeShader(shader1, 		<span class="comment">//两个Shader</span></span><br><span class="line">                                  shader2, </span><br><span class="line">                                  PorterDuff.Mode.SRC_OVER);<span class="comment">//PorterDuff.Mode类型，叠加模式 </span></span><br><span class="line">paint.setShader(shader);</span><br><span class="line"></span><br><span class="line">canvas.drawCircle(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, paint);  </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbdexkidj30l4088js2.jpg" alt="ComposeShader"></p>
+<p><code>ComposeShader()</code> 在硬件加速下是不支持两个相同类型的 <code>Shader</code> 的，所以这里也需要关闭硬件加速。</p>
+<p>ProterDuff.Mode是enum，用于两个 Shader 的叠加模式。因内容过多，所有在下面单独说明。</p>
+<br>
+
+<h6 id="ProterDuff-Mode"><a href="#ProterDuff-Mode" class="headerlink" title="ProterDuff.Mode"></a>ProterDuff.Mode</h6><p>PorterDuff.Mode 一共有 17 个，可以分为两类：</p>
+<ol>
+<li>Alpha 合成 (Alpha Compositing)</li>
+<li>混合 (Blending)</li>
+</ol>
+<p>第一类，Alpha 合成，其实就是 「PorterDuff」 这个词所指代的算法。 </p>
+<p>「PorterDuff」 是两个人的姓。这两个人共同发表了一篇论文，描述了 12 种将两个图像共同绘制的操作（即算法）。而这篇论文所论述的操作，都是关于 Alpha 通道「透明度」的计算的，后来人们就把这类计算称为<strong>Alpha 合成</strong> ( Alpha Compositing ) 。</p>
+<p>效果直接盗 Google 的<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/graphics/PorterDuff.Mode.html">官方文档</a>了。</p>
+<p>源图像和目标图像：</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdfagnej30n50780te.jpg" alt="img"></p>
+<p>Alpha 合成：</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbdgvnylj30go0opdhg.jpg" alt="img"></p>
+<p>第二类，混合，是制图软件里都有的那些混合模式（<code>multiply</code> <code>darken</code> <code>lighten</code> 之类的）。这一类操作的是颜色本身而不是 <code>Alpha</code> 通道，并不属于 <code>Alpha</code> 合成，所以和 Porter 与 Duff 这两个人也没什么关系，不过为了使用的方便，它们同样也被 Google 加进了 <code>PorterDuff.Mode</code> 里。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdh6sw6j30go0ci3z0.jpg" alt="img"></p>
+<p><strong>结论</strong></p>
+<p>从效果图可以看出，Alpha 合成类的效果都比较直观，而混合类的效果就相对抽象一些，Alpha 合成类需要掌握，而混合类了解即可，需要的时候在来查找。</p>
+<br>
+
+<h4 id="ColorFilter"><a href="#ColorFilter" class="headerlink" title="ColorFilter"></a>ColorFilter</h4><p>除了前面 Paint 设置基本颜色， 还有一个 <code>setColorFilter(ColorFilter colorFilter)</code> 方法和颜色有关。</p>
+<p>ColorFilter 这个类是为绘制设置颜色过滤。颜色过滤的意思，就是为绘制的内容设置一个统一的过滤策略，然后 <code>Canvas.drawXXX()</code> 方法会对每个像素都进行过滤后再绘制出来。</p>
+<p>ColorFilter 并不直接使用，而是使用它的子类。</p>
+<p>它共有三个子类：</p>
+<ul>
+<li><code>LightingColorFilter</code></li>
+<li><code>PorterDuffColorFilter</code> </li>
+<li><code>ColorMatrixColorFilter</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*LightingColorFilter(int mul, int add)</span></span><br><span class="line"><span class="comment">整个计算过程如下：</span></span><br><span class="line"><span class="comment">R&#x27; = R * mul.R / 0xff + add.R  </span></span><br><span class="line"><span class="comment">G&#x27; = G * mul.G / 0xff + add.G   </span></span><br><span class="line"><span class="comment">B&#x27; = B * mul.B / 0xff + add.B  </span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">ColorFilter lightingColorFilter = <span class="keyword">new</span> LightingColorFilter(<span class="number">0x00ffff</span>, <span class="number">0x000000</span>);  </span><br><span class="line">paint.setColorFilter(lightingColorFilter); </span><br></pre></td></tr></table></figure>
+
+<p>这三个类都是对颜色的直接操作，而且比较专业，就介绍到这里了。</p>
+<br>
+
+<h4 id="Xfermode"><a href="#Xfermode" class="headerlink" title="Xfermode"></a>Xfermode</h4><p>Xfermode 指的是你要绘制的内容和 <code>Canvas</code> 的目标位置的内容应该怎样结合计算出最终的颜色。但通俗地说，其实就是要你以绘制的内容作为源图像，以 View 中已有的内容作为目标图像，选取一个 <code>PorterDuff.Mode</code> 作为绘制内容的颜色处理方案。Xfermode 只有一个子类PorterDuffXfermode，所以直接用它。而且必须使用过离屏缓冲，不然效果会很奇特。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> saved = canvas.saveLayer(<span class="keyword">null</span>, <span class="keyword">null</span>, Canvas.ALL_SAVE_FLAG);	<span class="comment">//首先需要离屏缓冲</span></span><br><span class="line"></span><br><span class="line">canvas.drawBitmap(rectBitmap, <span class="number">0</span>, <span class="number">0</span>, paint); <span class="comment">// 画方</span></span><br><span class="line">paint.setXfermode(<span class="keyword">new</span> PorterDuffXfermode(PorterDuff.Mode.DST_IN)); <span class="comment">// 设置 Xfermode</span></span><br><span class="line">canvas.drawBitmap(circleBitmap, <span class="number">0</span>, <span class="number">0</span>, paint); <span class="comment">// 画圆</span></span><br><span class="line">paint.setXfermode(<span class="keyword">null</span>); <span class="comment">// 用完及时清除 Xfermode</span></span><br><span class="line"></span><br><span class="line">canvas.restoreToCount(saved); <span class="comment">//离屏缓冲后的图形，恢复到画板上</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbdj4y0ag30eg0b4npd.gif" alt="Xfermode"></p>
+<br>
+
+<br>
+
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><h4 id="抗锯齿"><a href="#抗锯齿" class="headerlink" title="抗锯齿"></a>抗锯齿</h4><p>抗锯齿默认是关闭的，如果需要抗锯齿，需要显式地打开。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//两种方式</span></span><br><span class="line">paint.setAntiAlias(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">Paint paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);<span class="comment">//参数里加一个 ANTI_ALIAS_FLAG 的 flag开启抗锯齿</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="Style"><a href="#Style" class="headerlink" title="Style"></a>Style</h4><p><code>setStyle(style)</code> 用来设置图形是线条风格还是填充风格</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Paint.Style.FILL); <span class="comment">// FILL 模式，填充  </span></span><br><span class="line">canvas.drawCircle(<span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>, paint);  </span><br></pre></td></tr></table></figure>
+
+<p>Pain.Style 有三个模式</p>
+<ul>
+<li>FILL 模式，填充  ，默认模式</li>
+<li>STROKE 模式，画线 </li>
+<li>FILL_AND_STROKE 模式，填充 + 画线</li>
+</ul>
+<br>
+
+<h4 id="线条形状"><a href="#线条形状" class="headerlink" title="线条形状"></a>线条形状</h4><p>设置线条形状的一共有 4 个方法</p>
+<ul>
+<li><p>setStrokeWidth(float width) </p>
+<p>设置线条宽度。单位为像素，默认值是 0</p>
+</li>
+<li><p>setStrokeCap(Paint.Cap cap) </p>
+<p>设置线头的形状。线头形状有三种：<code>BUTT</code> 平头、<code>ROUND</code> 圆头、<code>SQUARE</code> 方头。默认为 <code>BUTT</code>。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbdm9hreg30eg0b4npd.gif" alt="StrokeCap"></p>
+</li>
+<li><p>setStrokeJoin(Paint.Join join)</p>
+<p>设置拐角的形状。有三个值可以选择：<code>MITER</code> 尖角、 <code>BEVEL</code> 平角和 <code>ROUND</code> 圆角。默认为 <code>MITER</code></p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbdnti80j30ce05imx2.jpg" alt="StrokeJoin"></p>
+</li>
+<li><p>setStrokeMiter(float miter)</p>
+<p>设置 <code>MITER</code> 型拐角的延长线的最大值。</p>
+<p>这个是方法是对setStrokeJoin方法的补充。  <code>MITER</code> 型连接点有一个额外的规则：当尖角过长时，自动改用 <code>BEVEL</code> 的方式来渲染连接点，而这个方法就是用来设置延长线的最大值的。拐角的大小为 θ ，那么这个比值就等于 1 / sin ( θ / 2 ) </p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdorgdxj30e706dwee.jpg" alt="StrokeMiter"></p>
+</li>
+</ul>
+<br>
+
+<h4 id="色彩优化"><a href="#色彩优化" class="headerlink" title="色彩优化"></a>色彩优化</h4><p><code>Paint</code> 的色彩优化有两个方法： <code>setDither(boolean dither)</code> 和 <code>setFilterBitmap(boolean filter)</code> 。它们的作用都是让画面颜色变得更加「顺眼」，但原理和使用场景是不同的</p>
+<ul>
+<li>setDither(boolean dither) 设置图像抖动 ，</li>
+<li>setFilterBitmap(boolean filter) 设置是否使用双线性过滤来绘制 <code>Bitmap</code></li>
+</ul>
+<br>
+
+<h4 id="轮廓效果"><a href="#轮廓效果" class="headerlink" title="轮廓效果"></a>轮廓效果</h4><p>setPathEffect(PathEffect effect) 用来给给图形的轮廓设置效果。</p>
+<p>PathEffect 有六种</p>
+<ul>
+<li><p>CornerPathEffect 把所有拐角变成圆角</p>
+</li>
+<li><p>DiscretePathEffect 把线条进行随机的偏离</p>
+</li>
+<li><p>DashPathEffect 虚线来绘制线条</p>
+</li>
+<li><p>PathDashPathEffect 根据路径绘制虚线</p>
+</li>
+<li><p>SumPathEffect</p>
+<p>组合效果，分别按照两种 <code>PathEffect</code> 分别对目标进行绘制。</p>
+</li>
+<li><p>ComposePathEffect</p>
+<p>组合效果，先对目标 <code>Path</code> 使用一个 <code>PathEffect</code>，然后再对这个改变后的 <code>Path</code> 使用另一个 <code>PathEffect</code></p>
+</li>
+</ul>
+<br>
+
+<h4 id="阴影效果"><a href="#阴影效果" class="headerlink" title="阴影效果"></a>阴影效果</h4><p><code>setShadowLayer(float radius, float dx, float dy, int shadowColor)</code> </p>
+<p> <code>radius</code> 是阴影的模糊范围； </p>
+<p><code>dx</code> <code>dy</code> 是阴影的偏移量； </p>
+<p><code>shadowColor</code> 是阴影的颜色。</p>
+<p>如果要清除阴影层，使用 <code>clearShadowLayer()</code></p>
+<blockquote>
+<p>在硬件加速开启的情况下， <code>setShadowLayer()</code> 只支持文字的绘制，文字之外的绘制必须关闭硬件加速才能正常绘制阴影。</p>
+<p>如果 <code>shadowColor</code> 是半透明的，阴影的透明度就使用 <code>shadowColor</code> 自己的透明度；而如果 <code>shadowColor</code>是不透明的，阴影的透明度就使用 <code>paint</code> 的透明度</p>
+</blockquote>
+<br>
+
+<h4 id="前景效果"><a href="#前景效果" class="headerlink" title="前景效果"></a>前景效果</h4><p><code>setMaskFilter(MaskFilter maskfilter)</code> 设置绘制层上方的附加效果。</p>
+<p><code>MaskFilter</code> 有两种</p>
+<ul>
+<li> <code>BlurMaskFilter(float radius, BlurMaskFilter.Blur style)</code> </li>
+</ul>
+<p>  模糊效果，有NORMAL、SOLID、INNER、OUTER四种类型</p>
+<p>  <img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbdpnu3gj30dw0ecmxq.jpg"></p>
+<ul>
+<li><p><code> EmbossMaskFilter(float[] direction, float ambient, float specular, float blurRadius)</code></p>
+<p>浮雕效果，<code>direction</code> 是一个 3 个元素的数组，指定了光源的方向； <code>ambient</code> 是环境光的强度，数值范围是 0 到 1； <code>specular</code> 是炫光的系数； <code>blurRadius</code> 是应用光线的范围</p>
+</li>
+</ul>
+<br>
+
+<h4 id="获取绘制的Path"><a href="#获取绘制的Path" class="headerlink" title="获取绘制的Path"></a>获取绘制的Path</h4><ul>
+<li><code>getFillPath(src, dst)</code> 方法就能获取绘制的实际 <code>Path</code>。方法的参数里，<code>src</code> 是原 <code>Path</code> ，而 <code>dst</code> 就是实际 <code>Path</code> 的保存位置。 <code>getFillPath(src, dst)</code> 会计算出实际 <code>Path</code>，然后把结果保存在 <code>dst</code> 里</li>
+<li><code>getTextPath()</code> 方法，获取的就是目标文字所对应的 <code>Path</code> 。这个就是所谓「文字的 <code>Path</code>」</li>
+</ul>
+<br>
+
+<h3 id="文字"><a href="#文字" class="headerlink" title="文字"></a>文字</h3><p><code>Paint</code> 有些设置是文字绘制相关的，即和 <code>drawText()</code> 相关的。</p>
+<ul>
+<li>文字大小</li>
+<li>文字间隔</li>
+<li>文字效果（删除线、斜体、下划线）</li>
+</ul>
+<br>
+
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>这一类方法用来初始化 <code>Paint</code> 对象，或者是批量设置 <code>Paint</code> 的多个属性的方法</p>
+<ul>
+<li>rest()  重置 <code>Paint</code> 的所有属性为默认值</li>
+<li>set(Paint src) 把 <code>src</code>  的所有属性全部复制过来</li>
+<li>setFlages(int flags) 批量设置 flags。</li>
+</ul>
+<br>
+
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="http://hencoder.com/ui-1-2/">Android 开发进阶: 自定义 View 1-2 Paint 详解</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89View/" rel="tag"># 自定义View</a>
+              <a href="/tags/Canvas/" rel="tag"># Canvas</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/08/21/Android-Library%E7%9A%84%E4%BE%9D%E8%B5%96%E6%96%B9%E5%BC%8F%E5%8F%8A%E5%8F%91%E5%B8%83/" rel="prev" title="Android Library的依赖方式及发布">
+      <i class="fa fa-chevron-left"></i> Android Library的依赖方式及发布
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/09/03/Git-%E7%AE%80%E6%98%93%E6%8C%87%E5%8D%97/" rel="next" title="Git 简易指南">
+      Git 简易指南 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%9C%E8%89%B2"><span class="nav-number">1.</span> <span class="nav-text">颜色</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%A2%9C%E8%89%B2"><span class="nav-number">1.1.</span> <span class="nav-text">基本颜色</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E7%9B%B4%E6%8E%A5%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.直接设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E9%80%9A%E8%BF%87-Shader-%E9%97%B4%E6%8E%A5%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.通过 Shader 间接设置</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#LinearGradient-%E7%BA%BF%E6%80%A7%E6%B8%90%E5%8F%98"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">LinearGradient 线性渐变</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#RadialGradient-%E8%BE%90%E5%B0%84%E6%B8%90%E5%8F%98"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">RadialGradient 辐射渐变</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#SweepGradient-%E6%89%AB%E6%8F%8F%E6%B8%90%E5%8F%98"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">SweepGradient 扫描渐变</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#BitmapShader"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">BitmapShader</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#ComposeShader-%E6%B7%B7%E5%90%88%E7%9D%80%E8%89%B2%E5%99%A8"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">ComposeShader 混合着色器</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#ProterDuff-Mode"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">ProterDuff.Mode</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ColorFilter"><span class="nav-number">1.2.</span> <span class="nav-text">ColorFilter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Xfermode"><span class="nav-number">1.3.</span> <span class="nav-text">Xfermode</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%88%E6%9E%9C"><span class="nav-number">2.</span> <span class="nav-text">效果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%97%E9%94%AF%E9%BD%BF"><span class="nav-number">2.1.</span> <span class="nav-text">抗锯齿</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Style"><span class="nav-number">2.2.</span> <span class="nav-text">Style</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E6%9D%A1%E5%BD%A2%E7%8A%B6"><span class="nav-number">2.3.</span> <span class="nav-text">线条形状</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%89%B2%E5%BD%A9%E4%BC%98%E5%8C%96"><span class="nav-number">2.4.</span> <span class="nav-text">色彩优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AE%E5%BB%93%E6%95%88%E6%9E%9C"><span class="nav-number">2.5.</span> <span class="nav-text">轮廓效果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B4%E5%BD%B1%E6%95%88%E6%9E%9C"><span class="nav-number">2.6.</span> <span class="nav-text">阴影效果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E6%99%AF%E6%95%88%E6%9E%9C"><span class="nav-number">2.7.</span> <span class="nav-text">前景效果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%98%E5%88%B6%E7%9A%84Path"><span class="nav-number">2.8.</span> <span class="nav-text">获取绘制的Path</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E5%AD%97"><span class="nav-number">3.</span> <span class="nav-text">文字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

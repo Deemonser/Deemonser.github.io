@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前言面向对象是现在高级计算机语言的一个特性，Java、C++、python 等都是面向对象的编程语言。 这里有许多转载的部分，如果侵权，请告知。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面向对象">
+<meta property="og:url" content="https://deemonser.github.io/2015/07/30/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="前言面向对象是现在高级计算机语言的一个特性，Java、C++、python 等都是面向对象的编程语言。 这里有许多转载的部分，如果侵权，请告知。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbi7iwk6j30go0b3ab5.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbi85t3lj30eh04x747.jpg">
+<meta property="article:published_time" content="2015-07-30T11:14:18.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:32.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="Java 基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbi7iwk6j30go0b3ab5.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2015/07/30/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>面向对象 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2015/07/30/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          面向对象
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-07-30 19:14:18" itemprop="dateCreated datePublished" datetime="2015-07-30T19:14:18+08:00">2015-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:32" itemprop="dateModified" datetime="2021-09-14T17:07:32+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbi7iwk6j30go0b3ab5.jpg" alt="coffee"></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>面向对象是现在高级计算机语言的一个特性，Java、C++、python 等都是面向对象的编程语言。</p>
+<p>这里有许多转载的部分，如果侵权，请告知。</p>
+<span id="more"></span>
+
+<br>
+
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p><strong>面向对象</strong> 是相对于<strong>面向过程</strong> 而言的，是基于面向过程演变而来，和面向过程一样，都是一种编程思想。</p>
+<br>
+
+<h4 id="面向过程"><a href="#面向过程" class="headerlink" title="面向过程"></a>面向过程</h4><p>强调的是功能的行为过程，代表语言：C语言。</p>
+<br>
+
+<p>例子：把大象装进冰箱</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 打开冰箱。</span><br><span class="line">2. 存储大象。</span><br><span class="line">3. 关上冰箱。</span><br></pre></td></tr></table></figure>
+
+<p>“打开”、”存储”、”关上”都是功能行为，在代码中的直观体现就是函数或者方法，这就是一种面向过程的以功能行为为主体的思想体现。</p>
+<br>
+
+<h4 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h4><p>是将功能封装进对象，强调具备了功能的对象。代表语言：Java、C++、Python。</p>
+<br>
+
+<p>例子：把大象装进冰箱</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 冰箱打开。</span><br><span class="line">2. 冰箱存储。</span><br><span class="line">3. 冰箱关闭。</span><br></pre></td></tr></table></figure>
+
+<p> 可以看到，所有的操作都是以”冰箱”为主体，而不是功能行为。也就是说冰箱自己已经具备”打开”、”存储”、”关上”的行为功能，我们只需要让冰箱执行它具备的功能就可以了。这就是一种面向对象的以执行功能的对象为主体的思想体现。</p>
+<br>
+
+<h4 id="面向对象的三大特征"><a href="#面向对象的三大特征" class="headerlink" title="面向对象的三大特征"></a>面向对象的三大特征</h4><ul>
+<li><strong>封装</strong> </li>
+<li><strong>继承</strong> </li>
+<li><strong>多态</strong> </li>
+</ul>
+<br>
+
+<h3 id="类与对象"><a href="#类与对象" class="headerlink" title="类与对象"></a>类与对象</h3><p>类：是对现实生活中具体事物的描述</p>
+<p>对象：就是这类事物存在的个体。</p>
+<p>java中通过类来描述生活中的具体事物，将这个类创建后，就是对象。</p>
+<br>
+
+<h4 id="类与对象的关系"><a href="#类与对象的关系" class="headerlink" title="类与对象的关系"></a>类与对象的关系</h4><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbi85t3lj30eh04x747.jpg" alt="类与对象"></p>
+<p>可以理解为：类就是图纸，汽车就是堆内存中的对象。</p>
+<p>对于同一类事物可以抽取它们的共性的内容，定义在类中。如：生活中的汽车，每一台车都有轮胎数和颜色。<br>那么在通过java描述汽车这类事物时，就可以将这两个共性属性作为类中的属性进行定义。<br>通过该类建立的每一个汽车实体都具有该属性，并可以有对象特有的属性值。</p>
+<br>
+
+<h4 id="类的定义"><a href="#类的定义" class="headerlink" title="类的定义"></a>类的定义</h4><p>生活中描述事物无非就是描述事物的属性和行为。如：人有身高，体重等属性，有说话，打球等行为。</p>
+<p>Java中用类class来描述事物也是如此。<br>属性：对应类中的成员变量。<br>行为：对应类中的成员函数。<br>定义类其实在定义类中的成员(成员变量和成员函数)。</p>
+<br>
+
+<h4 id="成员变量和局部变量"><a href="#成员变量和局部变量" class="headerlink" title="成员变量和局部变量"></a>成员变量和局部变量</h4><p>​    成员变量：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 成员变量定义在类中，在整个类中都可以被访问。</span><br><span class="line">2. 成员变量随着对象的建立而建立，随着对象的消失而消失，存在于对象所在的堆内存中。</span><br><span class="line">3. 成员变量有默认初始化值。</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p>​    局部变量：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 局部变量只定义在局部范围内，如：函数内，语句内等，只在所属的区域有效。</span><br><span class="line">2. 局部变量存在于栈内存中，作用的范围结束，变量空间会自动释放。</span><br><span class="line">3. 局部变量没有默认初始化值。</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="构造方法（函数）"><a href="#构造方法（函数）" class="headerlink" title="构造方法（函数）"></a>构造方法（函数）</h4><p>对象的创建及初始化，必须依靠其构造方法。</p>
+<p>如果一个类没有定义任何构造方法，则默认有一个无参数的构造方法。</p>
+<p>如果类中定义了构造方法，则默认的构造方法失效。</p>
+<p>构造方法可以有多个，以重载的形式存在。</p>
+<br>
+
+<h5 id="构造方法的特点"><a href="#构造方法的特点" class="headerlink" title="构造方法的特点"></a>构造方法的特点</h5><ol>
+<li>方法名称与类名相同</li>
+<li>不用定义返回值类型</li>
+<li>没有返回值</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">       <span class="keyword">private</span> String name ;</span><br><span class="line">       <span class="keyword">private</span> <span class="keyword">int</span> age ;</span><br><span class="line"></span><br><span class="line">       <span class="comment">//定义一个Person类的构造方法</span></span><br><span class="line">       <span class="comment">//构造方法，而且是空参数的</span></span><br><span class="line">      Person()&#123;</span><br><span class="line">        	<span class="comment">//对象创建时，会调用构造方法里面的语句，进行一些初始化操作</span></span><br><span class="line">        	<span class="comment">//此处表示，对象创建时会打印“person run”</span></span><br><span class="line">            System.out.println(<span class="string">&quot;person run&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">speak</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out.println(name + <span class="string">&quot;:&quot;</span> + age);</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConsDemo</span></span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">             <span class="comment">//构造方法：构建对象时调用的函数</span></span><br><span class="line">             <span class="comment">//作用：可以给对象进行初始化</span></span><br><span class="line">            Person p = <span class="keyword">new</span> Person();</span><br><span class="line">            p.speak();</span><br><span class="line">      &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="一般方法与构造方法的区别"><a href="#一般方法与构造方法的区别" class="headerlink" title="一般方法与构造方法的区别"></a>一般方法与构造方法的区别</h5><p>​    构造方法：对象创建时，就会调用与之对应的构造方法，对对象进行初始化，并且只会调用一次。<br>​    一般方法：对象创建后，需要方法功能时才去手动调用，可以被调用多此。</p>
+<br>
+
+<h4 id="this-关键字"><a href="#this-关键字" class="headerlink" title="this 关键字"></a>this 关键字</h4><p><strong>this</strong> 指代本类对象的引用</p>
+<p>当成员变量和局部变量重名，可以用关键字 <strong>this</strong> 来区分，this 就是所在函数所属对象的引用。<br>简单说，哪个对象调用了this 所在的方法，this 就代表哪个对象。一般方法调用默认加this。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">          <span class="keyword">private</span> String name ;</span><br><span class="line">          <span class="keyword">private</span> <span class="keyword">int</span> age ;</span><br><span class="line"></span><br><span class="line">          Person(String name)&#123;</span><br><span class="line">             <span class="comment">//通过this区分成员变量和局部变量</span></span><br><span class="line">             <span class="keyword">this</span>.name = name;</span><br><span class="line">          &#125;</span><br><span class="line">         </span><br><span class="line">          Person(String name, <span class="keyword">int</span> age)&#123;</span><br><span class="line">             <span class="comment">//this也可以用于在构造函数中调用其他构造函数</span></span><br><span class="line">            <span class="comment">//this 调用其他构造时，必须写在第一行，因为初始化动作要先执行</span></span><br><span class="line">             <span class="keyword">this</span>(name);</span><br><span class="line">             <span class="keyword">this</span>.age = age;</span><br><span class="line">          &#125;</span><br><span class="line">            </span><br><span class="line">          <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">speak</span><span class="params">()</span></span>&#123;</span><br><span class="line">             System.out.println(name + <span class="string">&quot;:&quot;</span> + age);</span><br><span class="line">          &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConsDemo</span></span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">            Person p1 = <span class="keyword">new</span> Person(<span class="string">&quot;旺财&quot;</span> );</span><br><span class="line">            p1.speak();</span><br><span class="line">            Person p2 = <span class="keyword">new</span> Person(<span class="string">&quot;小强&quot;</span> ,<span class="number">10</span>);</span><br><span class="line">            p2.speak();</span><br><span class="line">      &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="static-关键字"><a href="#static-关键字" class="headerlink" title="static 关键字"></a>static 关键字</h4><p>static关键字用于修饰成员变量和成员函数</p>
+<p>被修饰后的成员具备以下特点：</p>
+<ol>
+<li>随着类的加载而加载。</li>
+<li>优先于对象存在。</li>
+<li>被所有对象所共享。</li>
+<li>可以直接被类名调用。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">        <span class="comment">//成员变量，实例变量</span></span><br><span class="line">       String name;</span><br><span class="line">       <span class="comment">//静态变量，类变量</span></span><br><span class="line">       <span class="comment">//所有对象共享的属性用static修饰</span></span><br><span class="line">       <span class="keyword">static</span> String country = <span class="string">&quot;CN&quot;</span>;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out.println(country + <span class="string">&quot;:&quot;</span> + name);</span><br><span class="line">             <span class="comment">//等效语句：System.out.println(Person.country + &quot;:&quot; + this.name);</span></span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StaticDemo</span></span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">            Person p = <span class="keyword">new</span> Person();</span><br><span class="line">            System.out.println(p.country);</span><br><span class="line">             <span class="comment">//可以用类名直接调用</span></span><br><span class="line">            System.out.println(Person.country);</span><br><span class="line">      &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="成员变量与静态变量的区别"><a href="#成员变量与静态变量的区别" class="headerlink" title="成员变量与静态变量的区别"></a>成员变量与静态变量的区别</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> 1. 两个变量的生命周期不同</span><br><span class="line"> 成员变量随着对象的创建而存在，随着对象被回收而释放。</span><br><span class="line"> 静态变量随着类的加载而存在，随着类的消失而消失。</span><br><span class="line"> 2. 调用方式不同</span><br><span class="line"> 成员变量只能被对象调用。</span><br><span class="line"> 静态变量可以被对象调用，还可以被类名调用。</span><br><span class="line"> 3. 别名不同</span><br><span class="line">成员变量也称为实例变量。</span><br><span class="line">静态变量也称为类变量。</span><br><span class="line"> 4. 数据存储位置不同</span><br><span class="line">成员变量存储在堆内存的对象中，所以也叫对象的特有数据。</span><br><span class="line">静态变量数据存储在方法区（共享数据区）的静态区，所以也叫对象的共享数据。</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>静态方法只能访问静态成员，如果访问非静态成员，就会报错</p>
+<p>非静态方法既可以访问静态成员，又可以访问非静态成员</p>
+</blockquote>
+<br>
+
+<h3 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h3><p>封装是指隐藏对象的属性和实现细节，仅对外提供公共访问方式。</p>
+<p>作用：将变化隔离、便于使用、提高重用性、安全性。<br>封装原则：将不需要对外提供的内容都隐藏起来，把属性都隐藏，提供公共方法对其访问。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">人：</span></span><br><span class="line"><span class="comment">属性：年龄</span></span><br><span class="line"><span class="comment">行为：说话</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">       <span class="comment">//private：私有，是一个权限修饰符，用于修饰</span></span><br><span class="line">       <span class="comment">//不希望别人直接访问赋值，需要通过私有化把属性进行隐藏</span></span><br><span class="line">       <span class="keyword">private</span> <span class="keyword">int</span> age ;</span><br><span class="line"></span><br><span class="line">       <span class="comment">//通过提供set、get公共方法对其访问</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">( <span class="keyword">int</span> a)</span></span>&#123;</span><br><span class="line">             <span class="comment">//在set方法内可以对属性的赋值进行限制</span></span><br><span class="line">             <span class="keyword">if</span> (a &gt; <span class="number">0</span> &amp;&amp; a &lt; <span class="number">130</span>)&#123;</span><br><span class="line">                   age = a;</span><br><span class="line">            &#125; <span class="keyword">else</span></span><br><span class="line">                  System.out .println(<span class="string">&quot;错误的数据&quot;</span> );</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span></span>&#123;</span><br><span class="line">             <span class="keyword">return</span> age ;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">void</span> <span class="title">speak</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out .println(<span class="string">&quot;age = &quot;</span> + age);</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonDemo</span></span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">            Person p = <span class="keyword">new</span> Person();</span><br><span class="line">            <span class="comment">//通过其他方式访问</span></span><br><span class="line">            p.setAge(<span class="number">20</span>);</span><br><span class="line">            p.speak();</span><br><span class="line">            <span class="comment">//赋值不合法，set方法就不允许成功赋值</span></span><br><span class="line">            p.setAge(-<span class="number">20</span>);</span><br><span class="line">      &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><p>通过 extends 关键字让类与类之间产生继承关系。<br>多个类中存在相同属性和行为时，将这些内容抽取到单独一个类中，那么多个类无需再定义这些属性和行为，只要继承那个类即可。多个类可以称为子类，单独这个类称为父类或者超类。子类可以直接访问父类中的非私有的属性和行为，却无法继承父类中私有的内容。</p>
+<br>
+
+<h4 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h4><p>继承的出现提高了代码的复用性。<br>继承的出现让类与类之间产生了关系，提供了多态的前提。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">      String name;</span><br><span class="line">      <span class="keyword">int</span> age ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">extends</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">void</span> <span class="title">study</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;student study...&quot;</span> + age);</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span> <span class="keyword">extends</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">void</span> <span class="title">work</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;worker work...&quot;</span> + age);</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExtendDemo</span></span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">            Student s = <span class="keyword">new</span> Student();</span><br><span class="line">            s. name = <span class="string">&quot;zhangsan&quot;</span> ;</span><br><span class="line">            s. age = <span class="number">20</span>;</span><br><span class="line">            s.study();</span><br><span class="line"></span><br><span class="line">            Worker w = <span class="keyword">new</span> Worker();</span><br><span class="line">            w. name = <span class="string">&quot;lisi&quot;</span> ;</span><br><span class="line">            w. age = <span class="number">30</span>;</span><br><span class="line">            w.work();</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Java只支持单继承，不支持多继承，但支持多层继承(继承体系)。如：C继承B，B继承A，就会出现继承体系。</p>
+<br>
+
+<h4 id="特征"><a href="#特征" class="headerlink" title="特征"></a>特征</h4><ol>
+<li>变量</li>
+</ol>
+<p>子类出现非私有的同名成员变量时，子类访问本类中变量时，用this；子类访问父类中变量时，用super</p>
+<ol>
+<li>函数（方法）</li>
+</ol>
+<p>子类出现和父类一模一样的方法时，当子类调用该方法时，会运行子类方法的内容，因为方法重写（覆盖override）</p>
+<ol>
+<li>构造函数</li>
+</ol>
+<p>子类中所有的构造函数都会默认访问父类中的空参数的构造函数，因为每一个子类构造内第一行都有默认的语句super();  </p>
+<p>如果父类中没有空参数的构造函数，那么子类的构造函数内，必须通过super语句指定要访问的父类中的构造函数。 </p>
+<p>如果子类构造函数中用this来指定调用子类自己的构造函数，那么被调用的构造函数也一样会访问父类中的构造函数</p>
+<br>
+
+<h4 id="final-特点"><a href="#final-特点" class="headerlink" title="final 特点"></a>final 特点</h4><ol>
+<li>这个关键字是一个修饰符，可以修饰类，方法，变量。</li>
+<li>被final修饰的类是一个最终类，不可以被继承。 </li>
+<li>被final修饰的方法是一个最终方法，不可以被覆盖。</li>
+<li>被final修饰的变量是一个常量，只能赋值一次。</li>
+</ol>
+<br>
+
+<h4 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h4><p>  Java中可以定义没有方法体的方法，该方法的具体实现由子类完成，该方法称为抽象方法，包含抽象方法的类就是抽象类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo</span></span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">void</span> <span class="title">show1</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">     <span class="function"><span class="keyword">void</span> <span class="title">show2</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h5><ol>
+<li>抽象方法只能定义在抽象类中，抽象类和抽象方法必须由abstract关键字修饰（可以描述类和方法，不可以描述变量）。 </li>
+<li>抽象方法只定义方法声明，并不定义方法实现。 </li>
+<li>抽象类不可以被创建对象(实例化)。 </li>
+<li>只有通过子类继承抽象类并覆盖了抽象类中的所有抽象方法后，该子类才可以实例化。否则，该子类还是一个抽象类。 </li>
+<li>抽象类只能单继承。</li>
+</ol>
+<br>
+
+<h5 id="抽象类的细节"><a href="#抽象类的细节" class="headerlink" title="抽象类的细节"></a>抽象类的细节</h5><ol>
+<li><p>抽象类中是否有构造函数？</p>
+<p>有，用于给子类对象进行初始化。</p>
+</li>
+<li><p>抽象类中是否可以定义非抽象方法？ </p>
+<p>可以。其实，抽象类和一般类没有太大的区别，都是在描述事物，只不过抽象类在描述事物时，有些功能不具体。所以抽象类和一般类在定义上，都是需要定义属性和行为的。只不过，比一般类多了一个抽象函数。而且比一般类少了一个创建对象的部分。 </p>
+</li>
+<li><p>抽象关键字abstract和哪些不可以共存？</p>
+<p>Final修饰的不能被重写</p>
+<p>Private修饰的不能访问</p>
+<p>Static修饰的随着类的加载而加载,此时还没有对象</p>
+</li>
+<li><p>抽象类中可不可以不定义抽象方法？可以。抽象方法目的仅仅为了不让该类创建对象。</p>
+</li>
+</ol>
+<br>
+
+<h4 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h4><p> 当一个抽象类中的方法都是抽象的时候，这时可以将该抽象类用另一种形式定义和表示，就是接口 <strong>interface</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Demo</span></span>&#123;</span><br><span class="line">       <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NUM = <span class="number">4</span>;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">show1</span><span class="params">()</span></span>;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">show2</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*实现*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DemoImpl</span> <span class="keyword">implements</span> <span class="title">Demo</span></span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show1</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show2</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InterfaceDemo</span></span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">            DemoImpl d = <span class="keyword">new</span> DemoImpl();</span><br><span class="line">            System.out.println(d.NUM);</span><br><span class="line">            System.out.println(DemoImpl.NUM);</span><br><span class="line">            System.out.println(Demo.NUM);</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="抽象类和接口的区别"><a href="#抽象类和接口的区别" class="headerlink" title="抽象类和接口的区别"></a>抽象类和接口的区别</h5><ol>
+<li>抽象类只能被继承，而且只能单继承。 接口需要被实现，而且可以多实现。  </li>
+<li>抽象类中可以定义非抽象方法，子类可以直接继承使用。 接口中都是抽象方法，需要子类去实现。</li>
+<li>抽象类使用的是  is a 关系。 接口使用的 like a 关系。 </li>
+<li>抽象类的成员修饰符可以自定义。 接口中的成员修饰符是固定的。全都是public的。</li>
+</ol>
+<p>​    </p>
+<br>
+
+<h3 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h3><h5 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h5><p>某一类事物的多种存在形态。</p>
+<p>函数本身就具备多态性，即某一种事物有不同的具体体现。 </p>
+<p>比如：父类引用或者接口的引用指向了自己的子类对象。</p>
+<p><code>Animal a = new Cat(); </code></p>
+<br>
+
+<ul>
+<li><p>好处</p>
+<p>提高了程序的扩展性。 </p>
+</li>
+<li><p>弊端</p>
+<p>当父类引用指向子类对象时，虽然提高了扩展性，但是只能访问父类中具备的方法，不可以访问子类中特有的方法。</p>
+<p>(前期不能使用后期产生的功能，即访问的局限性) </p>
+</li>
+</ul>
+<br>
+
+<h5 id="多态的前提"><a href="#多态的前提" class="headerlink" title="多态的前提"></a>多态的前提</h5><ol>
+<li>必须要有关系，比如继承、或者实现。</li>
+<li>通常会有覆盖操作。  </li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DuoTaiDemo</span></span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">          <span class="comment">//自动类型提升，猫对象提升到了动物类型。但是特有功能无法访问，作用就是限制对特有功能的访问。</span></span><br><span class="line">          <span class="comment">//专业讲：向上转型，将子类型隐藏。就不能使用子类的特有方法了。</span></span><br><span class="line">          Animal a = <span class="keyword">new</span> Cat();</span><br><span class="line">          a.eat();</span><br><span class="line">          <span class="comment">//a.catchMouse();//报错</span></span><br><span class="line"></span><br><span class="line">          <span class="comment">//如果还想用具体动物猫的特有功能。</span></span><br><span class="line">          <span class="comment">//你可以将该对象进行向下转型。</span></span><br><span class="line">          Cat c = (Cat)a; <span class="comment">//向下转型的目的是为了能够使用子类中的特有方法。</span></span><br><span class="line">          c.eat();</span><br><span class="line">          c.catchMouse();</span><br><span class="line"></span><br><span class="line">          <span class="comment">//注意：对于转型，自始至终都是子类对象在做类型的变化。</span></span><br><span class="line">          <span class="comment">//Animal a = new Dog();</span></span><br><span class="line">          <span class="comment">//Cat c = (Cat)a;//但是类型不能随意转换，否则可能会报出ClassCastException的异常</span></span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">(Animal a)</span></span>&#123;</span><br><span class="line">          a.eat();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<br>
+
+<h5 id="多态的特点"><a href="#多态的特点" class="headerlink" title="多态的特点"></a>多态的特点</h5><p>成员函数在多态调用时，编译看左边，运行看右边。</p>
+<p>静态成员函数和成员变量，无论编译和运行都看左边。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag"># Java 基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2015/07/29/Java%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80%EF%BC%88%E4%BA%8C%EF%BC%89/" rel="prev" title="Java语法基础（二）">
+      <i class="fa fa-chevron-left"></i> Java语法基础（二）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2015/08/01/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="next" title="多线程">
+      多线程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E8%BF%87%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">面向过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.</span> <span class="nav-text">面向对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E5%BE%81"><span class="nav-number">2.3.</span> <span class="nav-text">面向对象的三大特征</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.</span> <span class="nav-text">类与对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">3.1.</span> <span class="nav-text">类与对象的关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">3.2.</span> <span class="nav-text">类的定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E5%92%8C%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="nav-number">3.3.</span> <span class="nav-text">成员变量和局部变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%EF%BC%88%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">构造方法（函数）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">3.4.1.</span> <span class="nav-text">构造方法的特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E6%96%B9%E6%B3%95%E4%B8%8E%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.4.2.</span> <span class="nav-text">一般方法与构造方法的区别</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#this-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">3.5.</span> <span class="nav-text">this 关键字</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#static-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">3.6.</span> <span class="nav-text">static 关键字</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E4%B8%8E%E9%9D%99%E6%80%81%E5%8F%98%E9%87%8F%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.6.1.</span> <span class="nav-text">成员变量与静态变量的区别</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E8%A3%85"><span class="nav-number">4.</span> <span class="nav-text">封装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF"><span class="nav-number">5.</span> <span class="nav-text">继承</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%9C%E7%94%A8"><span class="nav-number">5.1.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E5%BE%81"><span class="nav-number">5.2.</span> <span class="nav-text">特征</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#final-%E7%89%B9%E7%82%B9"><span class="nav-number">5.3.</span> <span class="nav-text">final 特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%BD%E8%B1%A1%E7%B1%BB"><span class="nav-number">5.4.</span> <span class="nav-text">抽象类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">5.4.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-number">5.4.2.</span> <span class="nav-text">抽象类的细节</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3"><span class="nav-number">5.5.</span> <span class="nav-text">接口</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8A%BD%E8%B1%A1%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">5.5.1.</span> <span class="nav-text">抽象类和接口的区别</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%80%81"><span class="nav-number">6.</span> <span class="nav-text">多态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">6.0.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A4%9A%E6%80%81%E7%9A%84%E5%89%8D%E6%8F%90"><span class="nav-number">6.0.2.</span> <span class="nav-text">多态的前提</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A4%9A%E6%80%81%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">6.0.3.</span> <span class="nav-text">多态的特点</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

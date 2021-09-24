@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在商业计算中，一般都会用到 Java 中的 BigDecimal 或者 BigInteger。 这篇文章就来记录 BigDecimal 的一些用法知识。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BigDecimal">
+<meta property="og:url" content="https://deemonser.github.io/2017/11/14/BigDecimal/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="在商业计算中，一般都会用到 Java 中的 BigDecimal 或者 BigInteger。 这篇文章就来记录 BigDecimal 的一些用法知识。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbdvru35j30go0cgjsm.jpg">
+<meta property="article:published_time" content="2017-11-14T14:11:33.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="BigDecimal">
+<meta property="article:tag" content="四舍五入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbdvru35j30go0cgjsm.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2017/11/14/BigDecimal/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>BigDecimal | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2017/11/14/BigDecimal/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          BigDecimal
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-11-14 22:11:33" itemprop="dateCreated datePublished" datetime="2017-11-14T22:11:33+08:00">2017-11-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbdvru35j30go0cgjsm.jpg" alt="BigDecimal"></p>
+<p>在商业计算中，一般都会用到 Java 中的 BigDecimal 或者 BigInteger。</p>
+<p>这篇文章就来记录 BigDecimal 的一些用法知识。</p>
+<span id="more"></span>
+
+<br>
+
+<h3 id="Java-基本数据类型"><a href="#Java-基本数据类型" class="headerlink" title="Java 基本数据类型"></a>Java 基本数据类型</h3><p>在JAVA中一共有八种基本数据类型，他们分别是 ：<br><strong>byte、short、int、long、float、double、char、boolean</strong></p>
+<br>
+
+<p>整数型：</p>
+<p>在计算机中，所有的文件都是以二进制的形式存储的，所有规定，一个字节（byte）占8位（bit）二进制位数。在表示整数型时，最高位符号位表示数字的正负，剩余的位数表示一个数值，它们合起来表示一个整数。</p>
+<ul>
+<li>byte ：占1个字节，用8位二进制表示，所以其取值范围 -128~127（-2的7次方到2的7次方-1）</li>
+<li>short：占2个字节，用16位二进制表示，所以其取值范围-32768~32767（-2的15次方到2的15次方-1）</li>
+<li>int：占4个字节，用32位二进制表示，其取值范围-2147483648~2147483647（-2的31次方到2的31次方-1） </li>
+<li>long：占8个字节，用64位二进制表示，其取值范围-9223372036854774808~9223372036854774807（-2的63次方到2的63次方-1）</li>
+</ul>
+<br>
+
+<p>浮点型：</p>
+<p>浮点型的存储方式与整数型不同，其采用科学计数方式表示，最高位依然是表示正负的符号位，然后中间多了表示指数的指数位，其余的是尾数位。浮点型的范围主要取决于指数位，精度取决于尾数位。java 中默认的浮点型是 double。</p>
+<ul>
+<li>float：占4个字节，用32位二进制表示，第1位符号位表示正负，第2<del>9位这八位表示指数位，后面23位都表示尾数。float的指数部分有8bit(2^8)，对应的指数范围-128</del>128，其取值范围 -2^128到2^128 ，用科学计数表示3.402823e+38 ~ 1.401298e-45（e+38表示是乘以10的38次方，同样，e-45表示乘以10的负45次方），float的尾数位是23bit，对应 2^23=8388608，最多7位有效数字，保证有6位有效数字。</li>
+<li>double：占8个字节，用64位二进制表示，1位符号位，然后中间11位表示指数位，52位尾数。double的指数部分有11bit(2^11)，对应的指数范围-1024<del>1024，其取值范围 -2^1024到2^1024 ，用科学计数表示1.797693e+308</del> 4.9000000e-324，double的尾数位是52bit，对应2^52 = 4503599627370496，最多16位有效数字，保证15位有效。</li>
+</ul>
+<br>
+
+<p>char 型</p>
+<p>文本型用于存放字符的数据类型，占用2个字节，采用unicode编码，不过8位的ASCII码包含在Unicode中，是从0~127兼容的。</p>
+<ul>
+<li>char：占2个字节，用16位表示</li>
+</ul>
+<br>
+
+<p>布尔型：</p>
+<p>布尔数据类型只有两个可能的值：true和false</p>
+<ul>
+<li>boolean：布尔数据类型没有给出具体的占用字节数，因为对虚拟机来说根本就不存在 boolean 这个类型，boolean类型在编译后会使用其他数据类型来表示。官方文档并没有给出精确的定义，《Java虚拟机规范》给出了4个字节，和boolean数组1个字节的定义，具体还要看虚拟机实现是否按照规范来，所以1个字节、4个字节都是有可能的。</li>
+</ul>
+<br>
+
+<p>当然，这篇文章并不是讲上面的基本数据类型的。</p>
+<br>
+
+<h3 id="BigDecimal-介绍"><a href="#BigDecimal-介绍" class="headerlink" title="BigDecimal 介绍"></a>BigDecimal 介绍</h3><p>在实际开发中，java 的浮点型只能用来进行科学计算或工程计算，在大多数的商业计算中，一般采用 <strong>java.math.BigDecimal <strong>类来进行精确计算。商业计算中，要尽可能保证运算的准确性，所以在计算时要尽可能多的保证有效位数，减小精度损失，而 double 最多只能保证16位有效数字，因此，Java在java.math包中提供的API类</strong>BigDecimal</strong>，用来对超过16位有效位的数进行精确的运算。</p>
+<br>
+
+<p>BigDecimal 是不可变的、任意精度的有符号十进制数，由任意精度的整数<em>非标度值</em> 和32 位的整数<em>标度</em> (scale) 组成。如果为零或正数，则标度是小数点后的位数。如果为负数，则将该数的非标度值乘以 10 的负scale 次幂。</p>
+<br>
+
+<h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><p>在使用BigDecimal类来进行计算的时候，主要分为以下步骤：</p>
+<ol>
+<li>用float或者double变量构建BigDecimal对象。</li>
+<li>通过调用BigDecimal的加，减，乘，除等相应的方法进行算术运算。</li>
+<li>把BigDecimal对象转换成float，double，int等类型。</li>
+</ol>
+<br>
+
+<p>BigDecimal类是对象，不能使用传统的+、-、*、/等算术运算符直接对其进行数学运算,而必须调用其对应的方法.方法的参数也必须是BigDecimal类型的对象。</p>
+<p>首先，使用BigDecimal的构造方法或者静态方法的valueOf()方法把基本类型的变量构建成BigDecimal对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BigDecimal <span class="title">BigDecimal</span><span class="params">(<span class="keyword">double</span> d)</span></span>; <span class="comment">//不允许使用，直接使用 double 得到值不精确。</span></span><br><span class="line"><span class="function">BigDecimal <span class="title">BigDecimal</span><span class="params">(String s)</span></span>; <span class="comment">//常用,推荐使用</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> BigDecimal <span class="title">valueOf</span><span class="params">(<span class="keyword">double</span> d)</span></span>; <span class="comment">//常用,推荐使用</span></span><br><span class="line"><span class="comment">//示例</span></span><br><span class="line">BigDecimal b1 = <span class="keyword">new</span> BigDecimal(String.valueOf(<span class="string">&quot;0.48&quot;</span>));</span><br><span class="line">BigDecimal b2 = BigDecimal.valueOf(<span class="number">0.48</span>);</span><br></pre></td></tr></table></figure>
+
+<p>然后，对数据进行加减乘除，BigDecimal都是不可变的（immutable）的，在进行每一步运算时，都会产生一个新的对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> BigDecimal <span class="title">add</span><span class="params">(BigDecimal value)</span></span>;            <span class="comment">//加法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BigDecimal <span class="title">subtract</span><span class="params">(BigDecimal value)</span></span>;       <span class="comment">//减法 </span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BigDecimal <span class="title">multiply</span><span class="params">(BigDecimal value)</span></span>;       <span class="comment">//乘法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BigDecimal <span class="title">divide</span><span class="params">(BigDecimal value)</span></span>;         <span class="comment">//除法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BigDecimal <span class="title">remainder</span><span class="params">(BigDecimal divisor)</span></span>; 	<span class="comment">//求余数 </span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BigDecimal <span class="title">negate</span><span class="params">()</span></span>;							<span class="comment">//求相反数 </span></span><br></pre></td></tr></table></figure>
+
+<p>注意，在使用除法时，一般需要指定精度以及舍入模式，如果不指定，一旦出现无限小数就会直接抛算术异常。</p>
+<p>最后，将结果转换为float，double，int等类型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">intValue</span><span class="params">()</span> 				<span class="comment">//转int</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">floatValue</span><span class="params">()</span>			<span class="comment">//转float</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">doubleValue</span><span class="params">()</span>			<span class="comment">//转double</span></span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="8种舍入模式"><a href="#8种舍入模式" class="headerlink" title="8种舍入模式"></a>8种舍入模式</h3><p>在运算或者转换的过程中，可以设定精度，如果不指定舍入模式，则默认ROUND_UNNECESSARY，但是这种模式断言请求的操作具有精确的结果，因此不需要设定精度，所以在这个模式下去设定精度，一旦出现精度损失，必然会抛出异常，真是坑~~ </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">BigDecimal decimal = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.1&quot;</span>);</span><br><span class="line">BigDecimal scale1 = decimal.setScale(<span class="number">1</span>); <span class="comment">//设置保留一位小数，正常运行,显示 3.1</span></span><br><span class="line">BigDecimal scale2 = decimal.setScale(<span class="number">0</span>);<span class="comment">//设置不保留小数，造成精度损失，会抛出异常</span></span><br></pre></td></tr></table></figure>
+
+<p>所以，设定精度时，最好指定舍入模式。</p>
+<br>
+
+<p>由于BigDecimal 不可变，所有的变动都会返回新的BigDecimal对象，所以需要保存新对象来使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BigDecimal bigDecimal = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.1415&quot;</span>);</span><br><span class="line"><span class="comment">//保留小数点后3位小数，采用四舍五入</span></span><br><span class="line">BigDecimal scale = bigDecimal.setScale(<span class="number">3</span>, RoundingMode.HALF_UP);</span><br><span class="line">System.out.println(scale.toString());  <span class="comment">//打印3.142</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p>舍入模式一共有8种，都在 BigDecimal 设定了，并且通过 RoundingMode 这个枚举类进行了包装。</p>
+<table>
+<thead>
+<tr>
+<th align="center">模式</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>ROUND_UP</strong></td>
+<td align="left">舍入远离零的舍入模式。在丢弃非零部分之前始终增加数字(始终对非零舍弃部分前面的数字加1)。注意，此舍入模式始终不会减少计算值的大小。</td>
+</tr>
+<tr>
+<td align="center"><strong>ROUND_DOWN</strong></td>
+<td align="left">接近零的舍入模式。在丢弃某部分之前始终不增加数字(从不对舍弃部分前面的数字加1，即截短)。注意，此舍入模式始终不会增加计算值的大小。</td>
+</tr>
+<tr>
+<td align="center"><strong>ROUND_CEILING</strong></td>
+<td align="left">接近正无穷大的舍入模式。如果 BigDecimal 为正，则舍入行为与 ROUND_UP 相同;如果为负，则舍入行为与 ROUND_DOWN 相同。注意，此舍入模式始终不会减少计算值。</td>
+</tr>
+<tr>
+<td align="center"><strong>ROUND_FLOOR</strong></td>
+<td align="left">接近负无穷大的舍入模式。如果 BigDecimal 为正，则舍入行为与 ROUND_DOWN 相同;如果为负，则舍入行为与 ROUND_UP 相同。注意，此舍入模式始终不会增加计算值。</td>
+</tr>
+<tr>
+<td align="center"><strong>ROUND_HALF_UP</strong></td>
+<td align="left">向“最接近的”数字舍入，如果与两个相邻数字的距离相等，则为向上舍入的舍入模式。如果舍弃部分 &gt;= 0.5，则舍入行为与 ROUND_UP 相同;否则舍入行为与 ROUND_DOWN 相同。注意，这是我们大多数人在小学时就学过的舍入模式(四舍五入)。</td>
+</tr>
+<tr>
+<td align="center"><strong>ROUND_HALF_DOWN</strong></td>
+<td align="left">向“最接近的”数字舍入，如果与两个相邻数字的距离相等，则为上舍入的舍入模式。如果舍弃部分 &gt; 0.5，则舍入行为与 ROUND_UP 相同;否则舍入行为与 ROUND_DOWN 相同(五舍六入)。</td>
+</tr>
+<tr>
+<td align="center"><strong>ROUND_HALF_EVEN</strong></td>
+<td align="left">向“最接近的”数字舍入，如果与两个相邻数字的距离相等，则向相邻的偶数舍入。如果舍弃部分左边的数字为奇数，则舍入行为与 ROUND_HALF_UP 相同;如果为偶数，则舍入行为与 ROUND_HALF_DOWN 相同。注意，在重复进行一系列计算时，此舍入模式可以将累加错误减到最小。此舍入模式也称为“银行家舍入法”，主要在美国使用。四舍六入，五分两种情况。如果前一位为奇数，则入位，否则舍去。以下例子为保留小数点1位，那么这种舍入方式下的结果。1.15 -&gt; 1.2      1.25 -&gt; 1.2</td>
+</tr>
+<tr>
+<td align="center"><strong>ROUND_UNNECESSARY</strong></td>
+<td align="left">默认的模式，断言请求的操作具有精确的结果，因此不需要舍入。如果对获得精确结果的操作指定此舍入模式，则抛出ArithmeticException。</td>
+</tr>
+</tbody></table>
+<p>这8种模式中，最常用的应该是 <strong>ROUND_HALF_UP</strong> 四舍五入，这个都知道。</p>
+<p>还有一种<strong>ROUND_HALF_DOWN</strong> 五舍六入，这个是模式下，要看精度的后面的数值，一旦超过<strong>5</strong> ，就入位。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.1415&quot;</span>).setScale(<span class="number">3</span>, RoundingMode.HALF_DOWN);  	<span class="comment">//3.141</span></span><br><span class="line"><span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.14150001&quot;</span>).setScale(<span class="number">3</span>, RoundingMode.HALF_DOWN);	<span class="comment">//3.142</span></span><br><span class="line"><span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.14156&quot;</span>).setScale(<span class="number">3</span>, RoundingMode.HALF_DOWN);	<span class="comment">//3.142</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个模式下可以看到，即使是<strong>3.14150001</strong> ，在保留3位小数的情况下，结果依然是进一位。</p>
+<br>
+
+<p>最难理解的是<strong>ROUND_HALF_EVEN</strong> 银行家舍入，四舍六入，五分两种情况，如果前一位为奇数，则入位，否则舍去。这种模式可以将错误减到最小，所以一般在银行使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.14140&quot;</span>).setScale(<span class="number">3</span>, RoundingMode.HALF_EVEN);	<span class="comment">//3.141</span></span><br><span class="line"><span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.14149&quot;</span>).setScale(<span class="number">3</span>, RoundingMode.HALF_EVEN);	<span class="comment">//3.141</span></span><br><span class="line"><span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.14150&quot;</span>).setScale(<span class="number">3</span>, RoundingMode.HALF_EVEN);	<span class="comment">//3.142</span></span><br><span class="line"><span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.14050&quot;</span>).setScale(<span class="number">3</span>, RoundingMode.HALF_EVEN);	<span class="comment">//3.140</span></span><br><span class="line"><span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.14151&quot;</span>).setScale(<span class="number">3</span>, RoundingMode.HALF_EVEN);	<span class="comment">//3.142</span></span><br><span class="line"><span class="keyword">new</span> BigDecimal(<span class="string">&quot;3.14160&quot;</span>).setScale(<span class="number">3</span>, RoundingMode.HALF_EVEN);	<span class="comment">//3.142</span></span><br></pre></td></tr></table></figure>
+
+<p>看到这个示例，应该很清楚的了解这种模式。</p>
+<br>
+
+<h3 id="四舍五入常用写法"><a href="#四舍五入常用写法" class="headerlink" title="四舍五入常用写法"></a>四舍五入常用写法</h3><h4 id="一、Math（小数舍入为整数）"><a href="#一、Math（小数舍入为整数）" class="headerlink" title="一、Math（小数舍入为整数）"></a>一、Math（小数舍入为整数）</h4><p>Math.ceil()    向上舍入，即它总是将数值向上舍入为最接近的整数；</p>
+<p>Math.floor()    向下舍入，即它总是将数值向下舍入为最接近的整数；</p>
+<p>Math.round()标准舍入，即它总是将数值四舍五入为最接近的整数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Math.ceil(<span class="number">25.9</span>) <span class="comment">//26</span></span><br><span class="line">Math.ceil(<span class="number">25.1</span>) <span class="comment">//26</span></span><br><span class="line">Math.ceil(<span class="number">25.0</span>)<span class="comment">//25</span></span><br><span class="line"></span><br><span class="line">Math.round(<span class="number">25.9</span>) <span class="comment">//26</span></span><br><span class="line">Math.round(<span class="number">25.5</span>) <span class="comment">//26</span></span><br><span class="line">Math.round(<span class="number">25.1</span>) <span class="comment">//25</span></span><br><span class="line"></span><br><span class="line">Math.floor(<span class="number">25.9</span>) <span class="comment">//25</span></span><br><span class="line">Math.floor(<span class="number">25.5</span>) <span class="comment">//25</span></span><br><span class="line">Math.floor(<span class="number">25.1</span>) <span class="comment">//25</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="二、BigDecimal"><a href="#二、BigDecimal" class="headerlink" title="二、BigDecimal"></a>二、BigDecimal</h4><p>这种方式就是前面说的设置精度和舍入模式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BigDecimal b = <span class="keyword">new</span> BigDecimal(Double.toString(<span class="number">3.1415</span>));</span><br><span class="line"><span class="keyword">double</span> f1 = b.setScale(<span class="number">3</span>, BigDecimal.ROUND_HALF_UP).doubleValue(); <span class="comment">//3.142</span></span><br></pre></td></tr></table></figure>
+
+<p>这里就不多说了。</p>
+<br>
+
+<h4 id="三、DecimalFormat"><a href="#三、DecimalFormat" class="headerlink" title="三、DecimalFormat"></a>三、DecimalFormat</h4><p>DecimalFormat 默认采用了RoundingMode.HALF_EVEN这种舍入模式，可以通过 <code>setRoundingMode()</code> 来重新设置舍入模式，而且format 之后的结果是一个字符串类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> pi=<span class="number">3.1415927</span>;　<span class="comment">//圆周率</span></span><br><span class="line"><span class="comment">//取一位整数</span></span><br><span class="line"><span class="keyword">new</span> DecimalFormat(<span class="string">&quot;0&quot;</span>).format(pi);　　　<span class="comment">//3</span></span><br><span class="line"><span class="comment">//取一位整数和两位小数</span></span><br><span class="line"><span class="keyword">new</span> DecimalFormat(<span class="string">&quot;0.00&quot;</span>).format(pi);　<span class="comment">//3.14</span></span><br><span class="line"><span class="comment">//取两位整数和三位小数，整数不足部分以0填补。</span></span><br><span class="line"><span class="keyword">new</span> DecimalFormat(<span class="string">&quot;00.000&quot;</span>).format(pi);<span class="comment">// 03.142</span></span><br><span class="line"><span class="comment">//取所有整数部分</span></span><br><span class="line"><span class="keyword">new</span> DecimalFormat(<span class="string">&quot;#&quot;</span>).format(pi);　　　<span class="comment">//3</span></span><br><span class="line"><span class="comment">//以百分比方式计数，并取两位小数</span></span><br><span class="line"><span class="keyword">new</span> DecimalFormat(<span class="string">&quot;#.##%&quot;</span>).format(pi);　<span class="comment">//314.16%</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">long</span> c=<span class="number">299792458</span>;　　<span class="comment">//光速</span></span><br><span class="line"><span class="comment">//显示为科学计数法，并取五位小数</span></span><br><span class="line"><span class="keyword">new</span> DecimalFormat(<span class="string">&quot;#.#####E0&quot;</span>).format(c);　<span class="comment">//2.99792E8</span></span><br><span class="line"><span class="comment">//显示为两位整数的科学计数法，并取四位小数</span></span><br><span class="line"><span class="keyword">new</span> DecimalFormat(<span class="string">&quot;00.####E0&quot;</span>).format(c);　<span class="comment">//29.9792E7</span></span><br><span class="line"><span class="comment">//每三位以逗号进行分隔。</span></span><br><span class="line"><span class="keyword">new</span> DecimalFormat(<span class="string">&quot;,###&quot;</span>).format(c);　　　<span class="comment">//299,792,458</span></span><br><span class="line"><span class="comment">//将格式嵌入文本</span></span><br><span class="line"><span class="keyword">new</span> DecimalFormat(<span class="string">&quot;光速大小为每秒,###米。&quot;</span>).format(c);</span><br></pre></td></tr></table></figure>
+
+<p>DecimalFormat 类主要靠 # 和 0 两种占位符号来指定数字长度。0 表示如果位数不足则以 0 填充，# 表示只要有可能就把数字拉上这个位置。</p>
+<p>详细见<a target="_blank" rel="noopener" href="http://blog.csdn.net/evangel_z/article/details/7624503">Java DecimalFormat的主要功能及使用方法</a></p>
+<br>
+
+<h4 id="四、String-format"><a href="#四、String-format" class="headerlink" title="四、String.format"></a>四、String.format</h4><p>这是利用String 的 format 方法进行舍入，舍入模式默认就是四舍五入，而且不能更改舍入模式，至少我是不知道如何更改~~~</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> d = <span class="number">3.14149</span>;</span><br><span class="line">String result = String.format(<span class="string">&quot;%.3f&quot;</span>, d); <span class="comment">//3.141</span></span><br></pre></td></tr></table></figure>
+
+<p>关于 String.format 的用法，详见<a target="_blank" rel="noopener" href="https://deemons.cn/2017/11/14/String-format/">String.format</a>。</p>
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="http://blog.csdn.net/evangel_z/article/details/7624503">Java DecimalFormat的主要功能及使用方法</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/87627d53f77b">Java大数类BigDecimal及八种舍入模式的介绍</a></p>
+<br>
+
+<br>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/BigDecimal/" rel="tag"># BigDecimal</a>
+              <a href="/tags/%E5%9B%9B%E8%88%8D%E4%BA%94%E5%85%A5/" rel="tag"># 四舍五入</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/11/14/String-format/" rel="prev" title="String.format">
+      <i class="fa fa-chevron-left"></i> String.format
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/10/%E6%89%8B%E6%9C%BA%E5%8F%91%E5%B1%95%E5%8F%B2/" rel="next" title="手机发展史">
+      手机发展史 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">Java 基本数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BigDecimal-%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">BigDecimal 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">基本用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8%E7%A7%8D%E8%88%8D%E5%85%A5%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">8种舍入模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E8%88%8D%E4%BA%94%E5%85%A5%E5%B8%B8%E7%94%A8%E5%86%99%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">四舍五入常用写法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81Math%EF%BC%88%E5%B0%8F%E6%95%B0%E8%88%8D%E5%85%A5%E4%B8%BA%E6%95%B4%E6%95%B0%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">一、Math（小数舍入为整数）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81BigDecimal"><span class="nav-number">5.2.</span> <span class="nav-text">二、BigDecimal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81DecimalFormat"><span class="nav-number">5.3.</span> <span class="nav-text">三、DecimalFormat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81String-format"><span class="nav-number">5.4.</span> <span class="nav-text">四、String.format</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

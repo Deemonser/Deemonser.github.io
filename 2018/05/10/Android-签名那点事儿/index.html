@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"deemonser.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="针对 Android 中签名的相关问题，做一些记录整理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 签名那点事儿">
+<meta property="og:url" content="https://deemonser.github.io/2018/05/10/Android-%E7%AD%BE%E5%90%8D%E9%82%A3%E7%82%B9%E4%BA%8B%E5%84%BF/index.html">
+<meta property="og:site_name" content="Deemons&#39;s Blog">
+<meta property="og:description" content="针对 Android 中签名的相关问题，做一些记录整理。">
+<meta property="og:locale">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbcqlhy3j30go0b4t95.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbcsehuej30dn09eglw.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbctveevj30qr0ggtb6.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbcut8grj30eg0clgm3.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbcvsubvj30no0dagms.jpg">
+<meta property="article:published_time" content="2018-05-10T13:53:28.000Z">
+<meta property="article:modified_time" content="2021-09-14T09:07:30.000Z">
+<meta property="article:author" content="Deemons">
+<meta property="article:tag" content="-签名">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbcqlhy3j30go0b4t95.jpg">
+
+<link rel="canonical" href="https://deemonser.github.io/2018/05/10/Android-%E7%AD%BE%E5%90%8D%E9%82%A3%E7%82%B9%E4%BA%8B%E5%84%BF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Android 签名那点事儿 | Deemons's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Deemons's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://deemonser.github.io/2018/05/10/Android-%E7%AD%BE%E5%90%8D%E9%82%A3%E7%82%B9%E4%BA%8B%E5%84%BF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/my_icon.jpeg">
+      <meta itemprop="name" content="Deemons">
+      <meta itemprop="description" content="不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Deemons's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android 签名那点事儿
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-05-10 21:53:28" itemprop="dateCreated datePublished" datetime="2018-05-10T21:53:28+08:00">2018-05-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-14 17:07:30" itemprop="dateModified" datetime="2021-09-14T17:07:30+08:00">2021-09-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">编程安全</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbcqlhy3j30go0b4t95.jpg" alt="cytonn-photography-604680-unsplash_meitu_1"></p>
+<p>针对 Android 中签名的相关问题，做一些记录整理。</p>
+<span id="more"></span>
+<p>以前，遇到许多关于签名的问题</p>
+<ol>
+<li>APK 安装时的校验</li>
+<li>成为 Android 系统级应用</li>
+<li>查看应用的MD5或者是SHA1信息</li>
+<li>v2签名</li>
+<li>….</li>
+</ol>
+<p>这些问题都将在后面得到答案。<br><br></p>
+<h3 id="什么是签名"><a href="#什么是签名" class="headerlink" title="什么是签名"></a>什么是签名</h3><p>首先，什么是签名？为什么需要签名？</p>
+<p>在生活中，一般我们对某个文件进行签名，代表签名者对此文件的认可，防止签名者抵赖，同时防止文件被他人篡改。在计算机中也一样，签名就是对某个文件的一种认证过程，而签名校验就可以有效防止文件被恶意篡改，证明此文件是签名者的原始文件。</p>
+<br>
+
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2gbcsehuej30dn09eglw.jpg" alt="数字签名"></p>
+<p><strong>签名</strong>的流程如下：</p>
+<p>利用一个单向哈希函数对原始文件进行运算，生成数字摘要，然后用私钥加密这个数字摘要，这个加密后的数字摘要就是数字签名，最后将数字签名和原始文件一起打包成一个新的文件，如此，这个原始文件就被签名了。</p>
+<p><strong>校验签名</strong>的流程如下：<br>拿到被签名后的文件之后，首先提取出原始文件与签名，然后使用相同的单向哈希函数对原始文件运算，生成数字摘要，然后用公钥解密数字签名，然后对比两个数字摘要，如果相同就表示校验成功。</p>
+<br>
+
+<p>数字签名是非对称加密与数字摘要的组合应用，它有两种功效：</p>
+<ol>
+<li>确定文件（消息）确实是由签名者签名并发出来的，因为别人假冒不了签名者的签名。</li>
+<li>数字签名能确定消息的完整性。</li>
+</ol>
+<p>当然，数字签名一般不单独使用，基本都是用在数字证书里面。</p>
+<br>
+
+<h3 id="Android-签名"><a href="#Android-签名" class="headerlink" title="Android 签名"></a>Android 签名</h3><p>Android 要求所有已安装的应用程序都使用数字证书做数字签名，数字证书的私钥由开发者持有。</p>
+<p>Android 使用数字证书作为标识应用程序开发者的一种方式，并在应用程序之间建立信任的关系，证书并不用来控制用户能否安装那个应用程序。</p>
+<p>Android 的数字证书与普通数字证书最大的区别是，Android 数字证书并不需要权威的数字证书签名机构(CA)认证，它只是用来让应用程序包自我认证的，完全可以使用自签名证书（seft-signed certificates）。</p>
+<p>没有正确签名的应用，Android系统不会安装或运行，此规则适用于任何地方运行的Android系统，不管是在模拟器还是在真实设备上。即使是开发人员调试时的应用程序，也是使用了默认的签名文件 (目录：用户名/.android/debug.keystore，密码：android）进行签名的。</p>
+<p>只有签名文件相同且包名相同的 apk 才可以覆盖安装并保留用户信息，这样做是为了防止已安装的应用被恶意的第三方覆盖或替换。</p>
+<p>此外，数字证书都是有有效期的，Android 只是在应用程序安装的时候才会检查证书的有效期。如果程序已经安装在系统中，即使证书过期也不会影响程序的正常功能。</p>
+<br>
+#### Android 签名的作用
+Android 签名的主要作用是为了
+- **应用程序升级**：如果你希望用户无缝升级到新的版本，那么你必须用同一个证书进行签名。这是由于只有以同一个证书签名，系统才会允许安装升级的应用程序。如果你采用了不同的证书，那么系统会要求你的应用程序采用不同的包名称，在这种情况下相当于安装了一个全新的应用程序。如果想升级应用程序，签名证书要相同，包名称要相同！
+- **应用程序模块化**：Android系统可以允许同一个证书签名的多个应用程序在一个进程里运行，系统实际把他们作为一个单个的应用程序，此时就可以把我们的应用程序以模块的方式进行部署，而用户可以独立的升级其中的一个模块
+- **代码或者数据共享**：Android提供了基于签名的权限机制，那么一个应用程序就可以为另一个以相同证书签名的应用程序公开自己的功能。以同一个证书对多个应用程序进行签名，利用基于签名的权限检查，你就可以在应用程序间以安全的方式共享代码和数据了。
+
+<p><strong>所以一旦给Apk签名并上线后，签名文件和密码别名等一定要记住不能丢失，否则会损失用户且带来灾难性的后果.</strong></p>
+<br>
+
+<h4 id="签名文件格式"><a href="#签名文件格式" class="headerlink" title="签名文件格式"></a>签名文件格式</h4><p>签名文件格式有很多种，这里主要是介绍 Android 相关的，比如最早的 keystore、jks、pem/pk8等。</p>
+<ul>
+<li>KeyStore: KeyStore 是 Eclipse 开发 Android 的时候最早的签名文件了。</li>
+<li>JKS (Java key store): jks 是目前 Android Studio 中创建签名文件的格式 (Build -&gt; Generate Signed APK) 即可创建和使用签名文件为对应apk进行签名</li>
+<li>pem/pk8 :这个是系统的签名文件，Android系统在编译的时候也是需要签名，所以这个是系统的签名文件，如果想使自己的应用变成系统应用，则必须使用系统的签名文件进行签名。</li>
+</ul>
+<br>
+
+<h4 id="Signature-Versions-V1、V2"><a href="#Signature-Versions-V1、V2" class="headerlink" title="Signature Versions V1、V2"></a>Signature Versions V1、V2</h4><p>在新的 Android studio 版本中，出现了 v2 签名，先看看官方解释：</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2gbctveevj30qr0ggtb6.jpg" alt="Signature Versions V1、V2"></p>
+<p>V1：通过ZIP条目进行验证，这样APK 签署后可进行许多修改，可以移动甚至重新压缩文件。<br>V2：验证压缩文件的所有字节，而不是单个 ZIP 条目，因此，在签名后无法再更改(包括 zipalign)。正因如此，现在在编译过程中，我们将压缩、调整和签署合并成一步完成。好处显而易见，更安全而且新的签名可缩短在设备上进行验证的时间（不需要费时地解压缩然后验证）。</p>
+<p>只勾选v1签名并不会影响什么，但是在7.0上不会使用更安全的验证方式 。<br>只勾选V2签名7.0以下会直接安装完显示未安装，7.0以上则使用了V2的方式验证<br>同时勾选V1和V2则所有机型都没问题</p>
+<p>或者在app的build.gradle的android标签下加入如下</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">signingConfigs &#123;</span><br><span class="line">    debug &#123;</span><br><span class="line">        v1SigningEnabled <span class="literal">true</span></span><br><span class="line">        v2SigningEnabled <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    release &#123;</span><br><span class="line">        v1SigningEnabled <span class="literal">true</span></span><br><span class="line">        v2SigningEnabled <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>建议把V1和V2两个选项全部勾选，如果全部勾选出现了问题，那么可以忽略这种新的签名机制，只勾选第一个选项(V1)，依旧使用我们之前老的签名机制。</p>
+<br>
+
+<h3 id="生成数字证书"><a href="#生成数字证书" class="headerlink" title="生成数字证书"></a>生成数字证书</h3><p>生成数字证书有两种方式，包括带图形界面的 AS，以及命令行的keytool。</p>
+<h4 id="Android-Studio"><a href="#Android-Studio" class="headerlink" title="Android Studio"></a>Android Studio</h4><p>在 Android studio 中生成签名文件非常简单，build -&gt; Generate Signed APK -&gt; Create new… </p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2gbcut8grj30eg0clgm3.jpg" alt="生成 keystore"></p>
+<p>填写完信息之后就生成了数字证书，之后下一步就给 apk 签名上了。</p>
+<p>AS 签名带界面的，自然方便，但有时候需要使用命令行工具。</p>
+<p>签名相关的两个工具都在 JDK 中</p>
+<ul>
+<li>keytool 是个密钥和证书管理工具，可以用来生成证书。</li>
+<li>jarsigner 工具利用密钥仓库中的信息来产生或校验 Java 存档 (JAR) 文件的数字签名</li>
+</ul>
+<br>
+
+<h4 id="Keytool-生成"><a href="#Keytool-生成" class="headerlink" title="Keytool 生成"></a>Keytool 生成</h4><p>使用keytool生成证书:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -genkey -keystore test.keystore  -alias test -keyalg RSA -validity 10000</span><br></pre></td></tr></table></figure>
+
+<p>参数解释:</p>
+<ol>
+<li>-genkey 产生证书文件</li>
+<li>-keystore 指定密钥库的.keystore文件中</li>
+<li>-alias 指定别名</li>
+<li>-keyalg 指定密钥的算法,这里指定为RSA(非对称密钥算法)</li>
+<li>-validity 为证书有效天数</li>
+</ol>
+<br>
+
+<h4 id="jarsigner-签名"><a href="#jarsigner-签名" class="headerlink" title="jarsigner 签名"></a>jarsigner 签名</h4><p>数字证书生成后，需要使用 jarsigner 来签名</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jarsigner -verbose -keystore test.keystore -signedjar -signed.apk unsigned.apk &#x27;test&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>参数说明:</p>
+<ol>
+<li>-verbose：指定生成详细输出</li>
+<li>-keystore：指定数字证书存储路径</li>
+<li>-signedjar：该选项的三个参数为 -签名后的apk包，-未签名的apk包，-数字证书别名**(注意顺序)**</li>
+</ol>
+<br>
+
+<h3 id="查看签名文件"><a href="#查看签名文件" class="headerlink" title="查看签名文件"></a>查看签名文件</h3><p>在使用一些第三方库时（如分享、百度地图），有时会被要求提供 MD5 或者 SHA1值。</p>
+<p>查看签名文件信息需要用到 keytool 工具，keytool 是 JDK 自带的工具，需要配置环境变量，输入以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -list -v -keystore &lt;keystore文件名&gt;</span><br></pre></td></tr></table></figure>
+
+<p>例如，查看位于 <code>.android</code> 目录下默认的签名文件 <code>debug.keystore</code> 的信息：</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2gbcvsubvj30no0dagms.jpg" alt="查看签名文件"></p>
+<p>此命令需要提供 签名文件的密码， <code>debug.keystore</code> 文件的别名是 <code>androiddebugkey </code> ，密码是 <code>android</code> ，之后输出了签名文件的 MD5、SHA1、SHA256的值。</p>
+<br>
+
+<h3 id="系统签名"><a href="#系统签名" class="headerlink" title="系统签名"></a>系统签名</h3><p>普通应用程序的权限受限制，需要系统应用权限才行，因此在定制化系统中，需要将应用程序升级为系统应用程序，这时候就需要系统签名。</p>
+<p>这里有两种方案。</p>
+<h4 id="使用Android签名工具重新签名"><a href="#使用Android签名工具重新签名" class="headerlink" title="使用Android签名工具重新签名"></a>使用Android签名工具重新签名</h4><ol>
+<li><p>提供对应平台签名文件「platform.pk8」和「platform.x509.pem」，如果是定制系统，为了省事儿，直接找编译系统的兄弟讨要，如果是google 原生系统，则可以到源码处下载，8.0.0_r4 的两个文件<a target="_blank" rel="noopener" href="http://androidxref.com/8.0.0_r4/xref/build/target/product/security/">地址在此</a> ，其他平台版本的位置类似。</p>
+</li>
+<li><p>提供签名工具「signapk.jar」，8.0.0_r4的签名工具<a target="_blank" rel="noopener" href="http://androidxref.com/8.0.0_r4/xref/prebuilts/sdk/tools/lib/">地址在此</a>，其他平台版本的位置类似。</p>
+</li>
+<li><p>将签名证书「platform.pk8」、「platform.x509.pem 」，签名工具「signapk.jar 」放置在同一个文件夹，执行命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar signapk.jar platform.x509.pem platform.pk8 Demo.apk signedDemo.apk</span><br></pre></td></tr></table></figure></li>
+</ol>
+<br>
+
+<h4 id="生成系统debug-keystore文件"><a href="#生成系统debug-keystore文件" class="headerlink" title="生成系统debug.keystore文件"></a>生成系统debug.keystore文件</h4><p>这种方式的好处就是不用每次都手动打包，可以直接配置在 AS 中，同样需要前面的平台签名文件「platform.pk8」和「platform.x509.pem」。</p>
+<ol>
+<li><p>把pkcs8 格式的私钥转化成 pkcs12 格式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl pkcs8 -in platform.pk8 -inform DER -outform PEM -out shared.priv.pem -nocrypt</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="2">
+<li><p>把 x509.pem 公钥转换成 pkcs12 格式</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl pkcs12 -export -in platform.x509.pem -inkey shared.priv.pem -out shared.pk12 -name androiddebugkey</span><br></pre></td></tr></table></figure>
+
+<p>密码都是：android</p>
+</li>
+</ol>
+<ol start="3">
+<li><p>生成debug.keystore</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -importkeystore -deststorepass android -destkeypass android -destkeystore debug.keystore -srckeystore shared.pk12 -srcstoretype PKCS12 -srcstorepass android -alias androiddebugkey</span><br></pre></td></tr></table></figure></li>
+</ol>
+<br>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/axi295309066/article/details/52494832">Android安全加密：数字签名和数字证书</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/freezingxu/article/details/71547485">使用Java自带的keytool工具生成RSA非对称密钥证书，并导出公钥文件</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/jiangwei0910410003/article/details/50402000">Android签名机制之—签名过程详解</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/silenceoo/article/details/77568736">Android Studio打包签名 Signature Versions V1、V2的选择问题</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/63d699cffa1a">【Android 进阶】Apk 使用系统签名</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/luzhenrong45/article/details/47733053">给第三方apk进行系统签名的几种方式</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Double2hao/article/details/49861247">Android Studio查看SHA1和MD5（附带keystore创建）</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AD%BE%E5%90%8D/" rel="tag"># -签名</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/05/06/Android-%E5%A4%9A%E8%AF%AD%E8%A8%80/" rel="prev" title="Android 多语言">
+      <i class="fa fa-chevron-left"></i> Android 多语言
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/05/14/Android-%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/" rel="next" title="Android 串口通信">
+      Android 串口通信 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%AD%BE%E5%90%8D"><span class="nav-number">1.</span> <span class="nav-text">什么是签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-%E7%AD%BE%E5%90%8D"><span class="nav-number">2.</span> <span class="nav-text">Android 签名</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AD%BE%E5%90%8D%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">签名文件格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Signature-Versions-V1%E3%80%81V2"><span class="nav-number">2.2.</span> <span class="nav-text">Signature Versions V1、V2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6"><span class="nav-number">3.</span> <span class="nav-text">生成数字证书</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Android-Studio"><span class="nav-number">3.1.</span> <span class="nav-text">Android Studio</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Keytool-%E7%94%9F%E6%88%90"><span class="nav-number">3.2.</span> <span class="nav-text">Keytool 生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jarsigner-%E7%AD%BE%E5%90%8D"><span class="nav-number">3.3.</span> <span class="nav-text">jarsigner 签名</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%AD%BE%E5%90%8D%E6%96%87%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">查看签名文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%AD%BE%E5%90%8D"><span class="nav-number">5.</span> <span class="nav-text">系统签名</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Android%E7%AD%BE%E5%90%8D%E5%B7%A5%E5%85%B7%E9%87%8D%E6%96%B0%E7%AD%BE%E5%90%8D"><span class="nav-number">5.1.</span> <span class="nav-text">使用Android签名工具重新签名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9Fdebug-keystore%E6%96%87%E4%BB%B6"><span class="nav-number">5.2.</span> <span class="nav-text">生成系统debug.keystore文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Deemons"
+      src="/img/my_icon.jpeg">
+  <p class="site-author-name" itemprop="name">Deemons</p>
+  <div class="site-description" itemprop="description">不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备19061230号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Deemons</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
